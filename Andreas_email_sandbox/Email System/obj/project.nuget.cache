@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "1gC0kq89I5GS46nRjJJ9uT8cbHtIxsuoerpTiViglsomkg5bKmY2VlcOZ7K4drvAhls8/ptHUKYEIT47iFt4TA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Andreas\\Documents\\email_system\\Email System\\Email System.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Andreas\\.nuget\\packages\\mailkit\\3.4.1\\mailkit.3.4.1.nupkg.sha512",
+    "C:\\Users\\Andreas\\.nuget\\packages\\mimekit\\3.4.1\\mimekit.3.4.1.nupkg.sha512",
+    "C:\\Users\\Andreas\\.nuget\\packages\\portable.bouncycastle\\1.9.0\\portable.bouncycastle.1.9.0.nupkg.sha512",
+    "C:\\Users\\Andreas\\.nuget\\packages\\system.formats.asn1\\6.0.0\\system.formats.asn1.6.0.0.nupkg.sha512",
+    "C:\\Users\\Andreas\\.nuget\\packages\\system.security.cryptography.pkcs\\6.0.0\\system.security.cryptography.pkcs.6.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
