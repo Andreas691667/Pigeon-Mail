@@ -49,6 +49,7 @@
             this.passwordTb.Name = "passwordTb";
             this.passwordTb.Size = new System.Drawing.Size(329, 27);
             this.passwordTb.TabIndex = 1;
+            this.passwordTb.UseSystemPasswordChar = true;
             // 
             // loginBt
             // 
