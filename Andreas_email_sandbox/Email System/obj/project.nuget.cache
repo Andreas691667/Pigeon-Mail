@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "1gC0kq89I5GS46nRjJJ9uT8cbHtIxsuoerpTiViglsomkg5bKmY2VlcOZ7K4drvAhls8/ptHUKYEIT47iFt4TA==",
+  "dgSpecHash": "hLpGc7bsGcMkwbqkoZuQw1KdE2A2DakbF/IhkNpPeaZv+Bzph+3gGoObBYaFtVi2h0ZDcV8l2ns/SCKfBU3d5w==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Andreas\\Documents\\email_system\\Email System\\Email System.csproj",
+  "projectFilePath": "C:\\Users\\Andreas\\Source\\Repos\\Software_engineering_project\\Andreas_email_sandbox\\Email System\\Email System.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Andreas\\.nuget\\packages\\mailkit\\3.4.1\\mailkit.3.4.1.nupkg.sha512",
     "C:\\Users\\Andreas\\.nuget\\packages\\mimekit\\3.4.1\\mimekit.3.4.1.nupkg.sha512",

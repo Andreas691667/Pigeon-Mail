@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Andreas\\Documents\\email_system\\Email System\\Email System.csproj": {}
+    "C:\\Users\\Andreas\\Source\\Repos\\Software_engineering_project\\Andreas_email_sandbox\\Email System\\Email System.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Andreas\\Documents\\email_system\\Email System\\Email System.csproj": {
+    "C:\\Users\\Andreas\\Source\\Repos\\Software_engineering_project\\Andreas_email_sandbox\\Email System\\Email System.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Andreas\\Documents\\email_system\\Email System\\Email System.csproj",
+        "projectUniqueName": "C:\\Users\\Andreas\\Source\\Repos\\Software_engineering_project\\Andreas_email_sandbox\\Email System\\Email System.csproj",
         "projectName": "Email System",
-        "projectPath": "C:\\Users\\Andreas\\Documents\\email_system\\Email System\\Email System.csproj",
+        "projectPath": "C:\\Users\\Andreas\\Source\\Repos\\Software_engineering_project\\Andreas_email_sandbox\\Email System\\Email System.csproj",
         "packagesPath": "C:\\Users\\Andreas\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Andreas\\Documents\\email_system\\Email System\\obj\\",
+        "outputPath": "C:\\Users\\Andreas\\Source\\Repos\\Software_engineering_project\\Andreas_email_sandbox\\Email System\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Andreas\\AppData\\Roaming\\NuGet\\NuGet.Config",
