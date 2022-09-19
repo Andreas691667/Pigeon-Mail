@@ -45,16 +45,19 @@
             // 
             // messageLb
             // 
+            this.messageLb.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.messageLb.FormattingEnabled = true;
             this.messageLb.ItemHeight = 20;
             this.messageLb.Location = new System.Drawing.Point(221, 53);
             this.messageLb.Name = "messageLb";
-            this.messageLb.Size = new System.Drawing.Size(372, 424);
+            this.messageLb.Size = new System.Drawing.Size(588, 424);
             this.messageLb.TabIndex = 1;
             // 
             // newEmailBt
             // 
-            this.newEmailBt.Location = new System.Drawing.Point(599, 448);
+            this.newEmailBt.Location = new System.Drawing.Point(875, 448);
             this.newEmailBt.Name = "newEmailBt";
             this.newEmailBt.Size = new System.Drawing.Size(176, 29);
             this.newEmailBt.TabIndex = 2;
