@@ -22,7 +22,6 @@ namespace Email_System
             InitializeComponent();
             username = user;
             password = pass;
-            //string user, string pass
         }
 
         private void sendBt_Click(object sender, EventArgs e)
@@ -31,13 +30,19 @@ namespace Email_System
 
             message.From.Add(new MailboxAddress(username, username));
 
+            string[] recipients = recipientsTb.Text.Split(",");
+
             if(string.IsNullOrEmpty(recipientsTb.Text))
             {
                 MessageBox.Show("No recipient!");
             }
             else
             {
-                message.To.Add(MailboxAddress.Parse(recipientsTb.Text));
+                foreach(var rec in recipients)
+                {
+                    message.To.Add(MailboxAddress.Parse(rec));
+                }
+                
             }
 
             if(string.IsNullOrEmpty(subjectTb.Text))
