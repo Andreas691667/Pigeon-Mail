@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using MailKit.Net.Smtp;
 using MailKit;
 using MimeKit; //allow us to use mime messages
+using Org.BouncyCastle.Cms;
 
 namespace Email_System
 {
@@ -43,6 +44,17 @@ namespace Email_System
                 {
                     message.To.Add(MailboxAddress.Parse(rec));
                 }                
+            }
+
+            if (!string.IsNullOrEmpty(ccRecipientsTb.Text))
+            {
+                string[] ccRecipients = ccRecipientsTb.Text.Split(",");
+
+                foreach (var ccRec in ccRecipients)
+                {
+                    message.Cc.Add(MailboxAddress.Parse(ccRec));
+                }
+
             }
 
             if(string.IsNullOrEmpty(subjectTb.Text))
@@ -111,8 +123,6 @@ namespace Email_System
                 client.Disconnect(true);
                 client.Dispose();
             }
-
-
         }
 
         private void exitBt_Click(object sender, EventArgs e)
