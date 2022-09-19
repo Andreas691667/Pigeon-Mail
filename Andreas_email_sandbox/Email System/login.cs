@@ -24,8 +24,8 @@ namespace Email_System
                 client.Connect("smtp.gmail.com", 465, true);
                 client.Authenticate(username, password);
 
-                            
-                new newEmail(username, password).Show();
+                //new newEmail(username, password).Show();            
+                new Mailbox(username, password).Show();
                 this.Hide();
             }
 

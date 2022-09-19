@@ -28,21 +28,21 @@ namespace Email_System
         {
             MimeMessage message = new MimeMessage();
 
-            message.From.Add(new MailboxAddress(username, username));
-
-            string[] recipients = recipientsTb.Text.Split(",");
+            message.From.Add(new MailboxAddress(username, username));            
 
             if(string.IsNullOrEmpty(recipientsTb.Text))
             {
                 MessageBox.Show("No recipient!");
+                return;
             }
             else
             {
-                foreach(var rec in recipients)
+                string[] recipients = recipientsTb.Text.Split(",");
+
+                foreach (var rec in recipients)
                 {
                     message.To.Add(MailboxAddress.Parse(rec));
-                }
-                
+                }                
             }
 
             if(string.IsNullOrEmpty(subjectTb.Text))
@@ -50,26 +50,40 @@ namespace Email_System
                 DialogResult result = MessageBox.Show("No subject. Do you wish to send the e-mail anyway?", "Fault", MessageBoxButtons.YesNo);
                 if (result == DialogResult.No)
                 {
-                    this.Close();
+                    return;
                 }
-            }
+
+                else if(result == DialogResult.Yes)
+                {
+                    message.Subject = "<no subjext>";
+                }
+            }            
+            else
+            {
+                message.Subject = subjectTb.Text;
+            }                       
 
             if(string.IsNullOrEmpty(messageBodyTb.Text))
             {
                 DialogResult result = MessageBox.Show("No message. Do you wish to send the e-mail anyway?", "Fault", MessageBoxButtons.YesNo);
                 if (result == DialogResult.No)
                 {
-                    this.Close();
+                    return;
                 }
 
-
-            }
-             
-
-            message.Body = new TextPart("plain")
+                else if(result == DialogResult.Yes)
+                {
+                    message.Body = new TextPart("plain") { };                    
+                }
+            }             
+            else
             {
-                Text = messageBodyTb.Text
-            };
+                message.Body = new TextPart("plain")
+                {
+                    Text = messageBodyTb.Text
+                };
+            }
+
 
             SmtpClient client = new SmtpClient();
 
@@ -85,7 +99,6 @@ namespace Email_System
                 ccRecipientsTb.Clear();
                 subjectTb.Clear();
                 messageBodyTb.Clear();
-
             }
 
             catch (Exception ex)

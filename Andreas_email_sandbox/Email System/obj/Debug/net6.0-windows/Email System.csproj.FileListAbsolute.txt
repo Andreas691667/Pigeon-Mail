@@ -42,3 +42,4 @@ C:\Users\Andreas\Source\Repos\Software_engineering_project\Andreas_email_sandbox
 C:\Users\Andreas\Source\Repos\Software_engineering_project\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.pdb
 C:\Users\Andreas\Source\Repos\Software_engineering_project\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.genruntimeconfig.cache
 C:\Users\Andreas\Source\Repos\Software_engineering_project\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\ref\Email System.dll
+C:\Users\Andreas\source\repos\Software_engineering_project\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email_System.Mailbox.resources
