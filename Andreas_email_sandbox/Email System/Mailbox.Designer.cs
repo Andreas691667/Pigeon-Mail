@@ -41,6 +41,7 @@
             this.folderLb.Name = "folderLb";
             this.folderLb.Size = new System.Drawing.Size(203, 424);
             this.folderLb.TabIndex = 0;
+            this.folderLb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.RetrieveMessages);
             // 
             // messageLb
             // 

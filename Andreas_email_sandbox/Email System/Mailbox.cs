@@ -15,6 +15,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace Email_System
 {
+
     public partial class Mailbox : Form
     {
         string username;
@@ -46,7 +47,12 @@ namespace Email_System
             }
         }
 
-        private async void RetrieveMessages(object sender, EventArgs e)
+        private void newEmailBt_Click(object sender, EventArgs e)
+        {
+            new newEmail(username, password).Show();
+        }
+
+        private async void RetrieveMessages(object sender, MouseEventArgs e)
         {
             using var client = new ImapClient();
             {
@@ -54,19 +60,24 @@ namespace Email_System
                 client.Authenticate(username, password);
 
                 var folder = await client.GetFolderAsync(((ListBox)sender).SelectedItem.ToString());
+
                 await folder.OpenAsync(FolderAccess.ReadOnly);
 
-                               
-                foreach(var item in folder)
-                {
-                    messageLb.Items.Add(item.Subject.ToString());
-                }
-            }
-        }
+                List<string> emaillist = new List<string>();
 
-        private void newEmailBt_Click(object sender, EventArgs e)
-        {
-            new newEmail(username, password).Show();
+                foreach (var item in folder)
+                {
+                    emaillist.Add(item.Subject);
+                }
+
+                foreach (var item in emaillist)
+                {
+                    messageLb.Items.Add(item);
+                }               
+
+                client.Disconnect(true);
+            }
+
         }
     }
 }
