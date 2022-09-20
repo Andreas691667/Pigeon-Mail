@@ -21,7 +21,9 @@ namespace Email_System
 
             try
             {
-                client.Connect("smtp.gmail.com", 465, true);
+                string mail = username.Substring(username.LastIndexOf("@") + 1);
+
+                client.Connect("smtp." + mail, 465, true);
                 client.Authenticate(username, password);
 
                 //new newEmail(username, password).Show();            

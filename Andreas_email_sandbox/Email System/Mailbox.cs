@@ -20,6 +20,9 @@ namespace Email_System
     {
         string username;
         string password;
+
+        Dictionary<string, string> messages = new Dictionary<string, string>();
+
         public Mailbox(string user, string pass)
         {
             InitializeComponent();
@@ -40,7 +43,7 @@ namespace Email_System
 
                 foreach(var folder in folders)
                 {
-                    folderLb.Items.Add(folder.FullName);
+                    folderLb.Items.Add(folder.FullName.ToString());
                 }
 
                 client.Disconnect(true);
@@ -63,21 +66,38 @@ namespace Email_System
 
                 await folder.OpenAsync(FolderAccess.ReadOnly);
 
-                List<string> emaillist = new List<string>();
-
                 foreach (var item in folder)
                 {
-                    emaillist.Add(item.Subject);
-                }
-
-                foreach (var item in emaillist)
+                    messages.Add(key: item.MessageId, value: item.Subject);
+                }   
+                
+                foreach (var item in messages)
                 {
-                    messageLb.Items.Add(item);
-                }               
+                    messageLb.Items.Add(item.Value);
+                }
 
                 client.Disconnect(true);
             }
+        }
 
+        private async void ReadMessage(object sender, MouseEventArgs e)
+        {
+            using var client = new ImapClient();
+            {
+                client.Connect("imap.gmail.com", 993, true);
+                client.Authenticate(username, password);
+
+                var messageItem = ((ListBox)sender).SelectedItem;
+
+                var messageId = messages.First(m => m.Value == messageItem.ToString()).Key;                
+
+                var folder = client.GetFolder(folderLb.SelectedItem.ToString());
+                await folder.OpenAsync(FolderAccess.ReadOnly);
+
+                var message = folder.First(m => m.MessageId == messageId);
+
+                new readMessage(message).Show();                
+            }
         }
     }
 }
