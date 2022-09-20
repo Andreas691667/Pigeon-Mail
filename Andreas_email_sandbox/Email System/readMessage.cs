@@ -20,6 +20,15 @@ namespace Email_System
             message = m;
 
             fromTb.Text = message.From.ToString();
+
+            subjectTb.Text = message.Subject.ToString();
+
+            bodyRtb.Text = message.Body.ToString();
+        }
+
+        private void closeBt_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

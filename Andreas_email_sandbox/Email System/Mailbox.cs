@@ -57,6 +57,8 @@ namespace Email_System
 
         private async void RetrieveMessages(object sender, MouseEventArgs e)
         {
+            messageLb.Items.Clear();
+
             using var client = new ImapClient();
             {
                 client.Connect("imap.gmail.com", 993, true);
@@ -66,15 +68,28 @@ namespace Email_System
 
                 await folder.OpenAsync(FolderAccess.ReadOnly);
 
+                Dictionary<string, string> message_instance = new Dictionary<string, string>();
+
                 foreach (var item in folder)
                 {
-                    messages.Add(key: item.MessageId, value: item.Subject);
+                    message_instance.Add(key: item.MessageId, value: item.Subject);
                 }   
                 
-                foreach (var item in messages)
+                foreach (var item in message_instance)
                 {
-                    messageLb.Items.Add(item.Value);
+                    if(!(string.IsNullOrEmpty(item.Value)))
+                    {
+                        messageLb.Items.Add(item.Value);
+                    }
+
+                    else
+                    {
+                        messageLb.Items.Add("<no subject>");
+                    }
+                    
                 }
+
+                messages = message_instance;
 
                 client.Disconnect(true);
             }
