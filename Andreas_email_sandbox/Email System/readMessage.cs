@@ -29,6 +29,8 @@ namespace Email_System
             subjectTb.Text = message.Subject.ToString();
 
             bodyRtb.Text = message.Body.ToString();
+
+            
         }
 
         private void closeBt_Click(object sender, EventArgs e)
