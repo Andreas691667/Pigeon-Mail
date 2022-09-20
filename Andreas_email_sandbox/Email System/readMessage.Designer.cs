@@ -39,14 +39,17 @@
             // 
             // fromTb
             // 
-            this.fromTb.Location = new System.Drawing.Point(73, 60);
+            this.fromTb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.fromTb.Location = new System.Drawing.Point(147, 60);
             this.fromTb.Name = "fromTb";
             this.fromTb.ReadOnly = true;
-            this.fromTb.Size = new System.Drawing.Size(970, 27);
+            this.fromTb.Size = new System.Drawing.Size(896, 27);
             this.fromTb.TabIndex = 0;
             // 
             // bodyRtb
             // 
+            this.bodyRtb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.bodyRtb.Location = new System.Drawing.Point(73, 93);
             this.bodyRtb.Name = "bodyRtb";
             this.bodyRtb.ReadOnly = true;
@@ -81,13 +84,16 @@
             this.forwardBt.TabIndex = 4;
             this.forwardBt.Text = "Forward";
             this.forwardBt.UseVisualStyleBackColor = true;
+            this.forwardBt.Click += new System.EventHandler(this.forwardBt_Click);
             // 
             // subjectTb
             // 
-            this.subjectTb.Location = new System.Drawing.Point(71, 19);
+            this.subjectTb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.subjectTb.Font = new System.Drawing.Font("Segoe UI Semibold", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.subjectTb.Location = new System.Drawing.Point(147, 12);
             this.subjectTb.Name = "subjectTb";
             this.subjectTb.ReadOnly = true;
-            this.subjectTb.Size = new System.Drawing.Size(972, 27);
+            this.subjectTb.Size = new System.Drawing.Size(898, 38);
             this.subjectTb.TabIndex = 5;
             // 
             // closeBt

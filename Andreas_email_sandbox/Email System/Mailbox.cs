@@ -12,6 +12,7 @@ using MailKit;
 using MailKit.Search;
 using MimeKit;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using System.Collections;
 
 namespace Email_System
 {
@@ -20,6 +21,7 @@ namespace Email_System
     {
         string username;
         string password;
+        string server;
 
         Dictionary<string, string> messages = new Dictionary<string, string>();
 
@@ -29,6 +31,8 @@ namespace Email_System
             username = user;
             password = pass;
 
+            server = username.Substring(username.LastIndexOf("@") + 1);
+
             RetrieveFolders();
         }
 
@@ -36,7 +40,7 @@ namespace Email_System
         {
             using var client = new ImapClient();
             {
-                client.Connect("imap.gmail.com", 993, true);
+                client.Connect("imap." + server, 993, true);
                 client.Authenticate(username, password);
 
                 var folders = await client.GetFoldersAsync(new FolderNamespace(',', ""));
@@ -57,11 +61,9 @@ namespace Email_System
 
         private async void RetrieveMessages(object sender, MouseEventArgs e)
         {
-            messageLb.Items.Clear();
-
             using var client = new ImapClient();
             {
-                client.Connect("imap.gmail.com", 993, true);
+                client.Connect("imap." + server, 993, true);
                 client.Authenticate(username, password);
 
                 var folder = await client.GetFolderAsync(((ListBox)sender).SelectedItem.ToString());
@@ -71,45 +73,44 @@ namespace Email_System
                 Dictionary<string, string> message_instance = new Dictionary<string, string>();
 
                 foreach (var item in folder)
-                {
-                    message_instance.Add(key: item.MessageId, value: item.Subject);
-                }   
-                
-                foreach (var item in message_instance)
-                {
-                    if(!(string.IsNullOrEmpty(item.Value)))
                     {
-                        messageLb.Items.Add(item.Value);
+                        if (!string.IsNullOrEmpty(item.Subject))
+                        {
+                            message_instance.Add(key: item.MessageId, value: item.Subject);
+                        }
+                        else
+                        {
+                            message_instance.Add(key: item.MessageId, value: "<no subject>");
+                        }
                     }
 
-                    else
-                    {
-                        messageLb.Items.Add("<no subject>");
-                    }
-                    
+                    messageLb.DataSource = new BindingSource(message_instance, null);
+
+                    messageLb.DisplayMember = "Value";
+                    messageLb.ValueMember = "Key";
+
+                    messages = message_instance;
                 }
 
-                messages = message_instance;
-
                 client.Disconnect(true);
-            }
+            
         }
 
         private async void ReadMessage(object sender, MouseEventArgs e)
         {
             using var client = new ImapClient();
             {
-                client.Connect("imap.gmail.com", 993, true);
+                client.Connect("imap." + server, 993, true);
                 client.Authenticate(username, password);
 
-                var messageItem = ((ListBox)sender).SelectedItem;
+                var messageItem = (((ListBox)sender).SelectedValue);
 
-                var messageId = messages.First(m => m.Value == messageItem.ToString()).Key;                
-
+                //var messageId = messages.First(m => m.Value == messageItem.ToString());
+                
                 var folder = client.GetFolder(folderLb.SelectedItem.ToString());
                 await folder.OpenAsync(FolderAccess.ReadOnly);
 
-                var message = folder.First(m => m.MessageId == messageId);
+                var message = folder.First(m => m.MessageId == messageItem.ToString());
 
                 new readMessage(message, username, password).Show();                
             }

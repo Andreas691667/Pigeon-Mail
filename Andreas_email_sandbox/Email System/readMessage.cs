@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MimeKit;
+using Org.BouncyCastle.Cms;
 
 namespace Email_System
 {
@@ -28,9 +29,7 @@ namespace Email_System
 
             subjectTb.Text = message.Subject.ToString();
 
-            bodyRtb.Text = message.Body.ToString();
-
-            
+            bodyRtb.Text = message.Body.ToString();            
         }
 
         private void closeBt_Click(object sender, EventArgs e)
@@ -40,7 +39,13 @@ namespace Email_System
 
         private void replyBt_Click(object sender, EventArgs e)
         {
-            new newEmail(username, password, fromTb.Text, "Re: " + subjectTb.Text).Show();
+            string rec = fromTb.Text.Substring(fromTb.Text.IndexOf("<"));
+            new newEmail(username, password, message).Show();
+        }
+
+        private void forwardBt_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

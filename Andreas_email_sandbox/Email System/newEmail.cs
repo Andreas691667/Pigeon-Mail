@@ -18,14 +18,24 @@ namespace Email_System
     {
         string username;
         string password;
-        public newEmail(string user, string pass, string recipient = "", string subject = "")
+        string server;
+        MimeMessage message;
+
+
+        public newEmail(string user, string pass, MimeMessage m = null)
         {
             InitializeComponent();
             username = user;
             password = pass;
+            server = username.Substring(username.LastIndexOf("@") + 1);
 
-            recipientsTb.Text = recipient;
-            subjectTb.Text = subject;
+            if (m != null)
+            {
+                message = m;
+
+                string recipients = (message.From.ToString()).Substring(message.From.ToString().LastIndexOf("<"));  
+                recipientsTb.Text = recipients;
+            }
         }
 
         private void sendBt_Click(object sender, EventArgs e)
@@ -105,7 +115,7 @@ namespace Email_System
 
             try
             {
-                client.Connect("smtp.gmail.com", 465, true);
+                client.Connect("smtp." + server, 465, true);
                 client.Authenticate(username, password);
                 client.Send(message);
 
@@ -115,6 +125,7 @@ namespace Email_System
                 ccRecipientsTb.Clear();
                 subjectTb.Clear();
                 messageBodyTb.Clear();
+                this.Close();
             }
 
             catch (Exception ex)
