@@ -62,6 +62,7 @@
             this.replyBt.TabIndex = 2;
             this.replyBt.Text = "Reply";
             this.replyBt.UseVisualStyleBackColor = true;
+            this.replyBt.Click += new System.EventHandler(this.replyBt_Click);
             // 
             // replyAllBt
             // 

@@ -111,7 +111,7 @@ namespace Email_System
 
                 var message = folder.First(m => m.MessageId == messageId);
 
-                new readMessage(message).Show();                
+                new readMessage(message, username, password).Show();                
             }
         }
     }

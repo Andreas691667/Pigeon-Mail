@@ -18,11 +18,14 @@ namespace Email_System
     {
         string username;
         string password;
-        public newEmail(string user, string pass)
+        public newEmail(string user, string pass, string recipient = "", string subject = "")
         {
             InitializeComponent();
             username = user;
             password = pass;
+
+            recipientsTb.Text = recipient;
+            subjectTb.Text = subject;
         }
 
         private void sendBt_Click(object sender, EventArgs e)
@@ -36,6 +39,7 @@ namespace Email_System
                 MessageBox.Show("No recipient!");
                 return;
             }
+
             else
             {
                 string[] recipients = recipientsTb.Text.Split(",");
