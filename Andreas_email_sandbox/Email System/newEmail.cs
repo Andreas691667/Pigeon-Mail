@@ -51,7 +51,12 @@ namespace Email_System
             {
                 message = m;
 
-                messageBodyTb.Text = message.TextBody;
+                subjectTb.Text = "Fwrd: " + message.Subject;
+
+                messageBodyTb.AppendText("_____________________________________");
+                messageBodyTb.AppendText(Environment.NewLine);
+
+                messageBodyTb.AppendText(message.TextBody);
 
             }
         }
