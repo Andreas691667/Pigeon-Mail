@@ -54,11 +54,12 @@ namespace Email_System
 
                 string[] ccRecipients = message.Cc.ToString().Split(",");
                 
-                //vi har et problem med, at der er komma efter sidste adresse!
                 foreach (var rec in ccRecipients)
                 {
                     ccRecipientsTb.AppendText(rec + ", ");
                 }
+
+                ccRecipientsTb.Text = ccRecipientsTb.Text.Remove(ccRecipientsTb.Text.Length - 2);
             }
 
             else if(typeKey == 3 && m != null)
@@ -67,6 +68,7 @@ namespace Email_System
 
                 subjectTb.Text = "Fwrd: " + message.Subject;
 
+                messageBodyTb.AppendText(Environment.NewLine);
                 messageBodyTb.AppendText("-------- Forwarded message --------");
                 messageBodyTb.AppendText(Environment.NewLine);
                 messageBodyTb.AppendText(message.From.ToString());
