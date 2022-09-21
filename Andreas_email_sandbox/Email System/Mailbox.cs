@@ -56,7 +56,7 @@ namespace Email_System
 
         private void newEmailBt_Click(object sender, EventArgs e)
         {
-            new newEmail(username, password).Show();
+            new newEmail(username, password, 0).Show();
         }
 
         private async void RetrieveMessages(object sender, MouseEventArgs e)

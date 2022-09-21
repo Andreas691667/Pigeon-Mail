@@ -21,20 +21,38 @@ namespace Email_System
         string server;
         MimeMessage message;
 
-
-        public newEmail(string user, string pass, MimeMessage m = null)
+        //type keys:
+        // 0: blank email
+        // 1: reply
+        // 2: reply all
+        // 3: forward
+        public newEmail(string user, string pass, int typeKey, MimeMessage m = null)
         {
             InitializeComponent();
             username = user;
             password = pass;
             server = username.Substring(username.LastIndexOf("@") + 1);
 
-            if (m != null)
+            if (typeKey == 1 && m != null)
             {
                 message = m;
 
                 string recipients = (message.From.ToString()).Substring(message.From.ToString().LastIndexOf("<"));  
                 recipientsTb.Text = recipients;
+                subjectTb.Text = "Re: " + message.Subject;
+            }
+
+            else if(typeKey == 2 && m != null)
+            {
+                message = m;
+            }
+
+            else if(typeKey == 3 && m != null)
+            {
+                message = m;
+
+                messageBodyTb.Text = message.TextBody;
+
             }
         }
 

@@ -40,12 +40,12 @@ namespace Email_System
         private void replyBt_Click(object sender, EventArgs e)
         {
             string rec = fromTb.Text.Substring(fromTb.Text.IndexOf("<"));
-            new newEmail(username, password, message).Show();
+            new newEmail(username, password, 1, message).Show();
         }
 
         private void forwardBt_Click(object sender, EventArgs e)
         {
-
+            new newEmail(username, password, 3, message).Show();
         }
     }
 }
