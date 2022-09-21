@@ -19,14 +19,14 @@ namespace Email_System
         string username;
         string password;
         string server;
-        MimeMessage message;
+        MimeMessage message = new MimeMessage();
 
         //type keys:
         // 0: blank email
         // 1: reply
         // 2: reply all
         // 3: forward
-        public newEmail(string user, string pass, int typeKey, MimeMessage m = null)
+        public newEmail(string user, string pass, int typeKey, MimeMessage m = null!)
         {
             InitializeComponent();
             username = user;
@@ -63,7 +63,7 @@ namespace Email_System
 
         private void sendBt_Click(object sender, EventArgs e)
         {
-            MimeMessage message = new MimeMessage();
+            //MimeMessage message = new MimeMessage();
 
             message.From.Add(new MailboxAddress(username, username));            
 
