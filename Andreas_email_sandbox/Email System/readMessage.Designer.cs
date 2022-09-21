@@ -35,12 +35,13 @@
             this.forwardBt = new System.Windows.Forms.Button();
             this.subjectTb = new System.Windows.Forms.TextBox();
             this.closeBt = new System.Windows.Forms.Button();
+            this.ccRecipientsTb = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // fromTb
             // 
             this.fromTb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.fromTb.Location = new System.Drawing.Point(147, 60);
+            this.fromTb.Location = new System.Drawing.Point(147, 56);
             this.fromTb.Name = "fromTb";
             this.fromTb.ReadOnly = true;
             this.fromTb.Size = new System.Drawing.Size(896, 27);
@@ -50,10 +51,10 @@
             // 
             this.bodyRtb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.bodyRtb.Location = new System.Drawing.Point(73, 93);
+            this.bodyRtb.Location = new System.Drawing.Point(73, 132);
             this.bodyRtb.Name = "bodyRtb";
             this.bodyRtb.ReadOnly = true;
-            this.bodyRtb.Size = new System.Drawing.Size(970, 406);
+            this.bodyRtb.Size = new System.Drawing.Size(970, 367);
             this.bodyRtb.TabIndex = 1;
             this.bodyRtb.Text = "";
             // 
@@ -75,6 +76,7 @@
             this.replyAllBt.TabIndex = 3;
             this.replyAllBt.Text = "Reply all";
             this.replyAllBt.UseVisualStyleBackColor = true;
+            this.replyAllBt.Click += new System.EventHandler(this.replyAllBt_Click);
             // 
             // forwardBt
             // 
@@ -106,11 +108,20 @@
             this.closeBt.UseVisualStyleBackColor = true;
             this.closeBt.Click += new System.EventHandler(this.closeBt_Click);
             // 
+            // ccRecipientsTb
+            // 
+            this.ccRecipientsTb.Location = new System.Drawing.Point(147, 99);
+            this.ccRecipientsTb.Name = "ccRecipientsTb";
+            this.ccRecipientsTb.ReadOnly = true;
+            this.ccRecipientsTb.Size = new System.Drawing.Size(898, 27);
+            this.ccRecipientsTb.TabIndex = 7;
+            // 
             // readMessage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1099, 698);
+            this.Controls.Add(this.ccRecipientsTb);
             this.Controls.Add(this.closeBt);
             this.Controls.Add(this.subjectTb);
             this.Controls.Add(this.forwardBt);
@@ -134,5 +145,6 @@
         private Button forwardBt;
         private TextBox subjectTb;
         private Button closeBt;
+        private TextBox ccRecipientsTb;
     }
 }

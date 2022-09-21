@@ -29,7 +29,9 @@ namespace Email_System
 
             subjectTb.Text = message.Subject.ToString();
 
-            bodyRtb.Text = message.Body.ToString();            
+            bodyRtb.Text = message.Body.ToString();
+
+            ccRecipientsTb.Text = message.Cc.ToString();
         }
 
         private void closeBt_Click(object sender, EventArgs e)
@@ -46,6 +48,11 @@ namespace Email_System
         private void forwardBt_Click(object sender, EventArgs e)
         {
             new newEmail(username, password, 3, message).Show();
+        }
+
+        private void replyAllBt_Click(object sender, EventArgs e)
+        {
+            new newEmail(username, password, 2, message).Show();
         }
     }
 }

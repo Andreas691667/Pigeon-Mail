@@ -11,6 +11,7 @@ using MailKit.Net.Smtp;
 using MailKit;
 using MimeKit; //allow us to use mime messages
 using Org.BouncyCastle.Cms;
+using Org.BouncyCastle.Ocsp;
 
 namespace Email_System
 {
@@ -37,14 +38,27 @@ namespace Email_System
             {
                 message = m;
 
-                string recipients = (message.From.ToString()).Substring(message.From.ToString().LastIndexOf("<"));  
-                recipientsTb.Text = recipients;
+                string recipient = (message.From.ToString()).Substring(message.From.ToString().LastIndexOf("<"));  
+                recipientsTb.Text = recipient;
                 subjectTb.Text = "Re: " + message.Subject;
             }
 
             else if(typeKey == 2 && m != null)
             {
                 message = m;
+
+                subjectTb.Text = "Re: " + message.Subject;
+
+                string recipient = (message.From.ToString()).Substring(message.From.ToString().LastIndexOf("<"));
+                recipientsTb.Text = recipient;
+
+                string[] ccRecipients = message.Cc.ToString().Split(",");
+                
+                //vi har et problem med, at der er komma efter sidste adresse!
+                foreach (var rec in ccRecipients)
+                {
+                    ccRecipientsTb.AppendText(rec + ", ");
+                }
             }
 
             else if(typeKey == 3 && m != null)
@@ -53,12 +67,15 @@ namespace Email_System
 
                 subjectTb.Text = "Fwrd: " + message.Subject;
 
-                messageBodyTb.AppendText("_____________________________________");
+                messageBodyTb.AppendText("-------- Forwarded message --------");
                 messageBodyTb.AppendText(Environment.NewLine);
                 messageBodyTb.AppendText(message.From.ToString());
+                messageBodyTb.AppendText(Environment.NewLine);
                 messageBodyTb.AppendText(message.Date.ToString());
+                messageBodyTb.AppendText(Environment.NewLine);
+                messageBodyTb.AppendText(message.To.ToString());
+                messageBodyTb.AppendText(Environment.NewLine);
                 messageBodyTb.AppendText(message.TextBody);
-
             }
         }
 
@@ -79,7 +96,7 @@ namespace Email_System
                 string[] recipients = recipientsTb.Text.Split(",");
 
                 foreach (var rec in recipients)
-                {
+                {                    
                     message.To.Add(MailboxAddress.Parse(rec));
                 }                
             }
@@ -90,7 +107,9 @@ namespace Email_System
 
                 foreach (var ccRec in ccRecipients)
                 {
+
                     message.Cc.Add(MailboxAddress.Parse(ccRec));
+                    //message.Cc.Add(MailboxAddress.Parse(ccRec.Substring(ccRec.LastIndexOf("<"))));
                 }
 
             }
