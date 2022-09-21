@@ -55,7 +55,8 @@ namespace Email_System
 
                 messageBodyTb.AppendText("_____________________________________");
                 messageBodyTb.AppendText(Environment.NewLine);
-
+                messageBodyTb.AppendText(message.From.ToString());
+                messageBodyTb.AppendText(message.Date.ToString());
                 messageBodyTb.AppendText(message.TextBody);
 
             }
