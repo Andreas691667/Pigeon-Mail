@@ -33,7 +33,7 @@ namespace Email_System
             password = pass;
 
             server = username.Substring(username.LastIndexOf("@") + 1);
-
+           
             RetrieveFolders();
         }
 
@@ -45,6 +45,7 @@ namespace Email_System
             {
                 //connect and authenticate to the server
                 client.Connect("imap." + server, 993, true);
+                
                 client.Authenticate(username, password);
 
                 // get the folders from the server (to a List)

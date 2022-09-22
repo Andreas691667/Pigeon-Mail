@@ -9,7 +9,6 @@ namespace Email_System
         public login()
         {
             InitializeComponent();
-
         }
 
         private void loginBt_Click(object sender, EventArgs e)
@@ -24,9 +23,9 @@ namespace Email_System
                 string mail = username.Substring(username.LastIndexOf("@") + 1);
 
                 client.Connect("smtp." + mail, 465, true);
-                client.Authenticate(username, password);
 
-                //new newEmail(username, password).Show();            
+                client.Authenticate(username, password);
+   
                 new Mailbox(username, password).Show();
                 this.Hide();
             }
@@ -43,8 +42,6 @@ namespace Email_System
                 client.Dispose();
 
             }
-
-
         }
 
         private void exitBt_Click(object sender, EventArgs e)
