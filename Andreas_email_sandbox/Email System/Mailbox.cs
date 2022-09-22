@@ -45,6 +45,7 @@ namespace Email_System
 
                 var folders = await client.GetFoldersAsync(new FolderNamespace(',', ""));
 
+                //kan vi skille så vi ikke får 'GMAIL/'?
                 foreach(var folder in folders)
                 {
                     folderLb.Items.Add(folder.FullName.ToString());
