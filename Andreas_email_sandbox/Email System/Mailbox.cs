@@ -50,12 +50,20 @@ namespace Email_System
                 // get the folders from the server (to a List)
                 var folders = await client.GetFoldersAsync(new FolderNamespace(',', ""));
 
-                //kan vi skille så vi ikke får 'GMAIL/'?
-                //add all folders to the listbox
+                //add all folders to a list
+                List<string> foldersList = new List<string>();
+
                 foreach(var folder in folders)
                 {
-                    folderLb.Items.Add(folder.FullName.ToString());
+                    foldersList.Add(folder.FullName.ToString());
                 }
+                
+                // separate the items in folderLb by '/' and add them to the folder listbox
+                foreach(string item in foldersList)
+                {
+                    string f = item.Substring(item.LastIndexOf("/") + 1);
+                    folderLb.Items.Add(f);
+                }            
 
                 //disconnect from the client
                 client.Disconnect(true);
