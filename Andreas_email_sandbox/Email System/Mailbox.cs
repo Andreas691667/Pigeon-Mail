@@ -85,9 +85,6 @@ namespace Email_System
                 client.Connect("imap." + server, 993, true);
                 client.Authenticate(username, password);
 
-                //var folder = ((ListBox)sender).SelectedIndex.ToString();
-
-
                 // get access to the selected folder
                 var folder = await client.GetFolderAsync(((ListBox)sender).SelectedItem.ToString());
 
