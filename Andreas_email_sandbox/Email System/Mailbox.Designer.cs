@@ -28,9 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.folderLb = new System.Windows.Forms.ListBox();
             this.messageLb = new System.Windows.Forms.ListBox();
             this.newEmailBt = new System.Windows.Forms.Button();
+            this.refreshBt = new System.Windows.Forms.Button();
+            this.refreshTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // folderLb
@@ -66,11 +69,27 @@
             this.newEmailBt.UseVisualStyleBackColor = true;
             this.newEmailBt.Click += new System.EventHandler(this.newEmailBt_Click);
             // 
+            // refreshBt
+            // 
+            this.refreshBt.Location = new System.Drawing.Point(29, 20);
+            this.refreshBt.Name = "refreshBt";
+            this.refreshBt.Size = new System.Drawing.Size(94, 29);
+            this.refreshBt.TabIndex = 3;
+            this.refreshBt.Text = "Refresh";
+            this.refreshBt.UseVisualStyleBackColor = true;
+            this.refreshBt.Click += new System.EventHandler(this.refreshBt_Click);
+            // 
+            // refreshTimer
+            // 
+            this.refreshTimer.Interval = 10000;
+            this.refreshTimer.Tick += new System.EventHandler(this.refreshTimer_Tick);
+            // 
             // Mailbox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1199, 775);
+            this.Controls.Add(this.refreshBt);
             this.Controls.Add(this.newEmailBt);
             this.Controls.Add(this.messageLb);
             this.Controls.Add(this.folderLb);
@@ -85,5 +104,7 @@
         private ListBox folderLb;
         private ListBox messageLb;
         private Button newEmailBt;
+        private Button refreshBt;
+        private System.Windows.Forms.Timer refreshTimer;
     }
 }
