@@ -155,11 +155,13 @@ namespace Email_System
 
         private void refreshBt_Click(object sender, EventArgs e)
         {
+            folderLb.Items.Clear();
             RetrieveFolders();
         }
 
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
+            folderLb.Items.Clear();
             RetrieveFolders();
         }
     }
