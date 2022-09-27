@@ -13,6 +13,7 @@ using MailKit.Search;
 using MimeKit;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Collections;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace Email_System
 {
@@ -22,8 +23,6 @@ namespace Email_System
         string username;
         string password;
         string server;
-
-        Dictionary<string, string> messages = new Dictionary<string, string>();
 
         //constructor
         public Mailbox(string user, string pass)
@@ -40,35 +39,51 @@ namespace Email_System
         // method that retrieve folders and add the names to the listbox
         async void RetrieveFolders()
         {
-            //create instance of a IMAP client
-            using var client = new ImapClient();
+            bool foldersLoaded = false;
+
+            if (!foldersLoaded)
             {
-                //connect and authenticate to the server
-                client.Connect("imap." + server, 993, true);
-                
-                client.Authenticate(username, password);
+                this.Cursor = Cursors.WaitCursor;
+                //new waitForm(RetrieveFolders).Show();
 
-                // get the folders from the server (to a List)
-                var folders = await client.GetFoldersAsync(new FolderNamespace(',', ""));
-
-                //add all folders to a list
-                List<string> foldersList = new List<string>();
-
-                foreach(var folder in folders)
+                //create instance of a IMAP client
+                using var client = new ImapClient();
                 {
-                    foldersList.Add(folder.FullName.ToString());
+                    //connect and authenticate to the server
+                    client.Connect("imap." + server, 993, true);
+
+                    client.Authenticate(username, password);
+
+                    // get the folders from the server (to a List)
+                    var folders = await client.GetFoldersAsync(new FolderNamespace('.', ""));
+
+                    //dictionary for storing all folders
+                    Dictionary<string, string> foldersMap = new Dictionary<string, string>();
+
+                    // get the messages from the folder and add them to the dictionary
+                    foreach (var item in folders)
+                    {
+                        if (item.Exists)
+                        {
+                            var folderName = item.FullName.Substring(item.FullName.LastIndexOf('/') + 1);
+                            foldersMap.Add(key: item.FullName, value: folderName);
+                        }
+                    }
+
+                    // specify the data source for the listbox
+                    folderLb.DataSource = new BindingSource(foldersMap, null);
+
+                    // specify the display member and value member
+                    folderLb.DisplayMember = "Value";
+                    folderLb.ValueMember = "Key";
+
+
                 }
-                
-                // separate the items in folderLb by '/' and add them to the folder listbox
-                foreach(string item in foldersList)
-                {
-                    string f = item.Substring(item.LastIndexOf("/") + 1);
-                    folderLb.Items.Add(f);
-                }            
-
                 //disconnect from the client
                 client.Disconnect(true);
+                this.Cursor = Cursors.Default;
             }
+            foldersLoaded = true;
         }
 
         // open instance of newEmail form when the button is clicked (typeKey = blank email)
@@ -80,85 +95,104 @@ namespace Email_System
         // method to retrieve the messages from the folder when this folder is double clicked
         private async void RetrieveMessages(object sender, MouseEventArgs e)
         {
-            using var client = new ImapClient();
+            bool messagesLoaded = false;
+
+            if (!messagesLoaded)
             {
-                client.Connect("imap." + server, 993, true);
-                client.Authenticate(username, password);
+                this.Cursor = Cursors.WaitCursor;
 
-                // get access to the selected folder
-                var folder = await client.GetFolderAsync(((ListBox)sender).SelectedItem.ToString());
+                using var client = new ImapClient();
+                {
+                    client.Connect("imap." + server, 993, true);
+                    client.Authenticate(username, password);
 
-                // open the folder to read the messages
-                await folder.OpenAsync(FolderAccess.ReadOnly);
+                    // get access to the selected folder
+                    var folder = await client.GetFolderAsync(((ListBox)sender).SelectedValue.ToString());
 
-                // the messages are stored in a dictionary with message-id's as keys and the subject as values
-                Dictionary<string, string> message_instance = new Dictionary<string, string>();
+                    // open the folder to read the messages
+                    await folder.OpenAsync(FolderAccess.ReadOnly);
 
-                // get the messages from the folder and add them to the dictionary
-                foreach (var item in folder)
+                    // the messages are stored in a dictionary with message-id's as keys and the subject as values
+                    Dictionary<string, string> messageDictionary = new Dictionary<string, string>();
+
+                    if (folder.Count <= 0)
                     {
-                        if (!string.IsNullOrEmpty(item.Subject))
-                        {
-                            message_instance.Add(key: item.MessageId, value: item.Subject);
-                        }
-                        else
-                        {
-                            message_instance.Add(key: item.MessageId, value: "<no subject>");
-                        }
+                        messageDictionary.Add(key: "-1", value: "No messages in this folder");
+                        messageLb.Enabled = false;
                     }
 
-                // specify the data source for the listbox
-                messageLb.DataSource = new BindingSource(message_instance, null);
+                    else
+                    {
+                        // get the messages from the folder and add them to the dictionary
+                        foreach (var item in folder.Reverse())
+                        {
+                            if (!string.IsNullOrEmpty(item.Subject))
+                            {
+                                messageDictionary.Add(key: item.MessageId, value: item.Subject);
+                            }
+                            else
+                            {
+                                messageDictionary.Add(key: item.MessageId, value: "<no subject>");
+                            }
+                        }
+                        messageLb.Enabled = true;
+                    }
+                    // specify the data source for the listbox
+                    messageLb.DataSource = new BindingSource(messageDictionary, null);
 
-                // specify the display member and value member
-                messageLb.DisplayMember = "Value";
-                messageLb.ValueMember = "Key";
-
-                //how do we revrese these items?
-                //reverse the items in the listbox messageLb
-               
-
-                // update the global variable 'messages' to the current instance
-                messages = message_instance;
+                    // specify the display member and value member
+                    messageLb.DisplayMember = "Value";
+                    messageLb.ValueMember = "Key";
                 }
 
-            // disconnect from the client
-            client.Disconnect(true);
-            
+                // disconnect from the client
+                client.Disconnect(true);
+            }
+            this.Cursor = Cursors.Default;
+            messagesLoaded = true;
         }
 
         // method to read the message when it is double clicked
         private async void ReadMessage(object sender, MouseEventArgs e)
         {
-            using var client = new ImapClient();
+            bool messageLoaded = false;
+
+            if (!messageLoaded) 
             {
-                client.Connect("imap." + server, 993, true);
-                client.Authenticate(username, password);
+                this.Cursor = Cursors.WaitCursor;
 
-                // get the value of the selected item
-                var messageItem = (((ListBox)sender).SelectedValue);
+                using var client = new ImapClient();
+                {
+                    client.Connect("imap." + server, 993, true);
+                    client.Authenticate(username, password);
 
-                // get access to the selected content of the message
-                var folder = client.GetFolder(folderLb.SelectedItem.ToString());
-                await folder.OpenAsync(FolderAccess.ReadOnly);
+                    // get the value of the selected item
+                    var messageItem = (((ListBox)sender).SelectedValue);
 
-                //get the message object from the key associated with the selected value
-                var message = folder.First(m => m.MessageId == messageItem.ToString());
+                    // get access to the selected content of the message
+                    var folder = client.GetFolder(folderLb.SelectedValue.ToString());
+                    await folder.OpenAsync(FolderAccess.ReadOnly);
 
-                // create a new instance of the readMessage form with the retrieved message as input
-                new readMessage(message, username, password).Show();                
+                    //get the message object from the key associated with the selected value
+                    var message = folder.First(m => m.MessageId == messageItem.ToString());
+
+                    // create a new instance of the readMessage form with the retrieved message as input
+                    new readMessage(folder, message, username, password).Show();
+                }
+
+                client.Disconnect(true);
             }
+            this.Cursor = Cursors.Default;
+            messageLoaded = true;
         }
 
         private void refreshBt_Click(object sender, EventArgs e)
         {
-            folderLb.Items.Clear();
             RetrieveFolders();
         }
 
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
-            folderLb.Items.Clear();
             RetrieveFolders();
         }
     }

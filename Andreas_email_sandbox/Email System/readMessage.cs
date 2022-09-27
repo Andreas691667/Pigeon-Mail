@@ -4,10 +4,15 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MailKit;
+using MailKit.Net.Imap;
+using MailKit.Search;
 using MimeKit;
+using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Cms;
 
 namespace Email_System
@@ -18,9 +23,11 @@ namespace Email_System
         string password;
 
         MimeMessage message;
-        public readMessage(MimeMessage m, string user, string pass)
+        IMailFolder mailFolder;
+        public readMessage(IMailFolder f, MimeMessage m, string user, string pass)
         {
             InitializeComponent();
+            mailFolder = f;
             message = m;
             username = user;
             password = pass;
@@ -53,6 +60,11 @@ namespace Email_System
         private void replyAllBt_Click(object sender, EventArgs e)
         {
             new newEmail(username, password, 2, message).Show();
+        }
+
+        private void deleteMessageBt_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

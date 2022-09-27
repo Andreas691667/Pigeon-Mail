@@ -36,6 +36,7 @@
             this.subjectTb = new System.Windows.Forms.TextBox();
             this.closeBt = new System.Windows.Forms.Button();
             this.ccRecipientsTb = new System.Windows.Forms.TextBox();
+            this.deleteMessageBt = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // fromTb
@@ -116,11 +117,22 @@
             this.ccRecipientsTb.Size = new System.Drawing.Size(898, 27);
             this.ccRecipientsTb.TabIndex = 7;
             // 
+            // deleteMessageBt
+            // 
+            this.deleteMessageBt.Location = new System.Drawing.Point(862, 528);
+            this.deleteMessageBt.Name = "deleteMessageBt";
+            this.deleteMessageBt.Size = new System.Drawing.Size(93, 58);
+            this.deleteMessageBt.TabIndex = 8;
+            this.deleteMessageBt.Text = "Delete message";
+            this.deleteMessageBt.UseVisualStyleBackColor = true;
+            this.deleteMessageBt.Click += new System.EventHandler(this.deleteMessageBt_Click);
+            // 
             // readMessage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1099, 698);
+            this.Controls.Add(this.deleteMessageBt);
             this.Controls.Add(this.ccRecipientsTb);
             this.Controls.Add(this.closeBt);
             this.Controls.Add(this.subjectTb);
@@ -146,5 +158,6 @@
         private TextBox subjectTb;
         private Button closeBt;
         private TextBox ccRecipientsTb;
+        private Button deleteMessageBt;
     }
 }
