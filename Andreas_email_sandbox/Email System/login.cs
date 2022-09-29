@@ -26,7 +26,7 @@ namespace Email_System
                 client.Connect("smtp." + mail, 465, true);
 
                 client.Authenticate(username, password);
-   
+                this.Cursor = Cursors.WaitCursor;
                 new Mailbox(username, password).Show();
                 this.Hide();
             }

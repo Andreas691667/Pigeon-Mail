@@ -12,20 +12,13 @@ namespace Email_System
 {
     public partial class waitForm : Form
     {
-        public Action Worker { get; set; }
-        public waitForm(Action worker)
+        public waitForm()
         {
             InitializeComponent();
-            if (worker == null)
-                throw new ArgumentNullException();
-            
-            Worker = worker;
         }
 
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
-            Task.Factory.StartNew(Worker).ContinueWith(t => { this.Close(); }, TaskScheduler.FromCurrentSynchronizationContext());
         }
     }
 }

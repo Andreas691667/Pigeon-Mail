@@ -32,7 +32,6 @@ namespace Email_System
             password = pass;
 
             server = username.Substring(username.LastIndexOf("@") + 1);
-           
             RetrieveFolders();
         }
 
@@ -40,11 +39,11 @@ namespace Email_System
         async void RetrieveFolders()
         {
             bool foldersLoaded = false;
+            //new waitForm().Show();
 
             if (!foldersLoaded)
             {
-                this.Cursor = Cursors.WaitCursor;
-                //new waitForm(RetrieveFolders).Show();
+
 
                 //create instance of a IMAP client
                 using var client = new ImapClient();
