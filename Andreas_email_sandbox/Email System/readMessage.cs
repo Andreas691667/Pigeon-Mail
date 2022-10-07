@@ -64,7 +64,12 @@ namespace Email_System
 
         private void deleteMessageBt_Click(object sender, EventArgs e)
         {
+            var uids = mailFolder.Search(SearchQuery.All); 
 
+
+
+            foreach (var uid in uids) 
+                message = mailFolder.GetMessage(uid);
         }
     }
 }

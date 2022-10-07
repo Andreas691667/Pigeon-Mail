@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -6,14 +6,14 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Windows.Forms;*/
 using MailKit.Net.Imap;
 using MailKit;
-using MailKit.Search;
+/*using MailKit.Search;
 using MimeKit;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Collections;
-using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Asn1.X509;*/
 
 namespace Email_System
 {
