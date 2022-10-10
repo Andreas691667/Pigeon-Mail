@@ -35,6 +35,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.rememberMeCB = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -94,25 +95,36 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = global::Email_System.Properties.Resources._308652776_1159547471625191_8962619546181163215_n;
-            this.pictureBox1.Location = new System.Drawing.Point(47, 21);
+            this.pictureBox1.Location = new System.Drawing.Point(-7, -50);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(430, 151);
+            this.pictureBox1.Size = new System.Drawing.Size(529, 302);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 6;
             this.pictureBox1.TabStop = false;
+            // 
+            // rememberMeCB
+            // 
+            this.rememberMeCB.AutoSize = true;
+            this.rememberMeCB.Location = new System.Drawing.Point(316, 326);
+            this.rememberMeCB.Name = "rememberMeCB";
+            this.rememberMeCB.Size = new System.Drawing.Size(136, 24);
+            this.rememberMeCB.TabIndex = 7;
+            this.rememberMeCB.Text = "Remember me?";
+            this.rememberMeCB.UseVisualStyleBackColor = true;
             // 
             // login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(518, 419);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.rememberMeCB);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.exitBt);
             this.Controls.Add(this.loginBt);
             this.Controls.Add(this.passwordTb);
             this.Controls.Add(this.usernameTb);
+            this.Controls.Add(this.pictureBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "login";
@@ -132,5 +144,6 @@
         private Label label1;
         private Label label2;
         private PictureBox pictureBox1;
+        private CheckBox rememberMeCB;
     }
 }

@@ -127,7 +127,8 @@ namespace Email_System
                         {
                             if (!string.IsNullOrEmpty(item.Subject))
                             {
-                                messageDictionary.Add(key: item.MessageId, value: item.Subject);
+                                string val = item.Subject + " | " + item.Date.Date;
+                                messageDictionary.Add(key: item.MessageId, value: val);
                             }
                             else
                             {
