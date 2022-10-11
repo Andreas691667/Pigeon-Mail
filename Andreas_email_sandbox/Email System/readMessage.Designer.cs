@@ -37,6 +37,7 @@
             this.closeBt = new System.Windows.Forms.Button();
             this.ccRecipientsTb = new System.Windows.Forms.TextBox();
             this.deleteMessageBt = new System.Windows.Forms.Button();
+            this.moveToTrashBT = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // fromTb
@@ -127,11 +128,22 @@
             this.deleteMessageBt.UseVisualStyleBackColor = true;
             this.deleteMessageBt.Click += new System.EventHandler(this.deleteMessageBt_Click);
             // 
+            // moveToTrashBT
+            // 
+            this.moveToTrashBT.Location = new System.Drawing.Point(735, 528);
+            this.moveToTrashBT.Name = "moveToTrashBT";
+            this.moveToTrashBT.Size = new System.Drawing.Size(94, 58);
+            this.moveToTrashBT.TabIndex = 9;
+            this.moveToTrashBT.Text = "Move to trash";
+            this.moveToTrashBT.UseVisualStyleBackColor = true;
+            this.moveToTrashBT.Click += new System.EventHandler(this.moveToTrashBT_Click);
+            // 
             // readMessage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1099, 698);
+            this.Controls.Add(this.moveToTrashBT);
             this.Controls.Add(this.deleteMessageBt);
             this.Controls.Add(this.ccRecipientsTb);
             this.Controls.Add(this.closeBt);
@@ -159,5 +171,6 @@
         private Button closeBt;
         private TextBox ccRecipientsTb;
         private Button deleteMessageBt;
+        private Button moveToTrashBT;
     }
 }

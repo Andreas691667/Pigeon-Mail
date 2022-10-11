@@ -44,14 +44,14 @@
             this.usernameTb.Location = new System.Drawing.Point(166, 199);
             this.usernameTb.Name = "usernameTb";
             this.usernameTb.Size = new System.Drawing.Size(329, 27);
-            this.usernameTb.TabIndex = 0;
+            this.usernameTb.TabIndex = 1;
             // 
             // passwordTb
             // 
             this.passwordTb.Location = new System.Drawing.Point(166, 248);
             this.passwordTb.Name = "passwordTb";
             this.passwordTb.Size = new System.Drawing.Size(329, 27);
-            this.passwordTb.TabIndex = 1;
+            this.passwordTb.TabIndex = 2;
             this.passwordTb.UseSystemPasswordChar = true;
             // 
             // loginBt
@@ -59,7 +59,7 @@
             this.loginBt.Location = new System.Drawing.Point(166, 319);
             this.loginBt.Name = "loginBt";
             this.loginBt.Size = new System.Drawing.Size(94, 29);
-            this.loginBt.TabIndex = 2;
+            this.loginBt.TabIndex = 0;
             this.loginBt.Text = "Login";
             this.loginBt.UseVisualStyleBackColor = true;
             this.loginBt.Click += new System.EventHandler(this.loginBt_Click);
@@ -105,10 +105,12 @@
             // rememberMeCB
             // 
             this.rememberMeCB.AutoSize = true;
+            this.rememberMeCB.Checked = true;
+            this.rememberMeCB.CheckState = System.Windows.Forms.CheckState.Checked;
             this.rememberMeCB.Location = new System.Drawing.Point(316, 326);
             this.rememberMeCB.Name = "rememberMeCB";
             this.rememberMeCB.Size = new System.Drawing.Size(136, 24);
-            this.rememberMeCB.TabIndex = 7;
+            this.rememberMeCB.TabIndex = 4;
             this.rememberMeCB.Text = "Remember me?";
             this.rememberMeCB.UseVisualStyleBackColor = true;
             // 

@@ -20,14 +20,14 @@ namespace Email_System
         string username;
         string password;
         string server;
-        MimeMessage message = new MimeMessage();
+        IMessageSummary message = null!;
 
         //type keys:
         // 0: blank email
         // 1: reply
         // 2: reply all
         // 3: forward
-        public newEmail(string user, string pass, int typeKey, MimeMessage m = null!)
+        public newEmail(string user, string pass, int typeKey, IMessageSummary m = null!, string body = null!)
         {
             InitializeComponent();
             username = user;
@@ -38,21 +38,21 @@ namespace Email_System
             {
                 message = m;
 
-                string recipient = (message.From.ToString()).Substring(message.From.ToString().LastIndexOf("<"));  
+                string recipient = (message.Envelope.From.ToString()).Substring(message.Envelope.From.ToString().LastIndexOf("<"));  
                 recipientsTb.Text = recipient;
-                subjectTb.Text = "Re: " + message.Subject;
+                subjectTb.Text = "Re: " + message.Envelope.Subject;
             }
 
             else if(typeKey == 2 && m != null)
             {
                 message = m;
 
-                subjectTb.Text = "Re: " + message.Subject;
+                subjectTb.Text = "Re: " + message.Envelope.Subject;
 
-                string recipient = (message.From.ToString()).Substring(message.From.ToString().LastIndexOf("<"));
+                string recipient = (message.Envelope.From.ToString()).Substring(message.Envelope.From.ToString().LastIndexOf("<"));
                 recipientsTb.Text = recipient;
 
-                string[] ccRecipients = message.Cc.ToString().Split(",");
+                string[] ccRecipients = message.Envelope.Cc.ToString().Split(",");
                 
                 foreach (var rec in ccRecipients)
                 {
@@ -66,24 +66,24 @@ namespace Email_System
             {
                 message = m;
 
-                subjectTb.Text = "Fwrd: " + message.Subject;
+                subjectTb.Text = "Fwrd: " + message.Envelope.Subject;
 
                 messageBodyTb.AppendText(Environment.NewLine);
                 messageBodyTb.AppendText("-------- Forwarded message --------");
                 messageBodyTb.AppendText(Environment.NewLine);
-                messageBodyTb.AppendText(message.From.ToString());
+                messageBodyTb.AppendText(message.Envelope.From.ToString());
                 messageBodyTb.AppendText(Environment.NewLine);
                 messageBodyTb.AppendText(message.Date.ToString());
                 messageBodyTb.AppendText(Environment.NewLine);
-                messageBodyTb.AppendText(message.To.ToString());
+                messageBodyTb.AppendText(message.Envelope.To.ToString());
                 messageBodyTb.AppendText(Environment.NewLine);
-                messageBodyTb.AppendText(message.TextBody);
+                messageBodyTb.AppendText(body);
             }
         }
 
         private void sendBt_Click(object sender, EventArgs e)
         {
-            //MimeMessage message = new MimeMessage();
+            MimeMessage message = new MimeMessage();
 
             message.From.Add(new MailboxAddress(username, username));            
 
@@ -126,7 +126,7 @@ namespace Email_System
 
                 else if(result == DialogResult.Yes)
                 {
-                    message.Subject = "<no subjext>";
+                    message.Subject = "<no subject>";
                 }
             }            
             else
