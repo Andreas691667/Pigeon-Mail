@@ -17,8 +17,9 @@ namespace Email_System
             InitializeComponent();
         }
 
-        protected override void OnLoad(EventArgs e)
+        private void OnLoad(EventArgs e)
         {
+
         }
     }
 }

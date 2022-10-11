@@ -55,7 +55,7 @@
             this.messageLb.ItemHeight = 20;
             this.messageLb.Location = new System.Drawing.Point(221, 53);
             this.messageLb.Name = "messageLb";
-            this.messageLb.Size = new System.Drawing.Size(402, 424);
+            this.messageLb.Size = new System.Drawing.Size(670, 424);
             this.messageLb.TabIndex = 1;
             this.messageLb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ReadMessage);
             // 

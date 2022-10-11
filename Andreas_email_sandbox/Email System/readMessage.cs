@@ -16,6 +16,7 @@ using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Cms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
+
 namespace Email_System
 {
     public partial class readMessage : Form
@@ -36,7 +37,7 @@ namespace Email_System
             initializeMessage();
         }
 
-        private void initializeMessage()
+        private async void initializeMessage()
         {
             fromTb.Text = message.Envelope.From.ToString();
 
@@ -51,7 +52,7 @@ namespace Email_System
 
                 var bodyPart = message.TextBody;
 
-                client.Inbox.Open(FolderAccess.ReadOnly);
+                await client.Inbox.OpenAsync(FolderAccess.ReadOnly);
 
                 var body = (TextPart)client.Inbox.GetBodyPart(message.UniqueId, bodyPart);
 
@@ -82,7 +83,7 @@ namespace Email_System
             new newEmail(username, password, 2, message).Show();
         }
 
-        private void deleteMessageBt_Click(object sender, EventArgs e)
+        private async void deleteMessageBt_Click(object sender, EventArgs e)
         {
 
             DialogResult result = MessageBox.Show("The message will be deleted permanently without being moved to trash. Do you wish to continue? The action cannot be undone.", "Continue?", MessageBoxButtons.YesNo);
@@ -103,14 +104,12 @@ namespace Email_System
                         client.Connect("imap.gmail.com", 993, true);
                         client.Authenticate(username, password);
 
-                        var trashFolder = client.GetFolder(SpecialFolder.Trash);
+                        await client.Inbox.OpenAsync(FolderAccess.ReadWrite);
 
-                        client.Inbox.Open(FolderAccess.ReadWrite);
-
-                        client.Inbox.AddFlags(message.UniqueId, MessageFlags.Deleted, true);
-                        client.Inbox.Expunge();
+                        await client.Inbox.AddFlagsAsync(message.UniqueId, MessageFlags.Deleted, true);
+                        await client.Inbox.ExpungeAsync();
                     }
-
+                    client.Disconnect(true);
                     this.Cursor = Cursors.Default;
                     messageDeleted = true;
                     this.Close();
@@ -121,7 +120,7 @@ namespace Email_System
 
         }
 
-        private void moveToTrashBT_Click(object sender, EventArgs e)
+        private async void moveToTrashBT_Click(object sender, EventArgs e)
         {
             
             DialogResult result = MessageBox.Show("The message will be moved to trash. Do you wish to continue?", "Continue?", MessageBoxButtons.YesNo);
@@ -144,12 +143,12 @@ namespace Email_System
 
 
                         var trashFolder = client.GetFolder(SpecialFolder.Trash);
-                        trashFolder.Open(FolderAccess.ReadWrite);
-                        client.Inbox.Open(FolderAccess.ReadWrite);
+                        await trashFolder.OpenAsync(FolderAccess.ReadWrite);
+                        await client.Inbox.OpenAsync(FolderAccess.ReadWrite);
 
-                        client.Inbox.MoveTo(message.UniqueId, trashFolder);
+                        await client.Inbox.MoveToAsync(message.UniqueId, trashFolder);
                     }
-
+                    client.Disconnect(true);
                     messageMoved = true;
                     this.Cursor = Cursors.Default;
                     this.Close();

@@ -40,7 +40,7 @@ namespace Email_System
         }
 
         // method that retrieve folders and add the names to the listbox
-        async void RetrieveFolders()
+        private async void RetrieveFolders()
         {
 
             bool foldersLoaded = false;
@@ -68,7 +68,7 @@ namespace Email_System
                     {
                         if (item.Exists)
                         {
-                            var unread_no = item.Unread;
+                            var unread_no = item.Unread.ToString();
                             var folderName = item.FullName.Substring(item.FullName.LastIndexOf('/') + 1) + "   (" + unread_no + ")";
                             foldersMap.Add(key: item.FullName, value: folderName);
                         }
@@ -113,9 +113,9 @@ namespace Email_System
 
                     var folder = await client.GetFolderAsync(((ListBox)sender).SelectedValue.ToString());
 
-                    folder.Open(FolderAccess.ReadWrite);
+                    await folder.OpenAsync(FolderAccess.ReadWrite);
 
-                    var messages = folder.Fetch(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);                    
+                    var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);                    
 
                     if (messages.Count <= 0)
                     {
@@ -147,8 +147,7 @@ namespace Email_System
 
                         messageLb.Enabled = true;
                     }
-                    
-                    //folder.Close(false);
+
                 }
 
                 // disconnect from the client
