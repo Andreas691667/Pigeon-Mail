@@ -239,11 +239,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Andreas\\Source\\Repos\\Software_engineering_project\\Andreas_email_sandbox\\Email System\\Email System.csproj",
+      "projectUniqueName": "C:\\Users\\Andreas\\source\\repos\\Software_engineering_project\\Andreas_email_sandbox\\Email System\\Email System.csproj",
       "projectName": "Email System",
-      "projectPath": "C:\\Users\\Andreas\\Source\\Repos\\Software_engineering_project\\Andreas_email_sandbox\\Email System\\Email System.csproj",
+      "projectPath": "C:\\Users\\Andreas\\source\\repos\\Software_engineering_project\\Andreas_email_sandbox\\Email System\\Email System.csproj",
       "packagesPath": "C:\\Users\\Andreas\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Andreas\\Source\\Repos\\Software_engineering_project\\Andreas_email_sandbox\\Email System\\obj\\",
+      "outputPath": "C:\\Users\\Andreas\\source\\repos\\Software_engineering_project\\Andreas_email_sandbox\\Email System\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Andreas\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -296,7 +296,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }
