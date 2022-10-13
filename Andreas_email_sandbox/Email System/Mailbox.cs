@@ -85,7 +85,7 @@ namespace Email_System
 
                 var client = await Utility.establishConnectionImap();
                 var folder = client.Inbox;
-                await folder.OpenAsync(FolderAccess.ReadWrite);
+                await folder.OpenAsync(FolderAccess.ReadOnly);
 
                 var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
 
@@ -152,7 +152,7 @@ namespace Email_System
 
                     var folder = await client.GetFolderAsync(((ListBox)sender).SelectedValue.ToString());
 
-                    await folder.OpenAsync(FolderAccess.ReadWrite);
+                    await folder.OpenAsync(FolderAccess.ReadOnly);
 
                     var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);                    
 
