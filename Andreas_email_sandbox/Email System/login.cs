@@ -37,10 +37,10 @@ namespace Email_System
                 Properties.Settings.Default.Save();
             }
 
-
             string username = usernameTb.Text;
             string password = passwordTb.Text;
-            
+            Utility.username = usernameTb.Text;
+            Utility.password = passwordTb.Text;
 
             SmtpClient client = new SmtpClient();
 
@@ -51,6 +51,7 @@ namespace Email_System
                 client.Connect("smtp." + mail, 465, true);
 
                 client.Authenticate(username, password);
+
                 this.Cursor = Cursors.WaitCursor;
                 new Mailbox(username, password).Show();
                 this.Hide();

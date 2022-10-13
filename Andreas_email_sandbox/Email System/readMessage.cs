@@ -40,30 +40,27 @@ namespace Email_System
 
         private async void getTextBody()
         {
-            using var client = new ImapClient();
-            {
-                await client.ConnectAsync("imap.gmail.com", 993, true);
-                await client.AuthenticateAsync(username, password);
+            var client = await Utility.establishConnectionImap();
 
-                var bodyPart = message.TextBody;
+            var bodyPart = message.TextBody;
 
-                var folder = await client.GetFolderAsync(message.Folder.ToString());
+            var folder = await client.GetFolderAsync(message.Folder.ToString());
 
-                await folder.OpenAsync(FolderAccess.ReadOnly);
+            await folder.OpenAsync(FolderAccess.ReadOnly);
 
-                var body = (TextPart)folder.GetBodyPart(message.UniqueId, bodyPart);
+            var body = (TextPart)folder.GetBodyPart(message.UniqueId, bodyPart);
 
-                var text = body.Text;
-                bodyText = text;
+            var text = body.Text;
+            bodyText = text;
 
-                bodyRtb.Text = text;
-            }
+            bodyRtb.Text = text;
         }
 
         private void initializeMessage()
         {
             fromTb.Text = message.Envelope.From.ToString();
 
+            //NEED TO CHECK IF THIS IS NULL
             subjectTb.Text = message.Envelope.Subject.ToString();
 
             ccRecipientsTb.Text = message.Envelope.Cc.ToString();
@@ -105,23 +102,16 @@ namespace Email_System
                 while (!messageDeleted)
                 {
                     this.Cursor = Cursors.WaitCursor;
-                    using var client = new ImapClient();
-                    {
-                        await client.ConnectAsync("imap.gmail.com", 993, true);
-                        await client.AuthenticateAsync(username, password);
 
-                        var folder = await client.GetFolderAsync(message.Folder.ToString());
+                    var client = await Utility.establishConnectionImap();
 
-                        await folder.OpenAsync(FolderAccess.ReadWrite);
+                    var folder = await client.GetFolderAsync(message.Folder.ToString());
 
-                        await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Deleted, true);
-                        await folder.ExpungeAsync();
+                    await folder.OpenAsync(FolderAccess.ReadWrite);
 
-                        // await client.Inbox.OpenAsync(FolderAccess.ReadWrite);
+                    await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Deleted, true);
+                    await folder.ExpungeAsync();
 
-                        //await client.Inbox.AddFlagsAsync(message.UniqueId, MessageFlags.Deleted, true);
-                        //await client.Inbox.ExpungeAsync();
-                    }
                     await client.DisconnectAsync(true);
 
                     this.Cursor = Cursors.Default;
@@ -150,19 +140,17 @@ namespace Email_System
                 while (!messageMoved)
                 {
                     this.Cursor = Cursors.WaitCursor;
-                    using var client = new ImapClient();
-                    {
-                        await client.ConnectAsync("imap.gmail.com", 993, true);
-                        await client.AuthenticateAsync(username, password);
 
-                        var folder = await client.GetFolderAsync(message.Folder.ToString());
-                        var trashFolder = client.GetFolder(SpecialFolder.Trash);
+                    var client = await Utility.establishConnectionImap();
 
-                        await trashFolder.OpenAsync(FolderAccess.ReadWrite);
-                        await folder.OpenAsync(FolderAccess.ReadWrite);
+                    var folder = await client.GetFolderAsync(message.Folder.ToString());
+                    var trashFolder = client.GetFolder(SpecialFolder.Trash);
 
-                        await folder.MoveToAsync(message.UniqueId, trashFolder);
-                    }
+                    await trashFolder.OpenAsync(FolderAccess.ReadWrite);
+                    await folder.OpenAsync(FolderAccess.ReadWrite);
+
+                    await folder.MoveToAsync(message.UniqueId, trashFolder);
+
                     client.Disconnect(true);
                     messageMoved = true;
                     this.Cursor = Cursors.Default;

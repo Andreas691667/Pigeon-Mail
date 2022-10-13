@@ -27,6 +27,7 @@ namespace Email_System
         // 1: reply
         // 2: reply all
         // 3: forward
+        // 4: drafts (not implemented)
         public newEmail(string user, string pass, int typeKey, IMessageSummary m = null!, string body = null!)
         {
             InitializeComponent();
