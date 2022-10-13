@@ -34,33 +34,39 @@ namespace Email_System
             username = user;
             password = pass;
 
+            getTextBody();
             initializeMessage();
         }
 
-        private async void initializeMessage()
+        private async void getTextBody()
         {
-            fromTb.Text = message.Envelope.From.ToString();
-
-            subjectTb.Text = message.Envelope.Subject.ToString();
-
-            ccRecipientsTb.Text = message.Envelope.Cc.ToString();
-
             using var client = new ImapClient();
             {
-                client.Connect("imap.gmail.com", 993, true);
-                client.Authenticate(username, password);
+                await client.ConnectAsync("imap.gmail.com", 993, true);
+                await client.AuthenticateAsync(username, password);
 
                 var bodyPart = message.TextBody;
 
-                await client.Inbox.OpenAsync(FolderAccess.ReadOnly);
+                var folder = await client.GetFolderAsync(message.Folder.ToString());
 
-                var body = (TextPart)client.Inbox.GetBodyPart(message.UniqueId, bodyPart);
+                await folder.OpenAsync(FolderAccess.ReadOnly);
+
+                var body = (TextPart)folder.GetBodyPart(message.UniqueId, bodyPart);
 
                 var text = body.Text;
                 bodyText = text;
 
                 bodyRtb.Text = text;
             }
+        }
+
+        private void initializeMessage()
+        {
+            fromTb.Text = message.Envelope.From.ToString();
+
+            subjectTb.Text = message.Envelope.Subject.ToString();
+
+            ccRecipientsTb.Text = message.Envelope.Cc.ToString();
         }
         private void closeBt_Click(object sender, EventArgs e)
         {
@@ -101,15 +107,23 @@ namespace Email_System
                     this.Cursor = Cursors.WaitCursor;
                     using var client = new ImapClient();
                     {
-                        client.Connect("imap.gmail.com", 993, true);
-                        client.Authenticate(username, password);
+                        await client.ConnectAsync("imap.gmail.com", 993, true);
+                        await client.AuthenticateAsync(username, password);
 
-                        await client.Inbox.OpenAsync(FolderAccess.ReadWrite);
+                        var folder = await client.GetFolderAsync(message.Folder.ToString());
 
-                        await client.Inbox.AddFlagsAsync(message.UniqueId, MessageFlags.Deleted, true);
-                        await client.Inbox.ExpungeAsync();
+                        await folder.OpenAsync(FolderAccess.ReadWrite);
+
+                        await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Deleted, true);
+                        await folder.ExpungeAsync();
+
+                        // await client.Inbox.OpenAsync(FolderAccess.ReadWrite);
+
+                        //await client.Inbox.AddFlagsAsync(message.UniqueId, MessageFlags.Deleted, true);
+                        //await client.Inbox.ExpungeAsync();
                     }
-                    client.Disconnect(true);
+                    await client.DisconnectAsync(true);
+
                     this.Cursor = Cursors.Default;
                     messageDeleted = true;
                     this.Close();
@@ -138,15 +152,16 @@ namespace Email_System
                     this.Cursor = Cursors.WaitCursor;
                     using var client = new ImapClient();
                     {
-                        client.Connect("imap.gmail.com", 993, true);
-                        client.Authenticate(username, password);
+                        await client.ConnectAsync("imap.gmail.com", 993, true);
+                        await client.AuthenticateAsync(username, password);
 
-
+                        var folder = await client.GetFolderAsync(message.Folder.ToString());
                         var trashFolder = client.GetFolder(SpecialFolder.Trash);
-                        await trashFolder.OpenAsync(FolderAccess.ReadWrite);
-                        await client.Inbox.OpenAsync(FolderAccess.ReadWrite);
 
-                        await client.Inbox.MoveToAsync(message.UniqueId, trashFolder);
+                        await trashFolder.OpenAsync(FolderAccess.ReadWrite);
+                        await folder.OpenAsync(FolderAccess.ReadWrite);
+
+                        await folder.MoveToAsync(message.UniqueId, trashFolder);
                     }
                     client.Disconnect(true);
                     messageMoved = true;

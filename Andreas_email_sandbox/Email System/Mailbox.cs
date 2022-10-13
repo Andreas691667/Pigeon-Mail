@@ -16,6 +16,7 @@ using System.Collections;
 using Org.BouncyCastle.Asn1.X509;*/
 using System.Threading;
 using static System.Windows.Forms.AxHost;
+using System.Windows.Forms;
 
 namespace Email_System
 {
@@ -53,9 +54,9 @@ namespace Email_System
                 using var client = new ImapClient();
                 {
                     //connect and authenticate to the server
-                    client.Connect("imap." + server, 993, true);
+                    await client.ConnectAsync("imap." + server, 993, true);
 
-                    client.Authenticate(username, password);
+                    await client.AuthenticateAsync(username, password);
 
                     // get the folders from the server (to a List)
                     var folders = await client.GetFoldersAsync(new FolderNamespace('.', ""));
@@ -84,7 +85,7 @@ namespace Email_System
 
                 }
                 //disconnect from the client
-                client.Disconnect(true);
+                await client.DisconnectAsync(true);
                 this.Cursor = Cursors.Default;
             }
             foldersLoaded = true;
@@ -108,8 +109,8 @@ namespace Email_System
 
                 using var client = new ImapClient();
                 {
-                    client.Connect("imap." + server, 993, true);
-                    client.Authenticate(username, password);
+                    await client.ConnectAsync("imap." + server, 993, true);
+                    await client.AuthenticateAsync(username, password);
 
                     var folder = await client.GetFolderAsync(((ListBox)sender).SelectedValue.ToString());
 
@@ -129,14 +130,20 @@ namespace Email_System
 
                         foreach (var item in messages.Reverse())
                         {
-                            if (item.Envelope.Subject != null)
-                                messageLb.Items.Add(item.Envelope.Subject);
-                         
-                            else if(!item.Flags.Value.HasFlag(MessageFlags.Seen))
+                            if(item.Flags.Value.HasFlag(MessageFlags.Flagged))
                             {
-                                var sub = "(UNREAD) " + item.Envelope.Subject; 
-                                messageLb.Items.Add(sub);   
+                                var sub = "(FLAGGED) " + item.Envelope.Subject;
+                                messageLb.Items.Add(sub);
                             }
+
+                            if (!(item.Flags.Value.HasFlag(MessageFlags.Seen)))
+                            {
+                                var sub = "(UNREAD) " + item.Envelope.Subject;
+                                messageLb.Items.Add(sub);
+                            }
+
+                            else if (item.Envelope.Subject != null)
+                                messageLb.Items.Add(item.Envelope.Subject);
 
                             else
                             {
@@ -151,14 +158,14 @@ namespace Email_System
                 }
 
                 // disconnect from the client
-                client.Disconnect(true);
+                await client.DisconnectAsync(true);
             }
             this.Cursor = Cursors.Default;
             messagesLoaded = true;
         }
 
         // method to read the message when it is double clicked
-        private void ReadMessage(object sender, MouseEventArgs e)
+        private async void ReadMessage(object sender, MouseEventArgs e)
         {
             bool messageLoaded = false;
 
@@ -168,19 +175,26 @@ namespace Email_System
 
                 using var client = new ImapClient();
                 {
-                    client.Connect("imap." + server, 993, true);
-                    client.Authenticate(username, password);
+                    await client.ConnectAsync("imap." + server, 993, true);
+                    await client.AuthenticateAsync(username, password);
 
                     // get the value of the selected item
                     var messageItem = (((ListBox)sender).SelectedIndex);
 
                     var currentMessage = messageSummaries[messageSummaries.Count - messageItem - 1];
 
+                    //add 'seen' flag to message
+                    var folder = await client.GetFolderAsync(currentMessage.Folder.ToString());
+                    await folder.OpenAsync(FolderAccess.ReadWrite);
+
+                    await folder.AddFlagsAsync(currentMessage.UniqueId, MessageFlags.Seen, true);
+                    
+
                     // create a new instance of the readMessage form with the retrieved message as input
                     new readMessage(currentMessage, username, password).Show();
                 }
 
-                client.Disconnect(true);
+                await client.DisconnectAsync(true);
             }
             this.Cursor = Cursors.Default;
             messageLoaded = true;
