@@ -1,21 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using MailKit;
-using MailKit.Net.Imap;
-using MailKit.Search;
+﻿using MailKit;
 using MimeKit;
-using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Cms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-
 
 namespace Email_System
 {

@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using MailKit.Net.Smtp;
+﻿using MailKit.Net.Smtp;
 using MailKit;
 using MimeKit; //allow us to use mime messages
-using Org.BouncyCastle.Cms;
-using Org.BouncyCastle.Ocsp;
 
 namespace Email_System
 {

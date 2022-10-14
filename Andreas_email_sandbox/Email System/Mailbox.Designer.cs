@@ -34,6 +34,7 @@
             this.newEmailBt = new System.Windows.Forms.Button();
             this.refreshBt = new System.Windows.Forms.Button();
             this.refreshTimer = new System.Windows.Forms.Timer(this.components);
+            this.addFlagBt = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // folderLb
@@ -85,16 +86,29 @@
             this.refreshTimer.Interval = 10000;
             this.refreshTimer.Tick += new System.EventHandler(this.refreshTimer_Tick);
             // 
+            // addFlagBt
+            // 
+            this.addFlagBt.Location = new System.Drawing.Point(971, 86);
+            this.addFlagBt.Name = "addFlagBt";
+            this.addFlagBt.Size = new System.Drawing.Size(94, 29);
+            this.addFlagBt.TabIndex = 4;
+            this.addFlagBt.Text = "Add flag";
+            this.addFlagBt.UseVisualStyleBackColor = true;
+            this.addFlagBt.Visible = false;
+            this.addFlagBt.Click += new System.EventHandler(this.addFlagBt_Click);
+            // 
             // Mailbox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1199, 775);
+            this.Controls.Add(this.addFlagBt);
             this.Controls.Add(this.refreshBt);
             this.Controls.Add(this.newEmailBt);
             this.Controls.Add(this.messageLb);
             this.Controls.Add(this.folderLb);
             this.Name = "Mailbox";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds;
             this.Text = "Mailbox";
             this.ResumeLayout(false);
 
@@ -107,5 +121,6 @@
         private Button newEmailBt;
         private Button refreshBt;
         private System.Windows.Forms.Timer refreshTimer;
+        private Button addFlagBt;
     }
 }
