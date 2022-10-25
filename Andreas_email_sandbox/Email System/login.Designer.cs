@@ -34,11 +34,11 @@
             this.exitBt = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.companyImage = new System.Windows.Forms.PictureBox();
             this.rememberMeCB = new System.Windows.Forms.CheckBox();
             this.messagesBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.foldersBackgroundWorker = new System.ComponentModel.BackgroundWorker();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.companyImage)).BeginInit();
             this.SuspendLayout();
             // 
             // usernameTb
@@ -94,15 +94,15 @@
             this.label2.TabIndex = 5;
             this.label2.Text = "Password";
             // 
-            // pictureBox1
+            // companyImage
             // 
-            this.pictureBox1.Image = global::Email_System.Properties.Resources._308652776_1159547471625191_8962619546181163215_n;
-            this.pictureBox1.Location = new System.Drawing.Point(-7, -50);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(529, 302);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 6;
-            this.pictureBox1.TabStop = false;
+            this.companyImage.Image = global::Email_System.Properties.Resources._308652776_1159547471625191_8962619546181163215_n;
+            this.companyImage.Location = new System.Drawing.Point(-7, -50);
+            this.companyImage.Name = "companyImage";
+            this.companyImage.Size = new System.Drawing.Size(529, 302);
+            this.companyImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.companyImage.TabIndex = 6;
+            this.companyImage.TabStop = false;
             // 
             // rememberMeCB
             // 
@@ -137,12 +137,12 @@
             this.Controls.Add(this.loginBt);
             this.Controls.Add(this.passwordTb);
             this.Controls.Add(this.usernameTb);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.companyImage);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "login";
             this.Text = "Login";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.companyImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -156,7 +156,7 @@
         private Button exitBt;
         private Label label1;
         private Label label2;
-        private PictureBox pictureBox1;
+        private PictureBox companyImage;
         private CheckBox rememberMeCB;
         private System.ComponentModel.BackgroundWorker messagesBackgroundWorker;
         private System.ComponentModel.BackgroundWorker foldersBackgroundWorker;

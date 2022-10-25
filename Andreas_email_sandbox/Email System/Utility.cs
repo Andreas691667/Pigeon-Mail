@@ -51,7 +51,11 @@ namespace Email_System
                 MessageBox.Show(ex.Message);
                 return null!;
             }
+        }
 
+        public static void refreshFolders()
+        {
+            
         }
     }
 }

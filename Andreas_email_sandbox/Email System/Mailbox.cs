@@ -15,7 +15,7 @@ namespace Email_System
         IList<IMessageSummary> messageSummaries = null!;
 
         //constructor
-        public Mailbox(string user, string pass)
+        public Mailbox()
         {
             InitializeComponent();
 
@@ -93,27 +93,33 @@ namespace Email_System
                 {
                     messageSummaries = messages;
 
+                    
+
                     foreach (var item in messages.Reverse())
                     {
-/*                        if (item.Flags.Value.HasFlag(MessageFlags.Flagged))
+                        string subject = "";
+
+                        if (item.Flags.Value.HasFlag(MessageFlags.Flagged))
                         {
-                            var sub = "(FLAGGED) " + item.Envelope.Subject;
-                            messageLb.Items.Add(sub);
-                        }*/
+                            subject += "(FLAGGED) ";
+                        }
 
                         if (!(item.Flags.Value.HasFlag(MessageFlags.Seen)))
                         {
-                            var sub = "(UNREAD) " + item.Envelope.Subject;
-                            messageLb.Items.Add(sub);
+                            subject += "(UNREAD) ";
                         }
 
-                        else if (item.Envelope.Subject != null)
-                            messageLb.Items.Add(item.Envelope.Subject);
+                        if (item.Envelope.Subject != null)
+                        {
+                            subject += item.Envelope.Subject;
+                            messageLb.Items.Add(subject);
+                        }
 
                         else
                         {
                             item.Envelope.Subject = "<no subject>";
-                            messageLb.Items.Add(item.Envelope.Subject);
+                            subject += item.Envelope.Subject;
+                            messageLb.Items.Add(subject);
                         }
                     }
 
@@ -160,28 +166,33 @@ namespace Email_System
                 {
                     addFlagBt.Visible = true;
                     messageSummaries = messages;
+                    
 
                     foreach (var item in messages.Reverse())
                     {
+                        string subject = "";
+
                         if (item.Flags.Value.HasFlag(MessageFlags.Flagged))
                         {
-                            var sub = "(FLAGGED) " + item.Envelope.Subject;
-                            messageLb.Items.Add(sub);
+                            subject += "(FLAGGED) ";
                         }
 
                         if (!(item.Flags.Value.HasFlag(MessageFlags.Seen)))
                         {
-                            var sub = "(UNREAD) " + item.Envelope.Subject;
-                            messageLb.Items.Add(sub);
+                            subject += "(UNREAD) ";
                         }
 
-                        else if (item.Envelope.Subject != null)
-                            messageLb.Items.Add(item.Envelope.Subject);
+                        if (item.Envelope.Subject != null)
+                        {
+                            subject += item.Envelope.Subject;
+                            messageLb.Items.Add(subject);
+                        }
 
                         else
                         {
                             item.Envelope.Subject = "<no subject>";
-                            messageLb.Items.Add(item.Envelope.Subject);
+                            subject += item.Envelope.Subject;
+                            messageLb.Items.Add(subject);
                         }
                     }
 
@@ -230,21 +241,27 @@ namespace Email_System
 
         private void refreshBt_Click(object sender, EventArgs e)
         {
-            RetrieveFolders();
+            refresh();
+        }
+
+        //virker ikke:(
+        public static void refresh()
+        {
+            Mailbox mailbox = new Mailbox();
+            mailbox.RetrieveFolders();
         }
 
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
-            RetrieveFolders();
+            refresh();
         }
 
         private async void addFlagBt_Click(object sender, EventArgs e)
         {
-/*            var messageIndex = messageLb.SelectedIndex;
-            var message = messageSummaries[messageSummaries.Count - messageIndex];
+            var messageIndex = messageLb.SelectedIndex;
+            var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
 
             var client = await Utility.establishConnectionImap();
-
 
             //add flag to message
             var folder = await client.GetFolderAsync(message.Folder.ToString());
@@ -252,13 +269,7 @@ namespace Email_System
 
             await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
 
-            var importantFolder = client.GetFolder(SpecialFolder.Flagged);
-
-            importantFolder.Open(FolderAccess.ReadWrite);
-
-            await folder.CopyToAsync(message.UniqueId, importantFolder);
-
-            await client.DisconnectAsync(true);*/
+            await client.DisconnectAsync(true);
         }
     }
 }

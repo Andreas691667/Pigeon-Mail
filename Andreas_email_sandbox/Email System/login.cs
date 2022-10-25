@@ -58,7 +58,7 @@ namespace Email_System
                 client.Authenticate(username, password);
 
                 this.Cursor = Cursors.WaitCursor;
-                new Mailbox(username, password).Show();
+                new Mailbox().Show();
                 this.Hide();
             }
 
@@ -110,14 +110,13 @@ namespace Email_System
                 MessageBox.Show(msg);
             }
         }
-
-        #endregion
-
         private void messagesBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker bw = sender as BackgroundWorker;
 
             Data.loadMessages(bw);
         }
+
+        #endregion
     }
 }
