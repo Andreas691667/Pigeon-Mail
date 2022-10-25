@@ -18,9 +18,37 @@ namespace Email_System
         public Mailbox()
         {
             InitializeComponent();
-
             RetrieveFolders();
         }
+
+        private void messageFlagCheck(IMessageSummary item)
+        {
+            string subject = "";
+
+            if (item.Flags.Value.HasFlag(MessageFlags.Flagged))
+            {
+                subject += "(FLAGGED) ";
+            }
+
+            if (!(item.Flags.Value.HasFlag(MessageFlags.Seen)))
+            {
+                subject += "(UNREAD) ";
+            }
+
+            if (item.Envelope.Subject != null)
+            {
+                subject += item.Envelope.Subject;
+                messageLb.Items.Add(subject);
+            }
+
+            else
+            {
+                item.Envelope.Subject = "<no subject>";
+                subject += item.Envelope.Subject;
+                messageLb.Items.Add(subject);
+            }
+        }
+
 
         // method that retrieve folders and add the names to the listbox
         private async void RetrieveFolders()
@@ -85,42 +113,21 @@ namespace Email_System
 
                 if (messages.Count <= 0)
                 {
+                    addFlagBt.Visible = false;
+                    removeFlagBt.Visible = false;
                     messageLb.Items.Add("No messages in this folder!");
                     messageLb.Enabled = false;
                 }
 
                 else
                 {
-                    messageSummaries = messages;
-
-                    
+                    addFlagBt.Visible = true;
+                    removeFlagBt.Visible = true;
+                    messageSummaries = messages;                   
 
                     foreach (var item in messages.Reverse())
                     {
-                        string subject = "";
-
-                        if (item.Flags.Value.HasFlag(MessageFlags.Flagged))
-                        {
-                            subject += "(FLAGGED) ";
-                        }
-
-                        if (!(item.Flags.Value.HasFlag(MessageFlags.Seen)))
-                        {
-                            subject += "(UNREAD) ";
-                        }
-
-                        if (item.Envelope.Subject != null)
-                        {
-                            subject += item.Envelope.Subject;
-                            messageLb.Items.Add(subject);
-                        }
-
-                        else
-                        {
-                            item.Envelope.Subject = "<no subject>";
-                            subject += item.Envelope.Subject;
-                            messageLb.Items.Add(subject);
-                        }
+                        messageFlagCheck(item);
                     }
 
                     messageLb.Enabled = true;
@@ -158,6 +165,8 @@ namespace Email_System
 
                 if (messages.Count <= 0)
                 {
+                    addFlagBt.Visible = false;
+                    removeFlagBt.Visible = false;
                     messageLb.Items.Add("No messages in this folder!");
                     messageLb.Enabled = false;
                 }
@@ -165,35 +174,12 @@ namespace Email_System
                 else
                 {
                     addFlagBt.Visible = true;
-                    messageSummaries = messages;
-                    
+                    removeFlagBt.Visible = true;
+                    messageSummaries = messages;                    
 
                     foreach (var item in messages.Reverse())
                     {
-                        string subject = "";
-
-                        if (item.Flags.Value.HasFlag(MessageFlags.Flagged))
-                        {
-                            subject += "(FLAGGED) ";
-                        }
-
-                        if (!(item.Flags.Value.HasFlag(MessageFlags.Seen)))
-                        {
-                            subject += "(UNREAD) ";
-                        }
-
-                        if (item.Envelope.Subject != null)
-                        {
-                            subject += item.Envelope.Subject;
-                            messageLb.Items.Add(subject);
-                        }
-
-                        else
-                        {
-                            item.Envelope.Subject = "<no subject>";
-                            subject += item.Envelope.Subject;
-                            messageLb.Items.Add(subject);
-                        }
+                        messageFlagCheck(item);
                     }
 
                     messageLb.Enabled = true;
@@ -258,18 +244,50 @@ namespace Email_System
 
         private async void addFlagBt_Click(object sender, EventArgs e)
         {
-            var messageIndex = messageLb.SelectedIndex;
-            var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
+            try
+            {
+                var messageIndex = messageLb.SelectedIndex;
+                var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
+                var client = await Utility.establishConnectionImap();
 
-            var client = await Utility.establishConnectionImap();
+                //add flag to message
+                var folder = await client.GetFolderAsync(message.Folder.ToString());
+                await folder.OpenAsync(FolderAccess.ReadWrite);
 
-            //add flag to message
-            var folder = await client.GetFolderAsync(message.Folder.ToString());
-            await folder.OpenAsync(FolderAccess.ReadWrite);
+                await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
+                await client.DisconnectAsync(true);
 
-            await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
+                Utility.refreshFolders();
+            }
 
-            await client.DisconnectAsync(true);
+            catch
+            {
+                MessageBox.Show("No message selected!");
+            }
+        }
+
+        private async void removeFlagBt_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var messageIndex = messageLb.SelectedIndex;
+                var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
+                var client = await Utility.establishConnectionImap();
+
+                //add flag to message
+                var folder = await client.GetFolderAsync(message.Folder.ToString());
+                await folder.OpenAsync(FolderAccess.ReadWrite);
+
+                await folder.RemoveFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
+                await client.DisconnectAsync(true);
+
+                Utility.refreshFolders();
+            }
+
+            catch
+            {
+                MessageBox.Show("No message selected!");
+            }
         }
     }
 }

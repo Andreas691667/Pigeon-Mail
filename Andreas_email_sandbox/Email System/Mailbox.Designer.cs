@@ -35,6 +35,7 @@
             this.refreshBt = new System.Windows.Forms.Button();
             this.refreshTimer = new System.Windows.Forms.Timer(this.components);
             this.addFlagBt = new System.Windows.Forms.Button();
+            this.removeFlagBt = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // folderLb
@@ -88,20 +89,34 @@
             // 
             // addFlagBt
             // 
-            this.addFlagBt.Location = new System.Drawing.Point(971, 86);
+            this.addFlagBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.addFlagBt.Location = new System.Drawing.Point(1049, 53);
             this.addFlagBt.Name = "addFlagBt";
-            this.addFlagBt.Size = new System.Drawing.Size(94, 29);
+            this.addFlagBt.Size = new System.Drawing.Size(138, 29);
             this.addFlagBt.TabIndex = 4;
             this.addFlagBt.Text = "Add flag";
             this.addFlagBt.UseVisualStyleBackColor = true;
             this.addFlagBt.Visible = false;
             this.addFlagBt.Click += new System.EventHandler(this.addFlagBt_Click);
             // 
+            // removeFlagBt
+            // 
+            this.removeFlagBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.removeFlagBt.Location = new System.Drawing.Point(1049, 88);
+            this.removeFlagBt.Name = "removeFlagBt";
+            this.removeFlagBt.Size = new System.Drawing.Size(138, 29);
+            this.removeFlagBt.TabIndex = 5;
+            this.removeFlagBt.Text = "Remove flag";
+            this.removeFlagBt.UseVisualStyleBackColor = true;
+            this.removeFlagBt.Visible = false;
+            this.removeFlagBt.Click += new System.EventHandler(this.removeFlagBt_Click);
+            // 
             // Mailbox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1199, 775);
+            this.Controls.Add(this.removeFlagBt);
             this.Controls.Add(this.addFlagBt);
             this.Controls.Add(this.refreshBt);
             this.Controls.Add(this.newEmailBt);
@@ -122,5 +137,6 @@
         private Button refreshBt;
         private System.Windows.Forms.Timer refreshTimer;
         private Button addFlagBt;
+        private Button removeFlagBt;
     }
 }
