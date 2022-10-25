@@ -11,9 +11,6 @@ namespace Email_System
 
     public partial class Mailbox : Form
     {
-        string username;
-        string password;
-        string server;
 
         IList<IMessageSummary> messageSummaries = null!;
 
@@ -21,10 +18,7 @@ namespace Email_System
         public Mailbox(string user, string pass)
         {
             InitializeComponent();
-            username = user;
-            password = pass;
 
-            server = username.Substring(username.LastIndexOf("@") + 1);
             RetrieveFolders();
         }
 
@@ -135,7 +129,7 @@ namespace Email_System
         // open instance of newEmail form when the button is clicked (typeKey 0 = blank email)
         private void newEmailBt_Click(object sender, EventArgs e)
         {
-            new newEmail(username, password, 0).Show();
+            new newEmail(0).Show();
         }
 
         // method to retrieve the messages from the folder when this folder is double clicked
@@ -227,7 +221,7 @@ namespace Email_System
                     
 
                 // create a new instance of the readMessage form with the retrieved message as input
-                new readMessage(currentMessage, username, password).Show();
+                new readMessage(currentMessage).Show();
 
                 await client.DisconnectAsync(true);
             }

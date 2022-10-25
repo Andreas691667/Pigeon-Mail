@@ -5,18 +5,14 @@ namespace Email_System
 {
     public partial class readMessage : Form
     {
-        string username;
-        string password;
         string bodyText = null!;
 
         IMessageSummary message;
 
-        public readMessage(IMessageSummary m, string user, string pass)
+        public readMessage(IMessageSummary m)
         {
             InitializeComponent();
             message = m;
-            username = user;
-            password = pass;
 
             getTextBody();
             initializeMessage();
@@ -57,17 +53,17 @@ namespace Email_System
         private void replyBt_Click(object sender, EventArgs e)
         {
             string rec = fromTb.Text.Substring(fromTb.Text.IndexOf("<"));
-            new newEmail(username, password, 1, message).Show();
+            new newEmail(1, message).Show();
         }
 
         private void forwardBt_Click(object sender, EventArgs e)
         {
-            new newEmail(username, password, 3, message, bodyText).Show();
+            new newEmail(3, message, bodyText).Show();
         }
 
         private void replyAllBt_Click(object sender, EventArgs e)
         {
-            new newEmail(username, password, 2, message).Show();
+            new newEmail(2, message).Show();
         }
 
         private async void deleteMessageBt_Click(object sender, EventArgs e)

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace Email_System
@@ -16,22 +17,41 @@ namespace Email_System
 
         public static async Task<ImapClient>  establishConnectionImap()
         {
-            var client = new ImapClient();
+            try
+            {
+                ImapClient client = new ImapClient();
 
-            await client.ConnectAsync("imap.gmail.com", 993, true);
-            await client.AuthenticateAsync(username, password);
+                await client.ConnectAsync("imap.gmail.com", 993, true);
+                await client.AuthenticateAsync(username, password);
 
-            return client;
+                return client;
+            }
+
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null!;
+            }
         }
 
-        public static async Task<SmtpClient> establishConnectionSmtp()
+        public static SmtpClient establishConnectionSmtp()
         {
-            var client = new SmtpClient();
+            try
+            {
+                SmtpClient client = new SmtpClient();
 
-            await client.ConnectAsync("imap.gmail.com", 993, true);
-            await client.AuthenticateAsync(username, password);
+                client.Connect("smtp.gmail.com", 465, true);
+                client.Authenticate(username, password);
 
-            return client;
+                return client;
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null!;
+            }
+
         }
     }
 }

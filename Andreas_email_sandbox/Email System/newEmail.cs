@@ -6,9 +6,6 @@ namespace Email_System
 {
     public partial class newEmail : Form
     {
-        string username;
-        string password;
-        string server;
         IMessageSummary message = null!;
 
         //type keys:
@@ -17,12 +14,9 @@ namespace Email_System
         // 2: reply all
         // 3: forward
         // 4: drafts (not implemented)
-        public newEmail(string user, string pass, int typeKey, IMessageSummary m = null!, string body = null!)
+        public newEmail(int typeKey, IMessageSummary m = null!, string body = null!)
         {
             InitializeComponent();
-            username = user;
-            password = pass;
-            server = username.Substring(username.LastIndexOf("@") + 1);
 
             if (typeKey == 1 && m != null)
             {
@@ -71,13 +65,11 @@ namespace Email_System
             }
         }
 
-        private void sendBt_Click(object sender, EventArgs e)
+        #region Build message
+
+        private void addRecipient(MimeMessage message)
         {
-            MimeMessage message = new MimeMessage();
-
-            message.From.Add(new MailboxAddress(username, username));            
-
-            if(string.IsNullOrEmpty(recipientsTb.Text))
+            if (string.IsNullOrEmpty(recipientsTb.Text))
             {
                 MessageBox.Show("No recipient!");
                 return;
@@ -88,25 +80,28 @@ namespace Email_System
                 string[] recipients = recipientsTb.Text.Split(",");
 
                 foreach (var rec in recipients)
-                {                    
+                {
                     message.To.Add(MailboxAddress.Parse(rec));
-                }                
+                }
             }
+        }
 
+        private void addCcRecipients(MimeMessage message)
+        {
             if (!string.IsNullOrEmpty(ccRecipientsTb.Text))
             {
                 string[] ccRecipients = ccRecipientsTb.Text.Split(",");
 
                 foreach (var ccRec in ccRecipients)
                 {
-
                     message.Cc.Add(MailboxAddress.Parse(ccRec));
-                    //message.Cc.Add(MailboxAddress.Parse(ccRec.Substring(ccRec.LastIndexOf("<"))));
                 }
-
             }
+        }
 
-            if(string.IsNullOrEmpty(subjectTb.Text))
+        private void addSubject(MimeMessage message)
+        {
+            if (string.IsNullOrEmpty(subjectTb.Text))
             {
                 DialogResult result = MessageBox.Show("No subject. Do you wish to send the e-mail anyway?", "Fault", MessageBoxButtons.YesNo);
                 if (result == DialogResult.No)
@@ -114,17 +109,21 @@ namespace Email_System
                     return;
                 }
 
-                else if(result == DialogResult.Yes)
+                else if (result == DialogResult.Yes)
                 {
                     message.Subject = "<no subject>";
                 }
-            }            
+            }
+
             else
             {
                 message.Subject = subjectTb.Text;
-            }                       
+            }
+        }
 
-            if(string.IsNullOrEmpty(messageBodyTb.Text))
+        private void addBody(MimeMessage message)
+        {
+            if (string.IsNullOrEmpty(messageBodyTb.Text))
             {
                 DialogResult result = MessageBox.Show("No message. Do you wish to send the e-mail anyway?", "Fault", MessageBoxButtons.YesNo);
                 if (result == DialogResult.No)
@@ -132,11 +131,11 @@ namespace Email_System
                     return;
                 }
 
-                else if(result == DialogResult.Yes)
+                else if (result == DialogResult.Yes)
                 {
-                    message.Body = new TextPart("plain") { };                    
+                    message.Body = new TextPart("plain") { };
                 }
-            }             
+            }
             else
             {
                 message.Body = new TextPart("plain")
@@ -144,14 +143,28 @@ namespace Email_System
                     Text = messageBodyTb.Text
                 };
             }
+        }
 
+        #endregion
 
-            SmtpClient client = new SmtpClient();
+        private void sendBt_Click(object sender, EventArgs e)
+        {
+            MimeMessage message = new MimeMessage();
+
+            message.From.Add(new MailboxAddress(Utility.username, Utility.username));            
+
+            addRecipient(message);
+
+            addCcRecipients(message);
+
+            addSubject(message);
+
+            addBody(message);  
+
+            SmtpClient client = Utility.establishConnectionSmtp();
 
             try
             {
-                client.Connect("smtp." + server, 465, true);
-                client.Authenticate(username, password);
                 client.Send(message);
 
                 MessageBox.Show("Message sent successfully!");
