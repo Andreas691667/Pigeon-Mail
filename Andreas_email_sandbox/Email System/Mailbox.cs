@@ -140,17 +140,15 @@ namespace Email_System
 
             if (!messagesLoaded)
             {
-                this.Cursor = Cursors.WaitCursor;
+                this.Cursor = Cursors.WaitCursor;                         
 
-                         
+                var client = await Utility.establishConnectionImap();
 
-                    var client = await Utility.establishConnectionImap();
+                var folder = await client.GetFolderAsync(((ListBox)sender).SelectedValue.ToString());
 
-                    var folder = await client.GetFolderAsync(((ListBox)sender).SelectedValue.ToString());
+                await folder.OpenAsync(FolderAccess.ReadOnly);
 
-                    await folder.OpenAsync(FolderAccess.ReadOnly);
-
-                    var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
+                var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
 
                 if (messages.Count <= 0)
                 {

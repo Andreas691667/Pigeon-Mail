@@ -1,4 +1,5 @@
 using MailKit.Net.Smtp;
+using System.ComponentModel;
 
 
 namespace Email_System
@@ -38,8 +39,13 @@ namespace Email_System
 
             string username = usernameTb.Text;
             string password = passwordTb.Text;
+
             Utility.username = usernameTb.Text;
             Utility.password = passwordTb.Text;
+
+            //start retrieving folders
+            foldersBackgroundWorker.RunWorkerAsync();
+            //messagesBackgroundWorker.RunWorkerAsync();
 
             SmtpClient client = new SmtpClient();
 
@@ -73,6 +79,45 @@ namespace Email_System
         private void exitBt_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        #region BackgroundWork
+
+        private void foldersBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker bw = sender as BackgroundWorker;
+
+            Data.loadFolders(bw);
+        }
+
+        private void foldersBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled)
+            {
+                // The user canceled the operation.
+                MessageBox.Show("Operation was canceled");
+            }
+            else if (e.Error != null)
+            {
+                // There was an error during the operation.
+                string msg = String.Format("An error occurred: {0}", e.Error.Message);
+                MessageBox.Show(msg);
+            }
+            else
+            {
+                // The operation completed normally.
+                string msg = String.Format("Result = {0}", e.Result);
+                MessageBox.Show(msg);
+            }
+        }
+
+        #endregion
+
+        private void messagesBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker bw = sender as BackgroundWorker;
+
+            Data.loadMessages(bw);
         }
     }
 }

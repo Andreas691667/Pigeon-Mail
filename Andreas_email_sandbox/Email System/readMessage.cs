@@ -100,6 +100,8 @@ namespace Email_System
                 }
 
                 MessageBox.Show("The message has been deleted successfully!");
+                
+                //refresh inbox how?
             }
 
         }

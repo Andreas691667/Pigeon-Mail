@@ -36,6 +36,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.rememberMeCB = new System.Windows.Forms.CheckBox();
+            this.messagesBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.foldersBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -114,6 +116,15 @@
             this.rememberMeCB.Text = "Remember me?";
             this.rememberMeCB.UseVisualStyleBackColor = true;
             // 
+            // messagesBackgroundWorker
+            // 
+            this.messagesBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.messagesBackgroundWorker_DoWork);
+            // 
+            // foldersBackgroundWorker
+            // 
+            this.foldersBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.foldersBackgroundWorker_DoWork);
+            this.foldersBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.foldersBackgroundWorker_RunWorkerCompleted);
+            // 
             // login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -147,5 +158,7 @@
         private Label label2;
         private PictureBox pictureBox1;
         private CheckBox rememberMeCB;
+        private System.ComponentModel.BackgroundWorker messagesBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker foldersBackgroundWorker;
     }
 }
