@@ -84,7 +84,8 @@
             // 
             // refreshTimer
             // 
-            this.refreshTimer.Interval = 10000;
+            this.refreshTimer.Enabled = true;
+            this.refreshTimer.Interval = 60000;
             this.refreshTimer.Tick += new System.EventHandler(this.refreshTimer_Tick);
             // 
             // addFlagBt

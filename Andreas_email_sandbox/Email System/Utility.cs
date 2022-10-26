@@ -54,7 +54,7 @@ namespace Email_System
         }
 
         public static void refreshFolders()
-        {
+        {       
             Mailbox.refresh();
         }
     }

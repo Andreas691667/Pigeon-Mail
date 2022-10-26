@@ -8,17 +8,30 @@ using System.Windows.Forms;
 
 namespace Email_System
 {
-
     public partial class Mailbox : Form
     {
 
         IList<IMessageSummary> messageSummaries = null!;
+        private static Mailbox instance;
 
         //constructor
         public Mailbox()
         {
             InitializeComponent();
             RetrieveFolders();
+        }
+
+        //ensures singleton pattern is maintained (only one instance at all times)
+        public static Mailbox GetInstance
+        {
+            get
+            {
+                if (instance == null || instance.IsDisposed)
+                {
+                    instance = new Mailbox();
+                }
+                return instance;
+            }
         }
 
         private void messageFlagCheck(IMessageSummary item)
@@ -227,19 +240,17 @@ namespace Email_System
 
         private void refreshBt_Click(object sender, EventArgs e)
         {
-            refresh();
+            Utility.refreshFolders();
         }
 
-        //virker ikke:(
         public static void refresh()
         {
-            Mailbox mailbox = new Mailbox();
-            mailbox.RetrieveFolders();
+            instance.RetrieveInboxMessages();
         }
 
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
-            refresh();
+            Utility.refreshFolders();
         }
 
         private async void addFlagBt_Click(object sender, EventArgs e)

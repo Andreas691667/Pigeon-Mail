@@ -44,7 +44,7 @@ namespace Email_System
             Utility.password = passwordTb.Text;
 
             //start retrieving folders
-            foldersBackgroundWorker.RunWorkerAsync();
+            //foldersBackgroundWorker.RunWorkerAsync();
             //messagesBackgroundWorker.RunWorkerAsync();
 
             SmtpClient client = new SmtpClient();
@@ -58,7 +58,10 @@ namespace Email_System
                 client.Authenticate(username, password);
 
                 this.Cursor = Cursors.WaitCursor;
-                new Mailbox().Show();
+
+                Mailbox m = Mailbox.GetInstance;
+                m.Show();
+
                 this.Hide();
             }
 
