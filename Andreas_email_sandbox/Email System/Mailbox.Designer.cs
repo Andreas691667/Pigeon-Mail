@@ -47,11 +47,12 @@
             // 
             this.folderLb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.folderLb.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.folderLb.FormattingEnabled = true;
-            this.folderLb.ItemHeight = 20;
-            this.folderLb.Location = new System.Drawing.Point(12, 93);
+            this.folderLb.ItemHeight = 31;
+            this.folderLb.Location = new System.Drawing.Point(15, 89);
             this.folderLb.Name = "folderLb";
-            this.folderLb.Size = new System.Drawing.Size(237, 484);
+            this.folderLb.Size = new System.Drawing.Size(237, 469);
             this.folderLb.TabIndex = 0;
             this.folderLb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.RetrieveMessages);
             // 
@@ -61,11 +62,12 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.messageLb.BackColor = System.Drawing.SystemColors.Window;
+            this.messageLb.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.messageLb.FormattingEnabled = true;
-            this.messageLb.ItemHeight = 20;
-            this.messageLb.Location = new System.Drawing.Point(255, 93);
+            this.messageLb.ItemHeight = 25;
+            this.messageLb.Location = new System.Drawing.Point(255, 89);
             this.messageLb.Name = "messageLb";
-            this.messageLb.Size = new System.Drawing.Size(752, 484);
+            this.messageLb.Size = new System.Drawing.Size(752, 479);
             this.messageLb.TabIndex = 1;
             this.messageLb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ReadMessage);
             // 
@@ -173,7 +175,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1027, 603);
+            this.ClientSize = new System.Drawing.Size(1027, 588);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.messageLb);
             this.Controls.Add(this.folderLb);

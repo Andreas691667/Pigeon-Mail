@@ -70,25 +70,18 @@ namespace Email_System
 
             else if (result == DialogResult.Yes)
             {
-                bool done = false;
+                var client = await Utility.establishConnectionImap();
 
-                while (!done)
-                {
-                    var client = await Utility.establishConnectionImap();
+                var folder = await client.GetFolderAsync(mg.Folder.ToString());
 
-                    var folder = await client.GetFolderAsync(mg.Folder.ToString());
+                await folder.OpenAsync(FolderAccess.ReadWrite);
 
-                    await folder.OpenAsync(FolderAccess.ReadWrite);
+                await folder.AddFlagsAsync(mg.UniqueId, MessageFlags.Deleted, true);
+                await folder.ExpungeAsync();
 
-                    await folder.AddFlagsAsync(mg.UniqueId, MessageFlags.Deleted, true);
-                    await folder.ExpungeAsync();
+                Utility.refreshCurrentFolder();
 
-                    Utility.refreshCurrentFolder();
-
-                    done = true;
-
-                    await client.DisconnectAsync(true);
-                }
+                await client.DisconnectAsync(true);
 
                 MessageBox.Show("The message has been deleted successfully!");
             }
@@ -103,25 +96,19 @@ namespace Email_System
 
             else if (result == DialogResult.Yes)
             {
-                bool messageMoved = false;
+                var client = await Utility.establishConnectionImap();
 
-                while (!messageMoved)
-                {
-                    var client = await Utility.establishConnectionImap();
+                var folder = await client.GetFolderAsync(mg.Folder.ToString());
+                var trashFolder = client.GetFolder(SpecialFolder.Trash);
 
-                    var folder = await client.GetFolderAsync(mg.Folder.ToString());
-                    var trashFolder = client.GetFolder(SpecialFolder.Trash);
+                await trashFolder.OpenAsync(FolderAccess.ReadWrite);
+                await folder.OpenAsync(FolderAccess.ReadWrite);
 
-                    await trashFolder.OpenAsync(FolderAccess.ReadWrite);
-                    await folder.OpenAsync(FolderAccess.ReadWrite);
+                await folder.MoveToAsync(mg.UniqueId, trashFolder);
 
-                    await folder.MoveToAsync(mg.UniqueId, trashFolder);
+                Utility.refreshCurrentFolder();
 
-                    Utility.refreshCurrentFolder();
-
-                    client.Disconnect(true);
-                    messageMoved = true;
-                }
+                client.Disconnect(true);
 
                 MessageBox.Show("The message has been moved to trash succesfully!");
             }

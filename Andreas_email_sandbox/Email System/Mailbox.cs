@@ -84,7 +84,7 @@ namespace Email_System
             bool foldersLoaded = false;
             //new waitForm().Show();
 
-            if (!foldersLoaded)
+            while (!foldersLoaded)
             {
                 this.Cursor = Cursors.WaitCursor;
 
@@ -113,12 +113,14 @@ namespace Email_System
                 // specify the display member and value member
                 folderLb.DisplayMember = "Value";
                 folderLb.ValueMember = "Key";
-                
+
+                foldersLoaded = true;
                 //disconnect from the client
                 await client.DisconnectAsync(true);
-                this.Cursor = Cursors.Default;
+                //this.Cursor = Cursors.Default;
             }
-            foldersLoaded = true;
+
+            
         }
         private async void RetrieveInboxMessages()
         {
@@ -201,7 +203,7 @@ namespace Email_System
             bool messagesLoaded = false;
             messageLb.Items.Clear();
 
-            if (!messagesLoaded)
+            while (!messagesLoaded)
             {
                 this.Cursor = Cursors.WaitCursor;                         
 
@@ -249,9 +251,11 @@ namespace Email_System
 
                 // disconnect from the client
                 await client.DisconnectAsync(true);
+
+                messagesLoaded = true;
             }
             this.Cursor = Cursors.Default;
-            messagesLoaded = true;
+            
         }
 
         // method to read the message when it is double clicked
@@ -314,23 +318,40 @@ namespace Email_System
         {
             try
             {
-                var messageIndex = messageLb.SelectedIndex;
-                var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
-                var client = await Utility.establishConnectionImap();
+                bool done = false;
 
-                //add flag to message
-                var folder = await client.GetFolderAsync(message.Folder.ToString());
-                await folder.OpenAsync(FolderAccess.ReadWrite);
+                while (!done)
+                {
+                    this.Cursor = Cursors.WaitCursor;
 
-                await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
-                await client.DisconnectAsync(true);
+                    var messageIndex = messageLb.SelectedIndex;
+                    var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
+                    var client = await Utility.establishConnectionImap();
 
-                Utility.refreshCurrentFolder();
+                    //add flag to message
+                    var folder = await client.GetFolderAsync(message.Folder.ToString());
+                    await folder.OpenAsync(FolderAccess.ReadWrite);
+
+                    await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
+                    await client.DisconnectAsync(true);
+
+                    await client.DisconnectAsync(true);
+
+                    Utility.refreshCurrentFolder();
+
+                    done = true;
+                    
+                }
             }
 
             catch
             {
                 MessageBox.Show("No message selected!");
+            }
+
+            finally
+            {
+                this.Cursor = Cursors.Default;
             }
         }
 
