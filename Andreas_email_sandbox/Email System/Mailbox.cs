@@ -4,7 +4,7 @@ using MailKit;
 using System.Threading;
 using static System.Windows.Forms.AxHost;
 using System.Windows.Forms;
-
+using System.Linq.Expressions;
 
 namespace Email_System
 {
@@ -15,7 +15,7 @@ namespace Email_System
         private static Mailbox instance = null!;
 
         //constructor
-        public Mailbox()
+        private Mailbox()
         {
             InitializeComponent();
             RetrieveFolders();
@@ -34,7 +34,7 @@ namespace Email_System
             }
         }
 
-        public async Task<IMailFolder> getCurrentFolder()
+        private async Task<IMailFolder> getCurrentFolder()
         {
             var client = await Utility.establishConnectionImap();
 
@@ -76,10 +76,20 @@ namespace Email_System
             }
         }
 
+        private void toggleButtons(bool value)
+        {
+            removeFlagBt.Visible = value;
+            addFlagBt.Visible = value;
+            moveToTrashBt.Visible = value;
+            deleteBt.Visible = value;
+
+            messageLb.Enabled = value;
+        }
+
         // method that retrieve folders and add the names to the listbox
         private async void RetrieveFolders()
         {
-            RetrieveMessages();
+            RetrieveInboxMessages();
 
             bool foldersLoaded = false;
             //new waitForm().Show();
@@ -98,10 +108,10 @@ namespace Email_System
 
                 // get the messages from the folder and add them to the dictionary
                 foreach (var item in folders)
-                {
+                {                  
+
                     if (item.Exists)
                     {
-                        //var unread_no = item.Unread.ToString();
                         var folderName = item.FullName.Substring(item.FullName.LastIndexOf('/') + 1);
                         foldersMap.Add(key: item.FullName, value: folderName);
                     }
@@ -137,19 +147,16 @@ namespace Email_System
 
                 var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
 
-                if (messages.Count <= 0)
+                if (folder.Count <= 0)
                 {
-                    addFlagBt.Visible = false;
-                    removeFlagBt.Visible = false;
-                    messageLb.Enabled = false;
-                    messageLb.Items.Add("No messages in this folder!");
-                    
+                    toggleButtons(false);
+                    messageLb.Items.Add("No messages in this folder!");                    
                 }
 
                 else
                 {
-                    addFlagBt.Visible = true;
-                    removeFlagBt.Visible = true;
+                    toggleButtons(true);
+
                     messageSummaries = messages;                   
 
                     foreach (var item in messages.Reverse())
@@ -157,7 +164,6 @@ namespace Email_System
                         messageFlagCheck(item);
                     }
 
-                    messageLb.Enabled = true;
                 }
 
                 await client.DisconnectAsync(true);
@@ -176,7 +182,14 @@ namespace Email_System
         {
             addFlagBt.Visible = false;
             removeFlagBt.Visible = false;
+
+            moveToTrashBt.Visible = true;
+            deleteBt.Visible = true;
+            messageLb.Enabled = true;
+
+
             messageSummaries = messages;
+            
 
             foreach(var item in messages.Reverse())
             {
@@ -215,29 +228,21 @@ namespace Email_System
 
                 var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
 
-                if (messages.Count <= 0)
+                if (folder.Count <= 0)
                 {
-                    addFlagBt.Visible = false;
-                    removeFlagBt.Visible = false;
-                    deleteBt.Visible = false;
-                    moveToTrashBt.Visible = false;
-                    messageLb.Enabled = false;
-
+                    toggleButtons(false);
                     messageLb.Items.Add("No messages in this folder!");
-                    
+
                 }
 
-                if(folder.Attributes.HasFlag(FolderAttributes.Drafts))
+                else if(folder.Attributes.HasFlag(FolderAttributes.Drafts))
                 {
                     openFolderAsDraft(messages);
                 }
 
                 else
                 {
-                    addFlagBt.Visible = true;
-                    removeFlagBt.Visible = true;
-                    deleteBt.Visible = true;
-                    moveToTrashBt.Visible = true;
+                    toggleButtons(true);
 
                     messageSummaries = messages;                    
 
@@ -245,8 +250,6 @@ namespace Email_System
                     {
                         messageFlagCheck(item);
                     }
-
-                    messageLb.Enabled = true;
                 }
 
                 // disconnect from the client
@@ -383,6 +386,7 @@ namespace Email_System
         {
             try
             {
+                this.Cursor = Cursors.WaitCursor;
                 var messageIndex = messageLb.SelectedIndex;
                 var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
 

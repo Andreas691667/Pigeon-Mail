@@ -11,6 +11,7 @@ namespace Email_System
 
         public readMessage(IMessageSummary m)
         {
+            Utility.refreshCurrentFolder();
             InitializeComponent();
             message = m;
 

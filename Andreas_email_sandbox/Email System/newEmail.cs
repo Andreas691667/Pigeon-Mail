@@ -297,5 +297,10 @@ namespace Email_System
             else
                 return false;
         }
+
+        private void draftBt_Click(object sender, EventArgs e)
+        {
+            saveAsDraft();
+        }
     }
 }
