@@ -203,7 +203,7 @@ namespace Email_System
 
         private void exitBt_Click(object sender, EventArgs e)
         {
-            if (messageSent == false)
+            if (!allEmpty())
             {
                 DialogResult result = MessageBox.Show("Do you wish to save the mail in 'Drafts'?", "Save as draft?", MessageBoxButtons.YesNo);
 
@@ -236,27 +236,33 @@ namespace Email_System
             {
                 Text = messageBodyTb.Text
             };
+
+            if (!string.IsNullOrEmpty(recipientsTb.Text))
+            {
+                string[] recipients = recipientsTb.Text.Split(",");
+
+                foreach (var rec in recipients)
+                {
+                    mg.To.Add(MailboxAddress.Parse(rec));
+                }
+            }
         }
 
         //not implemented yet
         private async void saveAsDraft()
         {
-            MimeMessage mg = new MimeMessage();
-            buildDraftMessage(mg);  
-
             try
             {
+                MimeMessage mg = new MimeMessage();
+                buildDraftMessage(mg);
 
                 ImapClient client = await Utility.establishConnectionImap();
-                //var folder = await client.GetFolderAsync(message.Folder.ToString());
 
                 IMailFolder draftsFolder = await getDraftFolder();
 
                 await draftsFolder.OpenAsync(FolderAccess.ReadWrite);
 
                 draftsFolder.Append(mg, MessageFlags.Draft);
-
-                //Utility.refreshCurrentFolder();
 
                 this.Close();
             }
@@ -266,6 +272,30 @@ namespace Email_System
                 MessageBox.Show(ex.ToString());
             }
 
+        }
+
+        private void newEmail_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!allEmpty())
+            {
+                DialogResult result = MessageBox.Show("Do you wish to save the mail in 'Drafts'?", "Save as draft?", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.Yes)
+                {
+                    saveAsDraft();
+                }
+            }
+        }
+
+        private bool allEmpty()
+        {
+            if (string.IsNullOrEmpty(this.subjectTb.Text) && string.IsNullOrEmpty(this.recipientsTb.Text) && string.IsNullOrEmpty(this.ccRecipientsTb.Text) && string.IsNullOrEmpty(this.messageBodyTb.Text))
+            {
+                return true;
+            }
+
+            else
+                return false;
         }
     }
 }

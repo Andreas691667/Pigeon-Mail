@@ -101,8 +101,8 @@ namespace Email_System
                 {
                     if (item.Exists)
                     {
-                        var unread_no = item.Unread.ToString();
-                        var folderName = item.FullName.Substring(item.FullName.LastIndexOf('/') + 1) + "   (" + unread_no + ")";
+                        //var unread_no = item.Unread.ToString();
+                        var folderName = item.FullName.Substring(item.FullName.LastIndexOf('/') + 1);
                         foldersMap.Add(key: item.FullName, value: folderName);
                     }
                 }
@@ -139,8 +139,9 @@ namespace Email_System
                 {
                     addFlagBt.Visible = false;
                     removeFlagBt.Visible = false;
-                    messageLb.Items.Add("No messages in this folder!");
                     messageLb.Enabled = false;
+                    messageLb.Items.Add("No messages in this folder!");
+                    
                 }
 
                 else
@@ -216,7 +217,10 @@ namespace Email_System
                 {
                     addFlagBt.Visible = false;
                     removeFlagBt.Visible = false;
+                    deleteBt.Visible = false;
+                    moveToTrashBt.Visible = false;
                     messageLb.Enabled = false;
+
                     messageLb.Items.Add("No messages in this folder!");
                     
                 }
@@ -230,6 +234,9 @@ namespace Email_System
                 {
                     addFlagBt.Visible = true;
                     removeFlagBt.Visible = true;
+                    deleteBt.Visible = true;
+                    moveToTrashBt.Visible = true;
+
                     messageSummaries = messages;                    
 
                     foreach (var item in messages.Reverse())
@@ -381,6 +388,12 @@ namespace Email_System
             {
                 MessageBox.Show("No message selected!");
             }
+        }
+
+        private void Mailbox_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            instance.Dispose();
+            Environment.Exit(1);
         }
     }
 }

@@ -143,6 +143,7 @@
             this.Controls.Add(this.sendBt);
             this.Name = "newEmail";
             this.Text = "Form2";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.newEmail_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

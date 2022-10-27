@@ -38,34 +38,42 @@
             this.removeFlagBt = new System.Windows.Forms.Button();
             this.moveToTrashBt = new System.Windows.Forms.Button();
             this.deleteBt = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.settingsBt = new System.Windows.Forms.Button();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // folderLb
             // 
+            this.folderLb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.folderLb.FormattingEnabled = true;
             this.folderLb.ItemHeight = 20;
-            this.folderLb.Location = new System.Drawing.Point(12, 53);
+            this.folderLb.Location = new System.Drawing.Point(12, 93);
             this.folderLb.Name = "folderLb";
-            this.folderLb.Size = new System.Drawing.Size(203, 424);
+            this.folderLb.Size = new System.Drawing.Size(237, 484);
             this.folderLb.TabIndex = 0;
             this.folderLb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.RetrieveMessages);
             // 
             // messageLb
             // 
+            this.messageLb.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.messageLb.BackColor = System.Drawing.SystemColors.Window;
             this.messageLb.FormattingEnabled = true;
             this.messageLb.ItemHeight = 20;
-            this.messageLb.Location = new System.Drawing.Point(221, 53);
+            this.messageLb.Location = new System.Drawing.Point(255, 93);
             this.messageLb.Name = "messageLb";
-            this.messageLb.Size = new System.Drawing.Size(670, 424);
+            this.messageLb.Size = new System.Drawing.Size(752, 484);
             this.messageLb.TabIndex = 1;
             this.messageLb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ReadMessage);
             // 
             // newEmailBt
             // 
-            this.newEmailBt.Location = new System.Drawing.Point(12, 498);
+            this.newEmailBt.Location = new System.Drawing.Point(3, 3);
             this.newEmailBt.Name = "newEmailBt";
-            this.newEmailBt.Size = new System.Drawing.Size(176, 29);
+            this.newEmailBt.Size = new System.Drawing.Size(138, 58);
             this.newEmailBt.TabIndex = 2;
             this.newEmailBt.Text = "Create new e-mail";
             this.newEmailBt.UseVisualStyleBackColor = true;
@@ -73,11 +81,11 @@
             // 
             // refreshBt
             // 
-            this.refreshBt.Location = new System.Drawing.Point(29, 20);
+            this.refreshBt.Image = global::Email_System.Properties.Resources.refresh;
+            this.refreshBt.Location = new System.Drawing.Point(176, 17);
             this.refreshBt.Name = "refreshBt";
-            this.refreshBt.Size = new System.Drawing.Size(94, 29);
+            this.refreshBt.Size = new System.Drawing.Size(94, 35);
             this.refreshBt.TabIndex = 3;
-            this.refreshBt.Text = "Refresh";
             this.refreshBt.UseVisualStyleBackColor = true;
             this.refreshBt.Click += new System.EventHandler(this.refreshBt_Click);
             // 
@@ -90,9 +98,9 @@
             // addFlagBt
             // 
             this.addFlagBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.addFlagBt.Location = new System.Drawing.Point(1049, 53);
+            this.addFlagBt.Location = new System.Drawing.Point(572, 6);
             this.addFlagBt.Name = "addFlagBt";
-            this.addFlagBt.Size = new System.Drawing.Size(138, 29);
+            this.addFlagBt.Size = new System.Drawing.Size(94, 55);
             this.addFlagBt.TabIndex = 4;
             this.addFlagBt.Text = "Add flag";
             this.addFlagBt.UseVisualStyleBackColor = true;
@@ -102,9 +110,9 @@
             // removeFlagBt
             // 
             this.removeFlagBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.removeFlagBt.Location = new System.Drawing.Point(1049, 88);
+            this.removeFlagBt.Location = new System.Drawing.Point(461, 5);
             this.removeFlagBt.Name = "removeFlagBt";
-            this.removeFlagBt.Size = new System.Drawing.Size(138, 29);
+            this.removeFlagBt.Size = new System.Drawing.Size(105, 55);
             this.removeFlagBt.TabIndex = 5;
             this.removeFlagBt.Text = "Remove flag";
             this.removeFlagBt.UseVisualStyleBackColor = true;
@@ -114,41 +122,66 @@
             // moveToTrashBt
             // 
             this.moveToTrashBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.moveToTrashBt.Location = new System.Drawing.Point(1049, 181);
+            this.moveToTrashBt.Location = new System.Drawing.Point(796, 5);
             this.moveToTrashBt.Name = "moveToTrashBt";
-            this.moveToTrashBt.Size = new System.Drawing.Size(138, 55);
+            this.moveToTrashBt.Size = new System.Drawing.Size(116, 55);
             this.moveToTrashBt.TabIndex = 6;
             this.moveToTrashBt.Text = "Move message to trash";
             this.moveToTrashBt.UseVisualStyleBackColor = true;
+            this.moveToTrashBt.Visible = false;
             this.moveToTrashBt.Click += new System.EventHandler(this.moveToTrashBt_Click);
             // 
             // deleteBt
             // 
             this.deleteBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.deleteBt.Location = new System.Drawing.Point(1049, 143);
+            this.deleteBt.Location = new System.Drawing.Point(672, 6);
             this.deleteBt.Name = "deleteBt";
-            this.deleteBt.Size = new System.Drawing.Size(138, 32);
+            this.deleteBt.Size = new System.Drawing.Size(118, 55);
             this.deleteBt.TabIndex = 7;
             this.deleteBt.Text = "Delete message";
             this.deleteBt.UseVisualStyleBackColor = true;
+            this.deleteBt.Visible = false;
             this.deleteBt.Click += new System.EventHandler(this.deleteBt_Click);
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.settingsBt);
+            this.panel1.Controls.Add(this.refreshBt);
+            this.panel1.Controls.Add(this.removeFlagBt);
+            this.panel1.Controls.Add(this.deleteBt);
+            this.panel1.Controls.Add(this.addFlagBt);
+            this.panel1.Controls.Add(this.newEmailBt);
+            this.panel1.Controls.Add(this.moveToTrashBt);
+            this.panel1.Location = new System.Drawing.Point(12, 12);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(992, 64);
+            this.panel1.TabIndex = 8;
+            // 
+            // settingsBt
+            // 
+            this.settingsBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.settingsBt.Image = global::Email_System.Properties.Resources.icons8_settings_32;
+            this.settingsBt.Location = new System.Drawing.Point(918, 6);
+            this.settingsBt.Name = "settingsBt";
+            this.settingsBt.Size = new System.Drawing.Size(71, 54);
+            this.settingsBt.TabIndex = 8;
+            this.settingsBt.UseVisualStyleBackColor = true;
             // 
             // Mailbox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1199, 775);
-            this.Controls.Add(this.deleteBt);
-            this.Controls.Add(this.moveToTrashBt);
-            this.Controls.Add(this.removeFlagBt);
-            this.Controls.Add(this.addFlagBt);
-            this.Controls.Add(this.refreshBt);
-            this.Controls.Add(this.newEmailBt);
+            this.ClientSize = new System.Drawing.Size(1027, 603);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.messageLb);
             this.Controls.Add(this.folderLb);
             this.Name = "Mailbox";
             this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds;
             this.Text = "Mailbox";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Mailbox_FormClosed);
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -164,5 +197,8 @@
         private Button removeFlagBt;
         private Button moveToTrashBt;
         private Button deleteBt;
+        private PictureBox pictureBox1;
+        private Panel panel1;
+        private Button settingsBt;
     }
 }
