@@ -1,12 +1,18 @@
 ﻿using MailKit.Net.Smtp;
 using MailKit;
 using MimeKit; //allow us to use mime messages
+using System.Windows.Forms;
+using Org.BouncyCastle.Asn1.X509;
+using MailKit.Net.Imap;
+using System.Net.Mail;
 
 namespace Email_System
 {
     public partial class newEmail : Form
     {
         IMessageSummary message = null!;
+
+        bool messageSent = false;
 
         //type keys:
         // 0: blank email
@@ -62,6 +68,12 @@ namespace Email_System
                 messageBodyTb.AppendText(message.Envelope.To.ToString());
                 messageBodyTb.AppendText(Environment.NewLine);
                 messageBodyTb.AppendText(body);
+            }
+
+            else if(typeKey == 4 && m!= null)
+            {
+                message = m;
+                subjectTb.Text = message.Envelope.Subject;
             }
         }
 
@@ -161,13 +173,14 @@ namespace Email_System
 
             addBody(message);  
 
-            SmtpClient client = Utility.establishConnectionSmtp();
+            var client = Utility.establishConnectionSmtp();
 
             try
             {
                 client.Send(message);
 
                 MessageBox.Show("Message sent successfully!");
+                messageSent = true;
 
                 recipientsTb.Clear();
                 ccRecipientsTb.Clear();
@@ -190,7 +203,69 @@ namespace Email_System
 
         private void exitBt_Click(object sender, EventArgs e)
         {
-            this.Close();
+            if (messageSent == false)
+            {
+                DialogResult result = MessageBox.Show("Do you wish to save the mail in 'Drafts'?", "Save as draft?", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.Yes)
+                    saveAsDraft();
+
+                else if(result == DialogResult.No)
+                {
+                    this.Close();
+                }
+            }
+
+            else
+                this.Close();
+        }
+
+        private async Task<IMailFolder> getDraftFolder()
+        {
+            var client = await Utility.establishConnectionImap();
+            var folder = client.GetFolder(SpecialFolder.Drafts);
+
+            return folder;
+        }
+
+        private void buildDraftMessage(MimeMessage mg)
+        {
+            mg.Subject = subjectTb.Text;
+
+            mg.Body = new TextPart("plain")
+            {
+                Text = messageBodyTb.Text
+            };
+        }
+
+        //not implemented yet
+        private async void saveAsDraft()
+        {
+            MimeMessage mg = new MimeMessage();
+            buildDraftMessage(mg);  
+
+            try
+            {
+
+                ImapClient client = await Utility.establishConnectionImap();
+                //var folder = await client.GetFolderAsync(message.Folder.ToString());
+
+                IMailFolder draftsFolder = await getDraftFolder();
+
+                await draftsFolder.OpenAsync(FolderAccess.ReadWrite);
+
+                draftsFolder.Append(mg, MessageFlags.Draft);
+
+                //Utility.refreshCurrentFolder();
+
+                this.Close();
+            }
+
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
         }
     }
 }

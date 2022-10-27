@@ -1,12 +1,7 @@
-﻿using MailKit.Net.Imap;
+﻿using MailKit;
+using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace Email_System
 {
@@ -14,6 +9,13 @@ namespace Email_System
     {
         public static string username = null!;
         public static string password = null!;
+
+/*        ImapClient client_utility = new ImapClient();
+
+        public void test()
+        {
+            //client_utility.Idle();
+        }*/
 
         public static async Task<ImapClient>  establishConnectionImap()
         {
@@ -53,9 +55,76 @@ namespace Email_System
             }
         }
 
-        public static void refreshFolders()
-        {       
-            Mailbox.refresh();
+        public static void refreshCurrentFolder()
+        {
+            Mailbox.refreshCurrentFolder();
+        }
+
+        public static async void deleteMessage(IMessageSummary mg)
+        {
+            DialogResult result = MessageBox.Show("The message will be deleted permanently without being moved to trash. Do you wish to continue? The action cannot be undone.", "Continue?", MessageBoxButtons.YesNo);
+            if (result == DialogResult.No)
+            {
+                return;
+            }
+
+            else if (result == DialogResult.Yes)
+            {
+                bool done = false;
+
+                while (!done)
+                {
+                    var client = await Utility.establishConnectionImap();
+
+                    var folder = await client.GetFolderAsync(mg.Folder.ToString());
+
+                    await folder.OpenAsync(FolderAccess.ReadWrite);
+
+                    await folder.AddFlagsAsync(mg.UniqueId, MessageFlags.Deleted, true);
+                    await folder.ExpungeAsync();
+
+                    Utility.refreshCurrentFolder();
+
+                    done = true;
+
+                    await client.DisconnectAsync(true);
+                }
+
+                MessageBox.Show("The message has been deleted successfully!");
+            }
+        }
+        public static async void moveMessageToTrash(IMessageSummary mg)
+        {
+            DialogResult result = MessageBox.Show("The message will be moved to trash. Do you wish to continue?", "Continue?", MessageBoxButtons.YesNo);
+            if (result == DialogResult.No)
+            {
+                return;
+            }
+
+            else if (result == DialogResult.Yes)
+            {
+                bool messageMoved = false;
+
+                while (!messageMoved)
+                {
+                    var client = await Utility.establishConnectionImap();
+
+                    var folder = await client.GetFolderAsync(mg.Folder.ToString());
+                    var trashFolder = client.GetFolder(SpecialFolder.Trash);
+
+                    await trashFolder.OpenAsync(FolderAccess.ReadWrite);
+                    await folder.OpenAsync(FolderAccess.ReadWrite);
+
+                    await folder.MoveToAsync(mg.UniqueId, trashFolder);
+
+                    Utility.refreshCurrentFolder();
+
+                    client.Disconnect(true);
+                    messageMoved = true;
+                }
+
+                MessageBox.Show("The message has been moved to trash succesfully!");
+            }
         }
     }
 }

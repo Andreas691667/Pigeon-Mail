@@ -36,6 +36,8 @@
             this.refreshTimer = new System.Windows.Forms.Timer(this.components);
             this.addFlagBt = new System.Windows.Forms.Button();
             this.removeFlagBt = new System.Windows.Forms.Button();
+            this.moveToTrashBt = new System.Windows.Forms.Button();
+            this.deleteBt = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // folderLb
@@ -50,9 +52,6 @@
             // 
             // messageLb
             // 
-            this.messageLb.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.messageLb.BackColor = System.Drawing.SystemColors.Window;
             this.messageLb.FormattingEnabled = true;
             this.messageLb.ItemHeight = 20;
@@ -112,11 +111,35 @@
             this.removeFlagBt.Visible = false;
             this.removeFlagBt.Click += new System.EventHandler(this.removeFlagBt_Click);
             // 
+            // moveToTrashBt
+            // 
+            this.moveToTrashBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.moveToTrashBt.Location = new System.Drawing.Point(1049, 181);
+            this.moveToTrashBt.Name = "moveToTrashBt";
+            this.moveToTrashBt.Size = new System.Drawing.Size(138, 55);
+            this.moveToTrashBt.TabIndex = 6;
+            this.moveToTrashBt.Text = "Move message to trash";
+            this.moveToTrashBt.UseVisualStyleBackColor = true;
+            this.moveToTrashBt.Click += new System.EventHandler(this.moveToTrashBt_Click);
+            // 
+            // deleteBt
+            // 
+            this.deleteBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.deleteBt.Location = new System.Drawing.Point(1049, 143);
+            this.deleteBt.Name = "deleteBt";
+            this.deleteBt.Size = new System.Drawing.Size(138, 32);
+            this.deleteBt.TabIndex = 7;
+            this.deleteBt.Text = "Delete message";
+            this.deleteBt.UseVisualStyleBackColor = true;
+            this.deleteBt.Click += new System.EventHandler(this.deleteBt_Click);
+            // 
             // Mailbox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1199, 775);
+            this.Controls.Add(this.deleteBt);
+            this.Controls.Add(this.moveToTrashBt);
             this.Controls.Add(this.removeFlagBt);
             this.Controls.Add(this.addFlagBt);
             this.Controls.Add(this.refreshBt);
@@ -139,5 +162,7 @@
         private System.Windows.Forms.Timer refreshTimer;
         private Button addFlagBt;
         private Button removeFlagBt;
+        private Button moveToTrashBt;
+        private Button deleteBt;
     }
 }

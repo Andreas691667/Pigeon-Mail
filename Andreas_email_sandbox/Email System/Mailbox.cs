@@ -12,7 +12,7 @@ namespace Email_System
     {
 
         IList<IMessageSummary> messageSummaries = null!;
-        private static Mailbox instance;
+        private static Mailbox instance = null!;
 
         //constructor
         public Mailbox()
@@ -34,6 +34,15 @@ namespace Email_System
             }
         }
 
+        public async Task<IMailFolder> getCurrentFolder()
+        {
+            var client = await Utility.establishConnectionImap();
+
+            var folder = await client.GetFolderAsync(folderLb.SelectedValue.ToString());
+
+            return folder;
+        }
+
         private void messageFlagCheck(IMessageSummary item)
         {
             string subject = "";
@@ -41,6 +50,11 @@ namespace Email_System
             if (item.Flags.Value.HasFlag(MessageFlags.Flagged))
             {
                 subject += "(FLAGGED) ";
+            }
+
+            if(item.Flags.Value.HasFlag(MessageFlags.Draft))
+            {
+                subject += "(DRAFT) ";
             }
 
             if (!(item.Flags.Value.HasFlag(MessageFlags.Seen)))
@@ -62,11 +76,10 @@ namespace Email_System
             }
         }
 
-
         // method that retrieve folders and add the names to the listbox
         private async void RetrieveFolders()
         {
-            RetrieveInboxMessages();
+            RetrieveMessages();
 
             bool foldersLoaded = false;
             //new waitForm().Show();
@@ -107,8 +120,6 @@ namespace Email_System
             }
             foldersLoaded = true;
         }
-
-
         private async void RetrieveInboxMessages()
         {
             bool messagesLoaded = false;
@@ -158,8 +169,33 @@ namespace Email_System
             new newEmail(0).Show();
         }
 
+        private void openFolderAsDraft(IList<IMessageSummary> messages)
+        {
+            addFlagBt.Visible = false;
+            removeFlagBt.Visible = false;
+            messageSummaries = messages;
+
+            foreach(var item in messages.Reverse())
+            {
+                string subject = "(DRAFT) ";
+
+                if (item.Envelope.Subject != null)
+                {
+                    subject += item.Envelope.Subject;
+                    messageLb.Items.Add(subject);
+                }
+
+                else
+                {
+                    item.Envelope.Subject += "<no subject>";
+                    subject += item.Envelope.Subject;
+                    messageLb.Items.Add(subject);
+                }
+            }
+        }
+
         // method to retrieve the messages from the folder when this folder is double clicked
-        private async void RetrieveMessages(object sender, MouseEventArgs e)
+        private async void RetrieveMessages(object sender = null!, MouseEventArgs e = null!)
         {
             bool messagesLoaded = false;
             messageLb.Items.Clear();
@@ -170,7 +206,7 @@ namespace Email_System
 
                 var client = await Utility.establishConnectionImap();
 
-                var folder = await client.GetFolderAsync(((ListBox)sender).SelectedValue.ToString());
+                var folder = await getCurrentFolder();
 
                 await folder.OpenAsync(FolderAccess.ReadOnly);
 
@@ -180,8 +216,14 @@ namespace Email_System
                 {
                     addFlagBt.Visible = false;
                     removeFlagBt.Visible = false;
-                    messageLb.Items.Add("No messages in this folder!");
                     messageLb.Enabled = false;
+                    messageLb.Items.Add("No messages in this folder!");
+                    
+                }
+
+                if(folder.Attributes.HasFlag(FolderAttributes.Drafts))
+                {
+                    openFolderAsDraft(messages);
                 }
 
                 else
@@ -225,11 +267,19 @@ namespace Email_System
                 var folder = await client.GetFolderAsync(currentMessage.Folder.ToString());
                 await folder.OpenAsync(FolderAccess.ReadWrite);
 
-                await folder.AddFlagsAsync(currentMessage.UniqueId, MessageFlags.Seen, true);
-                    
+                if (folder.Attributes.HasFlag(FolderAttributes.Drafts))
+                {
+                    new newEmail(4, currentMessage).Show();
+                }
 
-                // create a new instance of the readMessage form with the retrieved message as input
-                new readMessage(currentMessage).Show();
+                else
+                {
+                    await folder.AddFlagsAsync(currentMessage.UniqueId, MessageFlags.Seen, true);
+
+                    // create a new instance of the readMessage form with the retrieved message as input
+                    new readMessage(currentMessage).Show();
+
+                }
 
                 await client.DisconnectAsync(true);
             }
@@ -240,17 +290,17 @@ namespace Email_System
 
         private void refreshBt_Click(object sender, EventArgs e)
         {
-            Utility.refreshFolders();
-        }
-
-        public static void refresh()
-        {
-            instance.RetrieveInboxMessages();
+            Utility.refreshCurrentFolder();
         }
 
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
-            Utility.refreshFolders();
+            Utility.refreshCurrentFolder();
+        }
+
+        public static void refreshCurrentFolder()
+        {
+            instance.RetrieveMessages();
         }
 
         private async void addFlagBt_Click(object sender, EventArgs e)
@@ -268,7 +318,7 @@ namespace Email_System
                 await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
                 await client.DisconnectAsync(true);
 
-                Utility.refreshFolders();
+                Utility.refreshCurrentFolder();
             }
 
             catch
@@ -292,7 +342,39 @@ namespace Email_System
                 await folder.RemoveFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
                 await client.DisconnectAsync(true);
 
-                Utility.refreshFolders();
+                Utility.refreshCurrentFolder();
+            }
+
+            catch
+            {
+                MessageBox.Show("No message selected!");
+            }
+        }
+
+        private void deleteBt_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var messageIndex = messageLb.SelectedIndex;
+                var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
+
+                Utility.deleteMessage(message);
+            }
+
+            catch
+            {
+                MessageBox.Show("No message selected!");
+            }
+        }
+
+        private void moveToTrashBt_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var messageIndex = messageLb.SelectedIndex;
+                var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
+
+                Utility.moveMessageToTrash(message);
             }
 
             catch

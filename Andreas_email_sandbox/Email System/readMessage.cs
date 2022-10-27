@@ -66,51 +66,18 @@ namespace Email_System
             new newEmail(2, message).Show();
         }
 
-        private async void deleteMessageBt_Click(object sender, EventArgs e)
+        private void deleteMessageBt_Click(object sender, EventArgs e)
         {
-
-            DialogResult result = MessageBox.Show("The message will be deleted permanently without being moved to trash. Do you wish to continue? The action cannot be undone.", "Continue?", MessageBoxButtons.YesNo);
-            if (result == DialogResult.No)
-            {
-                return;
-            }
-
-            else if (result == DialogResult.Yes)
-            {
-                bool messageDeleted = false;
-
-                while (!messageDeleted)
-                {
-                    this.Cursor = Cursors.WaitCursor;
-
-                    var client = await Utility.establishConnectionImap();
-
-                    var folder = await client.GetFolderAsync(message.Folder.ToString());
-
-                    await folder.OpenAsync(FolderAccess.ReadWrite);
-
-                    await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Deleted, true);
-                    await folder.ExpungeAsync();
-
-                    await client.DisconnectAsync(true);
-
-                    this.Cursor = Cursors.Default;
-                    messageDeleted = true;
-                    this.Close();
-                }
-
-                MessageBox.Show("The message has been deleted successfully!");
-
-                //Mailbox.refreshBt_Click();
-                //refresh inbox how?
-            }
-
+            Utility.deleteMessage(message);
+            this.Close();
         }
 
-        private async void moveToTrashBT_Click(object sender, EventArgs e)
+        private void moveToTrashBT_Click(object sender, EventArgs e)
         {
+            Utility.moveMessageToTrash(message);
+            this.Close();
             
-            DialogResult result = MessageBox.Show("The message will be moved to trash. Do you wish to continue?", "Continue?", MessageBoxButtons.YesNo);
+/*            DialogResult result = MessageBox.Show("The message will be moved to trash. Do you wish to continue?", "Continue?", MessageBoxButtons.YesNo);
             if (result == DialogResult.No)
             {
                 return;
@@ -134,6 +101,8 @@ namespace Email_System
 
                     await folder.MoveToAsync(message.UniqueId, trashFolder);
 
+                    Utility.refreshCurrentFolder();
+
                     client.Disconnect(true);
                     messageMoved = true;
                     this.Cursor = Cursors.Default;
@@ -141,7 +110,7 @@ namespace Email_System
                 }
 
                 MessageBox.Show("The message has been moved to trash succesfully!");
-            }
+            }*/
 
         }
     }
