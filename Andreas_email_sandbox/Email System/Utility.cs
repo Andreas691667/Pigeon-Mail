@@ -108,7 +108,7 @@ namespace Email_System
 
                 Utility.refreshCurrentFolder();
 
-                client.Disconnect(true);
+                await client.DisconnectAsync(true);
 
                 MessageBox.Show("The message has been moved to trash succesfully!");
             }

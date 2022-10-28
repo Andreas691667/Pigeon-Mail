@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using MailKit;
 
@@ -11,14 +12,42 @@ namespace Email_System
     internal class Data
     {
 
-        public static IList<string> folderList = new List<string>();
+        public struct msg
+        {
+            public string Id { get; set; }
+            public string subject { get; set; }
+            public string body { get; set; }
+        }
 
-        public static IList<string> messageList = new List<string>();
+        public static List<string> folderList = new List<string>();
+
+        public static List<msg> messageList = new List<msg>();
+
+        public static List<msg> messageList2 = new List<msg>();
 
         public static bool exit = false;
 
+
+        public static msg getMessageByID(UniqueId id)
+        {
+            int index = messageList2.FindIndex(msg => msg.Id == id.Id.ToString());
+            return messageList2[index];
+        }
+
+        public static void loadExistingMessages()
+        {
+            string filename = "messagesJson.json";
+            string jsonString = File.ReadAllText(filename);
+            var data = JsonSerializer.Deserialize<List<msg>>(jsonString)!;
+
+            messageList2 = data;
+        }
+
         public static async void loadFolders(BackgroundWorker bw)
         {
+
+            //File.Open("folders.txt", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+
             while (!bw.CancellationPending)
             {
 
@@ -48,24 +77,33 @@ namespace Email_System
             //string folderName = item.FullName.Substring(item.FullName.LastIndexOf('/') + 1);
         }
 
-
         public static async void loadMessages(BackgroundWorker bw)
         {
             while (!bw.CancellationPending)
             {
                 var client = await Utility.establishConnectionImap();
-                File.Open("folders.txt", FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-
-                foreach (string folderName in File.ReadLines("folders.txt"))
+                foreach (string folderName in folderList)
                 {
                     var folder = await client.GetFolderAsync(folderName);
 
                     await folder.OpenAsync(FolderAccess.ReadOnly);
 
-                    var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
+                    var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.Flags);
 
+                    foreach (var message in messages)
+                    {
+                        msg mg = new msg();
+
+                        mg.subject = message.Envelope.Subject;
+                        mg.Id = message.UniqueId.Id.ToString();
+                        //mg.body = message.Body.ToString();
+
+                        messageList.Add(mg);
+                    }
                 }
+
+
 
                 saveMessages();
 
@@ -78,15 +116,14 @@ namespace Email_System
 
         private static void saveFolders()
         {
-            File.WriteAllLines("folders.txt", folderList);
-            
+            File.WriteAllLines("folders.txt", folderList);            
             exit = true;
         }
 
         private static void saveMessages()
         {
-            File.WriteAllLines("messages.txt", messageList);
-            exit = true;
+            var json = JsonSerializer.Serialize(messageList);
+            File.WriteAllText("messagesJson.json", json);
         }
     }
 }

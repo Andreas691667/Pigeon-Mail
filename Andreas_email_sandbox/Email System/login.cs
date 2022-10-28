@@ -44,8 +44,10 @@ namespace Email_System
             Utility.password = passwordTb.Text;
 
             //start retrieving folders
-            //foldersBackgroundWorker.RunWorkerAsync();
-            //messagesBackgroundWorker.RunWorkerAsync();
+            foldersBackgroundWorker.RunWorkerAsync();
+
+            Data.loadExistingMessages();
+            
 
             SmtpClient client = new SmtpClient();
 
@@ -109,8 +111,9 @@ namespace Email_System
             else
             {
                 // The operation completed normally.
-                string msg = String.Format("Result = {0}", e.Result);
-                MessageBox.Show(msg);
+                //string msg = String.Format("Result = {0}", e.Result);
+                messagesBackgroundWorker.RunWorkerAsync();
+                //MessageBox.Show(msg);
             }
         }
         private void messagesBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -121,5 +124,28 @@ namespace Email_System
         }
 
         #endregion
+
+        private void messagesBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled)
+            {
+                // The user canceled the operation.
+                MessageBox.Show("Operation was canceled");
+            }
+            else if (e.Error != null)
+            {
+                // There was an error during the operation.
+                string msg = String.Format("An error occurred: {0}", e.Error.Message);
+                MessageBox.Show(msg);
+            }
+            else
+            {
+/*                string msg = String.Format("Result = {0}", e.Result);
+                MessageBox.Show(msg);*/
+
+                // The operation completed normally.
+            }
+
+        }
     }
 }

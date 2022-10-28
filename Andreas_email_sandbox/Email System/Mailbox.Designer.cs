@@ -47,12 +47,12 @@
             // 
             this.folderLb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.folderLb.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.folderLb.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.folderLb.FormattingEnabled = true;
-            this.folderLb.ItemHeight = 31;
+            this.folderLb.ItemHeight = 28;
             this.folderLb.Location = new System.Drawing.Point(15, 89);
             this.folderLb.Name = "folderLb";
-            this.folderLb.Size = new System.Drawing.Size(237, 469);
+            this.folderLb.Size = new System.Drawing.Size(237, 480);
             this.folderLb.TabIndex = 0;
             this.folderLb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.RetrieveMessages);
             // 
@@ -84,9 +84,9 @@
             // refreshBt
             // 
             this.refreshBt.Image = global::Email_System.Properties.Resources.refresh;
-            this.refreshBt.Location = new System.Drawing.Point(176, 17);
+            this.refreshBt.Location = new System.Drawing.Point(147, 3);
             this.refreshBt.Name = "refreshBt";
-            this.refreshBt.Size = new System.Drawing.Size(94, 35);
+            this.refreshBt.Size = new System.Drawing.Size(62, 57);
             this.refreshBt.TabIndex = 3;
             this.refreshBt.UseVisualStyleBackColor = true;
             this.refreshBt.Click += new System.EventHandler(this.refreshBt_Click);

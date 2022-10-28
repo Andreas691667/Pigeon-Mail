@@ -119,6 +119,7 @@
             // messagesBackgroundWorker
             // 
             this.messagesBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.messagesBackgroundWorker_DoWork);
+            this.messagesBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.messagesBackgroundWorker_RunWorkerCompleted);
             // 
             // foldersBackgroundWorker
             // 

@@ -34,9 +34,9 @@ namespace Email_System
             }
         }
 
-        private async Task<IMailFolder> getCurrentFolder()
+        private async Task<IMailFolder> getCurrentFolder(ImapClient client)
         {
-            var client = await Utility.establishConnectionImap();
+ //         var client = await Utility.establishConnectionImap();
 
             var folder = await client.GetFolderAsync(folderLb.SelectedValue.ToString());
 
@@ -187,9 +187,7 @@ namespace Email_System
             deleteBt.Visible = true;
             messageLb.Enabled = true;
 
-
-            messageSummaries = messages;
-            
+            messageSummaries = messages;            
 
             foreach(var item in messages.Reverse())
             {
@@ -222,7 +220,7 @@ namespace Email_System
 
                 var client = await Utility.establishConnectionImap();
 
-                var folder = await getCurrentFolder();
+                var folder = await getCurrentFolder(client);
 
                 await folder.OpenAsync(FolderAccess.ReadOnly);
 
@@ -321,40 +319,28 @@ namespace Email_System
         {
             try
             {
-                bool done = false;
+                var messageIndex = messageLb.SelectedIndex;
+                var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
 
-                while (!done)
-                {
-                    this.Cursor = Cursors.WaitCursor;
+                this.Cursor = Cursors.WaitCursor;
+                var client = await Utility.establishConnectionImap();
 
-                    var messageIndex = messageLb.SelectedIndex;
-                    var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
-                    var client = await Utility.establishConnectionImap();
+                //add flag to message
+                var folder = await client.GetFolderAsync(message.Folder.ToString());
+                await folder.OpenAsync(FolderAccess.ReadWrite);
 
-                    //add flag to message
-                    var folder = await client.GetFolderAsync(message.Folder.ToString());
-                    await folder.OpenAsync(FolderAccess.ReadWrite);
+                await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
+                await client.DisconnectAsync(true);
+                await client.DisconnectAsync(true);
 
-                    await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
-                    await client.DisconnectAsync(true);
+                Utility.refreshCurrentFolder();
 
-                    await client.DisconnectAsync(true);
-
-                    Utility.refreshCurrentFolder();
-
-                    done = true;
-                    
-                }
+                await client.DisconnectAsync(true);
             }
 
             catch
             {
                 MessageBox.Show("No message selected!");
-            }
-
-            finally
-            {
-                this.Cursor = Cursors.Default;
             }
         }
 
@@ -364,6 +350,8 @@ namespace Email_System
             {
                 var messageIndex = messageLb.SelectedIndex;
                 var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
+
+                this.Cursor = Cursors.WaitCursor;
                 var client = await Utility.establishConnectionImap();
 
                 //add flag to message
@@ -374,6 +362,8 @@ namespace Email_System
                 await client.DisconnectAsync(true);
 
                 Utility.refreshCurrentFolder();
+
+                await client.DisconnectAsync(true);
             }
 
             catch
@@ -386,17 +376,18 @@ namespace Email_System
         {
             try
             {
-                this.Cursor = Cursors.WaitCursor;
                 var messageIndex = messageLb.SelectedIndex;
                 var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
 
-                Utility.deleteMessage(message);
+                this.Cursor = Cursors.WaitCursor;
+                Utility.deleteMessage(message);                
             }
 
             catch
             {
                 MessageBox.Show("No message selected!");
             }
+
         }
 
         private void moveToTrashBt_Click(object sender, EventArgs e)
@@ -406,6 +397,7 @@ namespace Email_System
                 var messageIndex = messageLb.SelectedIndex;
                 var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
 
+                this.Cursor = Cursors.WaitCursor;
                 Utility.moveMessageToTrash(message);
             }
 
@@ -413,6 +405,8 @@ namespace Email_System
             {
                 MessageBox.Show("No message selected!");
             }
+
+
         }
 
         private void Mailbox_FormClosed(object sender, FormClosedEventArgs e)
