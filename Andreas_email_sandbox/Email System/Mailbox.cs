@@ -5,6 +5,7 @@ using System.Threading;
 using static System.Windows.Forms.AxHost;
 using System.Windows.Forms;
 using System.Linq.Expressions;
+using MimeKit;
 
 namespace Email_System
 {
@@ -279,9 +280,11 @@ namespace Email_System
                 var folder = await client.GetFolderAsync(currentMessage.Folder.ToString());
                 await folder.OpenAsync(FolderAccess.ReadWrite);
 
+                //if the message is draft, open as draft!
                 if (folder.Attributes.HasFlag(FolderAttributes.Drafts))
                 {
-                    new newEmail(4, currentMessage).Show();
+                    var body = (TextPart)folder.GetBodyPart(currentMessage.UniqueId, currentMessage.TextBody);
+                    new newEmail(4, currentMessage, body.Text).Show();
                 }
 
                 else

@@ -35,6 +35,8 @@ namespace Email_System
             bodyText = text;
 
             bodyRtb.Text = text;
+
+            await client.DisconnectAsync(true);
         }
 
         private void initializeMessage()
@@ -76,43 +78,7 @@ namespace Email_System
         private void moveToTrashBT_Click(object sender, EventArgs e)
         {
             Utility.moveMessageToTrash(message);
-            this.Close();
-            
-/*            DialogResult result = MessageBox.Show("The message will be moved to trash. Do you wish to continue?", "Continue?", MessageBoxButtons.YesNo);
-            if (result == DialogResult.No)
-            {
-                return;
-            }
-
-            else if (result == DialogResult.Yes)
-            {
-                bool messageMoved = false;
-
-                while (!messageMoved)
-                {
-                    this.Cursor = Cursors.WaitCursor;
-
-                    var client = await Utility.establishConnectionImap();
-
-                    var folder = await client.GetFolderAsync(message.Folder.ToString());
-                    var trashFolder = client.GetFolder(SpecialFolder.Trash);
-
-                    await trashFolder.OpenAsync(FolderAccess.ReadWrite);
-                    await folder.OpenAsync(FolderAccess.ReadWrite);
-
-                    await folder.MoveToAsync(message.UniqueId, trashFolder);
-
-                    Utility.refreshCurrentFolder();
-
-                    client.Disconnect(true);
-                    messageMoved = true;
-                    this.Cursor = Cursors.Default;
-                    this.Close();
-                }
-
-                MessageBox.Show("The message has been moved to trash succesfully!");
-            }*/
-
+            this.Close();            
         }
     }
 }

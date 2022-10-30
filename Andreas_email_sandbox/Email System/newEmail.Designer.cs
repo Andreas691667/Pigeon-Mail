@@ -39,12 +39,15 @@
             this.label4 = new System.Windows.Forms.Label();
             this.exitBt = new System.Windows.Forms.Button();
             this.draftBt = new System.Windows.Forms.Button();
+            this.addAttachmentBt = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.attachmentsLb = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // sendBt
             // 
             this.sendBt.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.sendBt.Location = new System.Drawing.Point(234, 415);
+            this.sendBt.Location = new System.Drawing.Point(12, 399);
             this.sendBt.Name = "sendBt";
             this.sendBt.Size = new System.Drawing.Size(137, 64);
             this.sendBt.TabIndex = 0;
@@ -54,9 +57,9 @@
             // 
             // messageBodyTb
             // 
-            this.messageBodyTb.Location = new System.Drawing.Point(400, 195);
+            this.messageBodyTb.Location = new System.Drawing.Point(262, 229);
             this.messageBodyTb.Name = "messageBodyTb";
-            this.messageBodyTb.Size = new System.Drawing.Size(506, 284);
+            this.messageBodyTb.Size = new System.Drawing.Size(642, 265);
             this.messageBodyTb.TabIndex = 1;
             this.messageBodyTb.Text = "";
             // 
@@ -84,7 +87,7 @@
             // recipientLabel
             // 
             this.recipientLabel.AutoSize = true;
-            this.recipientLabel.Location = new System.Drawing.Point(407, 36);
+            this.recipientLabel.Location = new System.Drawing.Point(407, 32);
             this.recipientLabel.Name = "recipientLabel";
             this.recipientLabel.Size = new System.Drawing.Size(71, 20);
             this.recipientLabel.TabIndex = 5;
@@ -102,7 +105,7 @@
             // SubjectLabel
             // 
             this.SubjectLabel.AutoSize = true;
-            this.SubjectLabel.Location = new System.Drawing.Point(420, 126);
+            this.SubjectLabel.Location = new System.Drawing.Point(420, 130);
             this.SubjectLabel.Name = "SubjectLabel";
             this.SubjectLabel.Size = new System.Drawing.Size(58, 20);
             this.SubjectLabel.TabIndex = 7;
@@ -111,32 +114,64 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(400, 172);
+            this.label4.Location = new System.Drawing.Point(262, 198);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(70, 20);
             this.label4.TabIndex = 8;
             this.label4.Text = "Message:";
+            this.label4.Visible = false;
             // 
             // exitBt
             // 
-            this.exitBt.Location = new System.Drawing.Point(12, 450);
+            this.exitBt.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.exitBt.Location = new System.Drawing.Point(155, 399);
             this.exitBt.Name = "exitBt";
-            this.exitBt.Size = new System.Drawing.Size(94, 29);
+            this.exitBt.Size = new System.Drawing.Size(78, 64);
             this.exitBt.TabIndex = 9;
-            this.exitBt.Text = "Exit";
+            this.exitBt.Text = "Cancel";
             this.exitBt.UseVisualStyleBackColor = true;
             this.exitBt.Click += new System.EventHandler(this.exitBt_Click);
             // 
             // draftBt
             // 
-            this.draftBt.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.draftBt.Location = new System.Drawing.Point(112, 415);
+            this.draftBt.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.draftBt.Location = new System.Drawing.Point(12, 320);
             this.draftBt.Name = "draftBt";
-            this.draftBt.Size = new System.Drawing.Size(116, 64);
+            this.draftBt.Size = new System.Drawing.Size(94, 61);
             this.draftBt.TabIndex = 10;
             this.draftBt.Text = "Save as draft";
             this.draftBt.UseVisualStyleBackColor = true;
             this.draftBt.Click += new System.EventHandler(this.draftBt_Click);
+            // 
+            // addAttachmentBt
+            // 
+            this.addAttachmentBt.Location = new System.Drawing.Point(12, 247);
+            this.addAttachmentBt.Name = "addAttachmentBt";
+            this.addAttachmentBt.Size = new System.Drawing.Size(94, 53);
+            this.addAttachmentBt.TabIndex = 11;
+            this.addAttachmentBt.Text = "Add Attachment";
+            this.addAttachmentBt.UseVisualStyleBackColor = true;
+            this.addAttachmentBt.Click += new System.EventHandler(this.addAttachmentBt_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(21, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(92, 20);
+            this.label1.TabIndex = 13;
+            this.label1.Text = "Attachments";
+            // 
+            // attachmentsLb
+            // 
+            this.attachmentsLb.FormattingEnabled = true;
+            this.attachmentsLb.HorizontalScrollbar = true;
+            this.attachmentsLb.ItemHeight = 20;
+            this.attachmentsLb.Location = new System.Drawing.Point(21, 32);
+            this.attachmentsLb.Name = "attachmentsLb";
+            this.attachmentsLb.Size = new System.Drawing.Size(134, 84);
+            this.attachmentsLb.TabIndex = 14;
+            this.attachmentsLb.Visible = false;
             // 
             // newEmail
             // 
@@ -144,6 +179,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(916, 506);
+            this.Controls.Add(this.attachmentsLb);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.addAttachmentBt);
             this.Controls.Add(this.draftBt);
             this.Controls.Add(this.exitBt);
             this.Controls.Add(this.label4);
@@ -176,5 +214,8 @@
         private Label label4;
         private Button exitBt;
         private Button draftBt;
+        private Button addAttachmentBt;
+        private Label label1;
+        private ListBox attachmentsLb;
     }
 }

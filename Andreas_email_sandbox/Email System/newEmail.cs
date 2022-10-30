@@ -5,14 +5,19 @@ using System.Windows.Forms;
 using Org.BouncyCastle.Asn1.X509;
 using MailKit.Net.Imap;
 using System.Net.Mail;
+using System.Diagnostics;
 
 namespace Email_System
 {
     public partial class newEmail : Form
     {
-        IMessageSummary message = null!;
+        IMessageSummary messageSender = null!;
+        MimeMessage message = new MimeMessage();
+        BodyBuilder builder = new BodyBuilder();
 
-        bool messageSent = false;
+
+        bool isDraft = false;
+        bool exitFromBt = false;
 
         //type keys:
         // 0: blank email
@@ -26,23 +31,23 @@ namespace Email_System
 
             if (typeKey == 1 && m != null)
             {
-                message = m;
+                messageSender = m;
 
-                string recipient = (message.Envelope.From.ToString()).Substring(message.Envelope.From.ToString().LastIndexOf("<"));  
+                string recipient = (messageSender.Envelope.From.ToString()).Substring(messageSender.Envelope.From.ToString().LastIndexOf("<"));  
                 recipientsTb.Text = recipient;
-                subjectTb.Text = "Re: " + message.Envelope.Subject;
+                subjectTb.Text = "Re: " + messageSender.Envelope.Subject;
             }
 
             else if(typeKey == 2 && m != null)
             {
-                message = m;
+                messageSender = m;
 
-                subjectTb.Text = "Re: " + message.Envelope.Subject;
+                subjectTb.Text = "Re: " + messageSender.Envelope.Subject;
 
-                string recipient = (message.Envelope.From.ToString()).Substring(message.Envelope.From.ToString().LastIndexOf("<"));
+                string recipient = (messageSender.Envelope.From.ToString()).Substring(messageSender.Envelope.From.ToString().LastIndexOf("<"));
                 recipientsTb.Text = recipient;
 
-                string[] ccRecipients = message.Envelope.Cc.ToString().Split(",");
+                string[] ccRecipients = messageSender.Envelope.Cc.ToString().Split(",");
                 
                 foreach (var rec in ccRecipients)
                 {
@@ -54,26 +59,30 @@ namespace Email_System
 
             else if(typeKey == 3 && m != null)
             {
-                message = m;
+                messageSender = m;
 
-                subjectTb.Text = "Fwrd: " + message.Envelope.Subject;
+                subjectTb.Text = "Fwrd: " + messageSender.Envelope.Subject;
 
                 messageBodyTb.AppendText(Environment.NewLine);
                 messageBodyTb.AppendText("-------- Forwarded message --------");
                 messageBodyTb.AppendText(Environment.NewLine);
-                messageBodyTb.AppendText(message.Envelope.From.ToString());
+                messageBodyTb.AppendText(messageSender.Envelope.From.ToString());
                 messageBodyTb.AppendText(Environment.NewLine);
-                messageBodyTb.AppendText(message.Date.ToString());
+                messageBodyTb.AppendText(messageSender.Date.ToString());
                 messageBodyTb.AppendText(Environment.NewLine);
-                messageBodyTb.AppendText(message.Envelope.To.ToString());
+                messageBodyTb.AppendText(messageSender.Envelope.To.ToString());
                 messageBodyTb.AppendText(Environment.NewLine);
                 messageBodyTb.AppendText(body);
             }
 
             else if(typeKey == 4 && m!= null)
             {
-                message = m;
-                subjectTb.Text = message.Envelope.Subject;
+                isDraft = true;
+
+                messageSender = m;
+                subjectTb.Text = messageSender.Envelope.Subject;
+                messageBodyTb.AppendText(body);
+                recipientsTb.Text = messageSender.Envelope.To.ToString();            
             }
         }
 
@@ -145,23 +154,47 @@ namespace Email_System
 
                 else if (result == DialogResult.Yes)
                 {
-                    message.Body = new TextPart("plain") { };
+                    builder.TextBody = @"";
                 }
             }
             else
             {
-                message.Body = new TextPart("plain")
-                {
-                    Text = messageBodyTb.Text
-                };
+                builder.TextBody = messageBodyTb.Text;
             }
+        }
+
+        private void addAttachment(MimeMessage message)
+        {
+            string fileName = chooseAttachment();
+
+            if (!string.IsNullOrEmpty(fileName))
+                builder.Attachments.Add(@fileName);
+        }
+
+        private string chooseAttachment()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            //openFileDialog.InitialDirectory = "C:\\";
+            //openFileDialog.Filter = "Database files (*.mdb, *.accdb)|*.mdb;*.accdb";
+            openFileDialog.FilterIndex = 0;
+            openFileDialog.RestoreDirectory = true;
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                attachmentsLb.Visible = true;
+                string fileName = openFileDialog.FileName;
+                attachmentsLb.Items.Add(fileName.Substring(fileName.LastIndexOf('\\') + 1) + " ");
+                return fileName;
+            }
+
+            else
+                return "";
         }
 
         #endregion
 
         private void sendBt_Click(object sender, EventArgs e)
         {
-            MimeMessage message = new MimeMessage();
 
             message.From.Add(new MailboxAddress(Utility.username, Utility.username));            
 
@@ -171,7 +204,9 @@ namespace Email_System
 
             addSubject(message);
 
-            addBody(message);  
+            addBody(message);
+
+            message.Body = builder.ToMessageBody();
 
             var client = Utility.establishConnectionSmtp();
 
@@ -180,7 +215,7 @@ namespace Email_System
                 client.Send(message);
 
                 MessageBox.Show("Message sent successfully!");
-                messageSent = true;
+                //messageSent = true;
 
                 recipientsTb.Clear();
                 ccRecipientsTb.Clear();
@@ -203,6 +238,8 @@ namespace Email_System
 
         private void exitBt_Click(object sender, EventArgs e)
         {
+            exitFromBt = true;
+
             if (!allEmpty())
             {
                 DialogResult result = MessageBox.Show("Do you wish to save the mail in 'Drafts'?", "Save as draft?", MessageBoxButtons.YesNo);
@@ -215,8 +252,6 @@ namespace Email_System
                     this.Close();
                 }
             }
-
-
 
             else
                 this.Close();
@@ -250,7 +285,6 @@ namespace Email_System
             }
         }
 
-        //not implemented yet
         private async void saveAsDraft()
         {
             try
@@ -278,7 +312,7 @@ namespace Email_System
 
         private void newEmail_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!allEmpty())
+            if (!allEmpty() && !exitFromBt)
             {
                 DialogResult result = MessageBox.Show("Do you wish to save the mail in 'Drafts'?", "Save as draft?", MessageBoxButtons.YesNo);
 
@@ -291,7 +325,7 @@ namespace Email_System
 
         private bool allEmpty()
         {
-            if (string.IsNullOrEmpty(this.subjectTb.Text) && string.IsNullOrEmpty(this.recipientsTb.Text) && string.IsNullOrEmpty(this.ccRecipientsTb.Text) && string.IsNullOrEmpty(this.messageBodyTb.Text))
+            if (string.IsNullOrEmpty(this.subjectTb.Text) && string.IsNullOrEmpty(this.recipientsTb.Text) && string.IsNullOrEmpty(this.ccRecipientsTb.Text) && string.IsNullOrEmpty(this.messageBodyTb.Text) && attachmentsLb.Items.Count == 0)
             {
                 return true;
             }
@@ -302,7 +336,13 @@ namespace Email_System
 
         private void draftBt_Click(object sender, EventArgs e)
         {
+            exitFromBt = true;
             saveAsDraft();
+        }
+
+        private void addAttachmentBt_Click(object sender, EventArgs e)
+        {
+            addAttachment(message);
         }
     }
 }
