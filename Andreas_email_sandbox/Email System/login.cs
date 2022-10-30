@@ -1,6 +1,6 @@
 using MailKit.Net.Smtp;
 using System.ComponentModel;
-
+using System.Diagnostics;
 
 namespace Email_System
 {
@@ -44,21 +44,22 @@ namespace Email_System
             Utility.password = passwordTb.Text;
 
             //start retrieving folders
-            foldersBackgroundWorker.RunWorkerAsync();
+            //foldersBackgroundWorker.RunWorkerAsync();
 
-            Data.loadExistingMessages();
+            //Data.loadExistingMessages();
             
 
             SmtpClient client = new SmtpClient();
 
             try
             {
-                string mail = username.Substring(username.LastIndexOf("@") + 1);
+                //string mail = username.Substring(username.LastIndexOf("@") + 1);
+                setProviderSettings(username);
 
-                client.Connect("smtp." + mail, 465, true);
-
+                client.Connect(Properties.Settings.Default.SmtpServer, Properties.Settings.Default.SmtpPort, true);
+                Debug.WriteLine("connecting");
                 client.Authenticate(username, password);
-
+                Debug.WriteLine("authenticating");
                 this.Cursor = Cursors.WaitCursor;
 
                 Mailbox m = Mailbox.GetInstance;
@@ -86,7 +87,63 @@ namespace Email_System
             this.Close();
         }
 
+        private void setProviderSettings(string username)
+        {
+            string Imapserver = "";
+            int Imapport = -1;
+            string SmtpServer = "";
+            int SmtpPort = -1;
+            string mail = username.Substring(username.LastIndexOf("@") + 1);
+
+            switch (mail)
+            {
+                case "gmail.com":
+                    Imapserver= "imap.gmail.com";
+                    Imapport = 993;
+                    SmtpServer = "smtp.gmail.com";
+                    SmtpPort = 465;
+                    break;
+
+                case "hotmail.com":
+                    Imapserver = "imap-mail.outlook.com";
+                    Imapport = 993;
+                    SmtpServer = "smtp-mail.outlook.com";
+                    SmtpPort = 465;
+                    break;
+            }
+
+            Properties.Settings.Default.SmtpServer = SmtpServer;
+            Properties.Settings.Default.SmtpPort = SmtpPort;
+            Properties.Settings.Default.ImapServer = Imapserver;
+            Properties.Settings.Default.ImapPort = Imapport;
+            Properties.Settings.Default.Save();
+        }
+
+
         #region BackgroundWork
+
+        private void messagesBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled)
+            {
+                // The user canceled the operation.
+                MessageBox.Show("Operation was canceled");
+            }
+            else if (e.Error != null)
+            {
+                // There was an error during the operation.
+                string msg = String.Format("An error occurred: {0}", e.Error.Message);
+                MessageBox.Show(msg);
+            }
+            else
+            {
+                /*                string msg = String.Format("Result = {0}", e.Result);
+                                MessageBox.Show(msg);*/
+
+                // The operation completed normally.
+            }
+
+        }
 
         private void foldersBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -125,27 +182,6 @@ namespace Email_System
 
         #endregion
 
-        private void messagesBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (e.Cancelled)
-            {
-                // The user canceled the operation.
-                MessageBox.Show("Operation was canceled");
-            }
-            else if (e.Error != null)
-            {
-                // There was an error during the operation.
-                string msg = String.Format("An error occurred: {0}", e.Error.Message);
-                MessageBox.Show(msg);
-            }
-            else
-            {
-/*                string msg = String.Format("Result = {0}", e.Result);
-                MessageBox.Show(msg);*/
-
-                // The operation completed normally.
-            }
-
-        }
+        
     }
 }
