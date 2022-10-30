@@ -19,6 +19,11 @@ namespace Email_System
             initializeMessage();
         }
 
+        private void getAttachments()
+        {
+            
+        }
+
         private async void getTextBody()
         {
             var client = await Utility.establishConnectionImap();

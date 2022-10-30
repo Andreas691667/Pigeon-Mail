@@ -181,6 +181,7 @@ namespace Email_System
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
+                attachmentsLabel.Visible = true;
                 attachmentsLb.Visible = true;
                 string fileName = openFileDialog.FileName;
                 attachmentsLb.Items.Add(fileName.Substring(fileName.LastIndexOf('\\') + 1) + " ");
@@ -239,6 +240,11 @@ namespace Email_System
         private void exitBt_Click(object sender, EventArgs e)
         {
             exitFromBt = true;
+
+            if(isDraft)
+            {
+                //implement here functionality such that the message is overwritten.
+            }
 
             if (!allEmpty())
             {

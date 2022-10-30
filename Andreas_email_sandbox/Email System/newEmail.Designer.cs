@@ -40,7 +40,7 @@
             this.exitBt = new System.Windows.Forms.Button();
             this.draftBt = new System.Windows.Forms.Button();
             this.addAttachmentBt = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.attachmentsLabel = new System.Windows.Forms.Label();
             this.attachmentsLb = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
@@ -153,14 +153,15 @@
             this.addAttachmentBt.UseVisualStyleBackColor = true;
             this.addAttachmentBt.Click += new System.EventHandler(this.addAttachmentBt_Click);
             // 
-            // label1
+            // attachmentsLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(21, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(92, 20);
-            this.label1.TabIndex = 13;
-            this.label1.Text = "Attachments";
+            this.attachmentsLabel.AutoSize = true;
+            this.attachmentsLabel.Location = new System.Drawing.Point(21, 9);
+            this.attachmentsLabel.Name = "attachmentsLabel";
+            this.attachmentsLabel.Size = new System.Drawing.Size(95, 20);
+            this.attachmentsLabel.TabIndex = 13;
+            this.attachmentsLabel.Text = "Attachments:";
+            this.attachmentsLabel.Visible = false;
             // 
             // attachmentsLb
             // 
@@ -180,7 +181,7 @@
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(916, 506);
             this.Controls.Add(this.attachmentsLb);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.attachmentsLabel);
             this.Controls.Add(this.addAttachmentBt);
             this.Controls.Add(this.draftBt);
             this.Controls.Add(this.exitBt);
@@ -215,7 +216,7 @@
         private Button exitBt;
         private Button draftBt;
         private Button addAttachmentBt;
-        private Label label1;
+        private Label attachmentsLabel;
         private ListBox attachmentsLb;
     }
 }

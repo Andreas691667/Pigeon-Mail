@@ -53,10 +53,10 @@
             // 
             this.bodyRtb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.bodyRtb.Location = new System.Drawing.Point(73, 132);
+            this.bodyRtb.Location = new System.Drawing.Point(147, 132);
             this.bodyRtb.Name = "bodyRtb";
             this.bodyRtb.ReadOnly = true;
-            this.bodyRtb.Size = new System.Drawing.Size(970, 367);
+            this.bodyRtb.Size = new System.Drawing.Size(896, 367);
             this.bodyRtb.TabIndex = 1;
             this.bodyRtb.Text = "";
             // 
