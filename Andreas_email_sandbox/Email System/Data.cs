@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MailKit;
+using MimeKit;
 
 namespace Email_System
 {
@@ -23,15 +25,15 @@ namespace Email_System
 
         public static List<msg> messageList = new List<msg>();
 
-        public static List<msg> messageList2 = new List<msg>();
+        public static List<msg> existingMessages = new List<msg>();
 
         public static bool exit = false;
 
 
         public static msg getMessageByID(UniqueId id)
         {
-            int index = messageList2.FindIndex(msg => msg.Id == id.Id.ToString());
-            return messageList2[index];
+            int index = existingMessages.FindIndex(msg => msg.Id == id.Id.ToString());
+            return existingMessages[index];
         }
 
         public static void loadExistingMessages()
@@ -40,7 +42,9 @@ namespace Email_System
             string jsonString = File.ReadAllText(filename);
             var data = JsonSerializer.Deserialize<List<msg>>(jsonString)!;
 
-            messageList2 = data;
+            existingMessages = data;
+
+            Debug.WriteLine("existing messaes loaded");
         }
 
         public static async void loadFolders(BackgroundWorker bw)
@@ -74,6 +78,8 @@ namespace Email_System
                     break;
             }
 
+            Debug.WriteLine("folders loaded");
+
             //string folderName = item.FullName.Substring(item.FullName.LastIndexOf('/') + 1);
         }
 
@@ -89,7 +95,7 @@ namespace Email_System
 
                     await folder.OpenAsync(FolderAccess.ReadOnly);
 
-                    var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.Flags);
+                    var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure| MessageSummaryItems.Flags);
 
                     foreach (var message in messages)
                     {
@@ -97,19 +103,24 @@ namespace Email_System
 
                         mg.subject = message.Envelope.Subject;
                         mg.Id = message.UniqueId.Id.ToString();
-                        //mg.body = message.Body.ToString();
+
+                        if (message.TextBody != null)
+                        {
+                            var body = (TextPart)folder.GetBodyPart(message.UniqueId, message.TextBody);
+                            mg.body = body.Text;
+                        }
 
                         messageList.Add(mg);
                     }
                 }
-
-
 
                 saveMessages();
 
                 if (exit)
                     break;
             }
+
+            Debug.WriteLine("messages loaded");
         }
 
 

@@ -13,8 +13,8 @@ namespace Email_System
         {
             Utility.refreshCurrentFolder();
             InitializeComponent();
-            message = m;
 
+            message = m;
             getTextBody();
             initializeMessage();
         }

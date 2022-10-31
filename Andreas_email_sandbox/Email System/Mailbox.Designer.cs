@@ -39,6 +39,7 @@
             this.moveToTrashBt = new System.Windows.Forms.Button();
             this.deleteBt = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.logoutBt = new System.Windows.Forms.Button();
             this.settingsBt = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -73,21 +74,27 @@
             // 
             // newEmailBt
             // 
-            this.newEmailBt.Location = new System.Drawing.Point(3, 3);
+            this.newEmailBt.Image = global::Email_System.Properties.Resources.icons8_secured_letter_32;
+            this.newEmailBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.newEmailBt.Location = new System.Drawing.Point(3, 0);
             this.newEmailBt.Name = "newEmailBt";
-            this.newEmailBt.Size = new System.Drawing.Size(138, 58);
+            this.newEmailBt.Size = new System.Drawing.Size(95, 64);
             this.newEmailBt.TabIndex = 2;
-            this.newEmailBt.Text = "Create new e-mail";
+            this.newEmailBt.Text = "New e-mail";
+            this.newEmailBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.newEmailBt.UseVisualStyleBackColor = true;
             this.newEmailBt.Click += new System.EventHandler(this.newEmailBt_Click);
             // 
             // refreshBt
             // 
             this.refreshBt.Image = global::Email_System.Properties.Resources.refresh;
-            this.refreshBt.Location = new System.Drawing.Point(147, 3);
+            this.refreshBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.refreshBt.Location = new System.Drawing.Point(106, 0);
             this.refreshBt.Name = "refreshBt";
-            this.refreshBt.Size = new System.Drawing.Size(62, 57);
+            this.refreshBt.Size = new System.Drawing.Size(70, 64);
             this.refreshBt.TabIndex = 3;
+            this.refreshBt.Text = "Refresh";
+            this.refreshBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.refreshBt.UseVisualStyleBackColor = true;
             this.refreshBt.Click += new System.EventHandler(this.refreshBt_Click);
             // 
@@ -100,11 +107,14 @@
             // addFlagBt
             // 
             this.addFlagBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.addFlagBt.Location = new System.Drawing.Point(572, 6);
+            this.addFlagBt.Image = global::Email_System.Properties.Resources.icons8_flag_32;
+            this.addFlagBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.addFlagBt.Location = new System.Drawing.Point(556, 0);
             this.addFlagBt.Name = "addFlagBt";
-            this.addFlagBt.Size = new System.Drawing.Size(94, 55);
+            this.addFlagBt.Size = new System.Drawing.Size(105, 64);
             this.addFlagBt.TabIndex = 4;
-            this.addFlagBt.Text = "Add flag";
+            this.addFlagBt.Text = "Flag/unflag";
+            this.addFlagBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.addFlagBt.UseVisualStyleBackColor = true;
             this.addFlagBt.Visible = false;
             this.addFlagBt.Click += new System.EventHandler(this.addFlagBt_Click);
@@ -112,7 +122,7 @@
             // removeFlagBt
             // 
             this.removeFlagBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.removeFlagBt.Location = new System.Drawing.Point(461, 5);
+            this.removeFlagBt.Location = new System.Drawing.Point(445, 3);
             this.removeFlagBt.Name = "removeFlagBt";
             this.removeFlagBt.Size = new System.Drawing.Size(105, 55);
             this.removeFlagBt.TabIndex = 5;
@@ -124,11 +134,14 @@
             // moveToTrashBt
             // 
             this.moveToTrashBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.moveToTrashBt.Location = new System.Drawing.Point(796, 5);
+            this.moveToTrashBt.Image = global::Email_System.Properties.Resources.icons8_trash_32;
+            this.moveToTrashBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.moveToTrashBt.Location = new System.Drawing.Point(749, 0);
             this.moveToTrashBt.Name = "moveToTrashBt";
-            this.moveToTrashBt.Size = new System.Drawing.Size(116, 55);
+            this.moveToTrashBt.Size = new System.Drawing.Size(56, 64);
             this.moveToTrashBt.TabIndex = 6;
-            this.moveToTrashBt.Text = "Move message to trash";
+            this.moveToTrashBt.Text = "Trash";
+            this.moveToTrashBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.moveToTrashBt.UseVisualStyleBackColor = true;
             this.moveToTrashBt.Visible = false;
             this.moveToTrashBt.Click += new System.EventHandler(this.moveToTrashBt_Click);
@@ -136,11 +149,14 @@
             // deleteBt
             // 
             this.deleteBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.deleteBt.Location = new System.Drawing.Point(672, 6);
+            this.deleteBt.Image = global::Email_System.Properties.Resources.icons8_remove_32;
+            this.deleteBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.deleteBt.Location = new System.Drawing.Point(667, 0);
             this.deleteBt.Name = "deleteBt";
-            this.deleteBt.Size = new System.Drawing.Size(118, 55);
+            this.deleteBt.Size = new System.Drawing.Size(76, 64);
             this.deleteBt.TabIndex = 7;
-            this.deleteBt.Text = "Delete message";
+            this.deleteBt.Text = "Delete";
+            this.deleteBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.deleteBt.UseVisualStyleBackColor = true;
             this.deleteBt.Visible = false;
             this.deleteBt.Click += new System.EventHandler(this.deleteBt_Click);
@@ -149,6 +165,7 @@
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.logoutBt);
             this.panel1.Controls.Add(this.settingsBt);
             this.panel1.Controls.Add(this.refreshBt);
             this.panel1.Controls.Add(this.removeFlagBt);
@@ -161,14 +178,31 @@
             this.panel1.Size = new System.Drawing.Size(992, 64);
             this.panel1.TabIndex = 8;
             // 
+            // logoutBt
+            // 
+            this.logoutBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.logoutBt.Image = global::Email_System.Properties.Resources.icons8_logout_32;
+            this.logoutBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.logoutBt.Location = new System.Drawing.Point(908, 0);
+            this.logoutBt.Name = "logoutBt";
+            this.logoutBt.Size = new System.Drawing.Size(81, 64);
+            this.logoutBt.TabIndex = 9;
+            this.logoutBt.Text = "Sign out";
+            this.logoutBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.logoutBt.UseVisualStyleBackColor = true;
+            this.logoutBt.Click += new System.EventHandler(this.logoutBt_Click);
+            // 
             // settingsBt
             // 
             this.settingsBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.settingsBt.Image = global::Email_System.Properties.Resources.icons8_settings_32;
-            this.settingsBt.Location = new System.Drawing.Point(918, 6);
+            this.settingsBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.settingsBt.Location = new System.Drawing.Point(811, 0);
             this.settingsBt.Name = "settingsBt";
-            this.settingsBt.Size = new System.Drawing.Size(71, 54);
+            this.settingsBt.Size = new System.Drawing.Size(91, 64);
             this.settingsBt.TabIndex = 8;
+            this.settingsBt.Text = "Settings";
+            this.settingsBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.settingsBt.UseVisualStyleBackColor = true;
             // 
             // Mailbox
@@ -202,5 +236,6 @@
         private PictureBox pictureBox1;
         private Panel panel1;
         private Button settingsBt;
+        private Button logoutBt;
     }
 }

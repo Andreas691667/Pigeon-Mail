@@ -1,6 +1,7 @@
 ﻿using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using System.Windows.Forms;
 
 namespace Email_System
@@ -10,20 +11,13 @@ namespace Email_System
         public static string username = null!;
         public static string password = null!;
 
-/*        ImapClient client_utility = new ImapClient();
-
-        public void test()
-        {
-            //client_utility.Idle();
-        }*/
-
         public static async Task<ImapClient>  establishConnectionImap()
         {
             try
             {
                 ImapClient client = new ImapClient();
 
-                await client.ConnectAsync("imap.gmail.com", 993, true);
+                await client.ConnectAsync(Properties.Settings.Default.ImapServer, Properties.Settings.Default.ImapPort, true);
                 await client.AuthenticateAsync(username, password);
 
                 return client;
@@ -42,7 +36,20 @@ namespace Email_System
             {
                 SmtpClient client = new SmtpClient();
 
-                client.Connect("smtp.gmail.com", 465, true);
+                string server = Properties.Settings.Default.SmtpServer;
+
+                switch (server)
+                {
+                    case "smtp.gmail.com":
+                        client.Connect(Properties.Settings.Default.SmtpServer, Properties.Settings.Default.SmtpPort, true);
+                        break;
+
+                    case "smtp.office365.com":
+                        client.Connect(Properties.Settings.Default.SmtpServer, Properties.Settings.Default.SmtpPort, SecureSocketOptions.StartTls);
+                        break;
+                }
+
+                
                 client.Authenticate(username, password);
 
                 return client;

@@ -40,7 +40,6 @@ namespace Email_System
  //         var client = await Utility.establishConnectionImap();
 
             var folder = await client.GetFolderAsync(folderLb.SelectedValue.ToString());
-
             return folder;
         }
 
@@ -79,7 +78,7 @@ namespace Email_System
 
         private void toggleButtons(bool value)
         {
-            removeFlagBt.Visible = value;
+            //removeFlagBt.Visible = value;
             addFlagBt.Visible = value;
             moveToTrashBt.Visible = value;
             deleteBt.Visible = value;
@@ -213,7 +212,7 @@ namespace Email_System
         private async void RetrieveMessages(object sender = null!, MouseEventArgs e = null!)
         {
             bool messagesLoaded = false;
-            messageLb.Items.Clear();
+            
 
             while (!messagesLoaded)
             {
@@ -226,6 +225,9 @@ namespace Email_System
                 await folder.OpenAsync(FolderAccess.ReadOnly);
 
                 var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
+
+
+                messageLb.Items.Clear();
 
                 if (folder.Count <= 0)
                 {
@@ -325,6 +327,11 @@ namespace Email_System
                 var messageIndex = messageLb.SelectedIndex;
                 var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
 
+                if(message.Flags.Value.HasFlag(MessageFlags.Flagged))
+                {
+                    removeFlagBt.PerformClick();
+                }
+
                 this.Cursor = Cursors.WaitCursor;
                 var client = await Utility.establishConnectionImap();
 
@@ -414,8 +421,14 @@ namespace Email_System
 
         private void Mailbox_FormClosed(object sender, FormClosedEventArgs e)
         {
+            logoutBt.PerformClick();
+        }
+
+        private void logoutBt_Click(object sender, EventArgs e)
+        {
+            login l = login.GetInstance;
+            l.Show();
             instance.Dispose();
-            Environment.Exit(1);
         }
     }
 }

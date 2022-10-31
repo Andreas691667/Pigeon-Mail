@@ -1,4 +1,5 @@
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -6,13 +7,17 @@ namespace Email_System
 {
     public partial class login : Form
     {
-        public login()
+
+        private static login instance = null!;
+
+        //constructor
+        private login()
         {
             InitializeComponent();
 
-            if(Properties.Settings.Default.Password != null)
+            if (Properties.Settings.Default.Password != null)
             {
-                passwordTb.Text = Properties.Settings.Default.Password; 
+                passwordTb.Text = Properties.Settings.Default.Password;
             }
 
             if (Properties.Settings.Default.Username != null)
@@ -20,6 +25,20 @@ namespace Email_System
                 usernameTb.Text = Properties.Settings.Default.Username;
             }
         }
+
+        //ensures singleton pattern is maintained (only one instance at all times)
+        public static login GetInstance
+        {
+            get
+            {
+                if (instance == null || instance.IsDisposed)
+                {
+                    instance = new login();
+                }
+                return instance;
+            }
+        }
+
 
         private void loginBt_Click(object sender, EventArgs e)
         {
@@ -43,10 +62,6 @@ namespace Email_System
             Utility.username = usernameTb.Text;
             Utility.password = passwordTb.Text;
 
-            //start retrieving folders
-            //foldersBackgroundWorker.RunWorkerAsync();
-
-            //Data.loadExistingMessages();
             
 
             SmtpClient client = new SmtpClient();
@@ -56,11 +71,25 @@ namespace Email_System
                 //string mail = username.Substring(username.LastIndexOf("@") + 1);
                 setProviderSettings(username);
 
-                client.Connect(Properties.Settings.Default.SmtpServer, Properties.Settings.Default.SmtpPort, true);
+                switch (Properties.Settings.Default.SmtpServer)
+                {
+                    case "smtp.gmail.com":
+                        client.Connect(Properties.Settings.Default.SmtpServer, Properties.Settings.Default.SmtpPort, true);
+                        break;
+
+                    case "smtp.office365.com":
+                        client.Connect(Properties.Settings.Default.SmtpServer, Properties.Settings.Default.SmtpPort, SecureSocketOptions.StartTls);
+                        break;
+                }
+
                 Debug.WriteLine("connecting");
                 client.Authenticate(username, password);
                 Debug.WriteLine("authenticating");
                 this.Cursor = Cursors.WaitCursor;
+
+                //start retrieving folders
+                //foldersBackgroundWorker.RunWorkerAsync();
+                //Data.loadExistingMessages();
 
                 Mailbox m = Mailbox.GetInstance;
                 m.Show();
@@ -107,8 +136,8 @@ namespace Email_System
                 case "hotmail.com":
                     Imapserver = "imap-mail.outlook.com";
                     Imapport = 993;
-                    SmtpServer = "smtp-mail.outlook.com";
-                    SmtpPort = 465;
+                    SmtpServer = "smtp.office365.com";
+                    SmtpPort = 587;
                     break;
             }
 
