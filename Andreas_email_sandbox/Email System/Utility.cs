@@ -2,6 +2,7 @@
 using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Org.BouncyCastle.Asn1.X509;
 using System.Windows.Forms;
 
 namespace Email_System
@@ -10,6 +11,34 @@ namespace Email_System
     {
         public static string username = null!;
         public static string password = null!;
+
+        //maybe add even more names?
+        static string[] TrashFolderNames = { "Deleted", "Trash", "Papirkurv"};
+
+        static IMailFolder GetTrashFolder(ImapClient client, CancellationToken cancellationToken)
+        {
+            if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0)
+            {
+                var trashFolder = client.GetFolder(SpecialFolder.Trash);
+                return trashFolder;
+            }
+
+            else
+            {
+                var personal = client.GetFolder(client.PersonalNamespaces[0]);
+
+                foreach (var folder in personal.GetSubfolders(false, cancellationToken))
+                {
+                    foreach (var name in TrashFolderNames)
+                    {
+                        if (folder.Name == name)
+                            return folder;
+                    }
+                }
+            }
+
+            return null;
+        }
 
         public static async Task<ImapClient>  establishConnectionImap()
         {
@@ -101,23 +130,32 @@ namespace Email_System
                 return;
             }
 
+
             else if (result == DialogResult.Yes)
             {
-                var client = await Utility.establishConnectionImap();
+                try
+                {
+                    var client = await Utility.establishConnectionImap();
+                    var folder = await client.GetFolderAsync(mg.Folder.ToString());
 
-                var folder = await client.GetFolderAsync(mg.Folder.ToString());
-                var trashFolder = client.GetFolder(SpecialFolder.Trash);
+                    IMailFolder trashFolder = GetTrashFolder(client, CancellationToken.None);                    
 
-                await trashFolder.OpenAsync(FolderAccess.ReadWrite);
-                await folder.OpenAsync(FolderAccess.ReadWrite);
+                    await trashFolder.OpenAsync(FolderAccess.ReadWrite);
+                    await folder.OpenAsync(FolderAccess.ReadWrite);
 
-                await folder.MoveToAsync(mg.UniqueId, trashFolder);
+                    await folder.MoveToAsync(mg.UniqueId, trashFolder);
 
-                Utility.refreshCurrentFolder();
+                    Utility.refreshCurrentFolder();
 
-                await client.DisconnectAsync(true);
+                    await client.DisconnectAsync(true);
 
-                MessageBox.Show("The message has been moved to trash succesfully!");
+                    MessageBox.Show("The message has been moved to trash succesfully!");
+                }
+
+                catch(Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
             }
         }
     }

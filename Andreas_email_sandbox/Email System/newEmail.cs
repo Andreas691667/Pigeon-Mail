@@ -6,6 +6,7 @@ using Org.BouncyCastle.Asn1.X509;
 using MailKit.Net.Imap;
 using System.Net.Mail;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Email_System
 {
@@ -14,6 +15,8 @@ namespace Email_System
         IMessageSummary messageSender = null!;
         MimeMessage message = new MimeMessage();
         BodyBuilder builder = new BodyBuilder();
+
+        static string[] DraftFolderNames = { "Drafts", "Kladder", "Draft" };
 
 
         bool isDraft = false;
@@ -263,12 +266,29 @@ namespace Email_System
                 this.Close();
         }
 
-        private async Task<IMailFolder> getDraftFolder()
+        private IMailFolder getDraftFolder(ImapClient client, CancellationToken cancellationToken)
         {
-            var client = await Utility.establishConnectionImap();
-            var folder = client.GetFolder(SpecialFolder.Drafts);
+            if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0)
+            {
+                var trashFolder = client.GetFolder(SpecialFolder.Drafts);
+                return trashFolder;
+            }
 
-            return folder;
+            else
+            {
+                var personal = client.GetFolder(client.PersonalNamespaces[0]);
+
+                foreach (var folder in personal.GetSubfolders(false, cancellationToken))
+                {
+                    foreach (var name in DraftFolderNames)
+                    {
+                        if (folder.Name == name)
+                            return folder;
+                    }
+                }
+            }
+
+            return null;
         }
 
         private void buildDraftMessage(MimeMessage mg)
@@ -300,7 +320,7 @@ namespace Email_System
 
                 ImapClient client = await Utility.establishConnectionImap();
 
-                IMailFolder draftsFolder = await getDraftFolder();
+                IMailFolder draftsFolder = getDraftFolder(client, CancellationToken.None);
 
                 await draftsFolder.OpenAsync(FolderAccess.ReadWrite);
 

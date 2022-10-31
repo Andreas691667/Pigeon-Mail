@@ -6,6 +6,7 @@ using static System.Windows.Forms.AxHost;
 using System.Windows.Forms;
 using System.Linq.Expressions;
 using MimeKit;
+using System.Diagnostics;
 
 namespace Email_System
 {
@@ -327,25 +328,28 @@ namespace Email_System
                 var messageIndex = messageLb.SelectedIndex;
                 var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
 
-                if(message.Flags.Value.HasFlag(MessageFlags.Flagged))
+                if (message.Flags.Value.HasFlag(MessageFlags.Flagged))
                 {
-                    removeFlagBt.PerformClick();
+                    removeFlagBt_Click();
+                    Debug.WriteLine("Removing flag");
                 }
 
-                this.Cursor = Cursors.WaitCursor;
-                var client = await Utility.establishConnectionImap();
+                else
+                {
 
-                //add flag to message
-                var folder = await client.GetFolderAsync(message.Folder.ToString());
-                await folder.OpenAsync(FolderAccess.ReadWrite);
+                    this.Cursor = Cursors.WaitCursor;
+                    var client = await Utility.establishConnectionImap();
 
-                await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
-                await client.DisconnectAsync(true);
-                await client.DisconnectAsync(true);
+                    //add flag to message
+                    var folder = await client.GetFolderAsync(message.Folder.ToString());
+                    await folder.OpenAsync(FolderAccess.ReadWrite);
 
-                Utility.refreshCurrentFolder();
+                    await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
 
-                await client.DisconnectAsync(true);
+                    Utility.refreshCurrentFolder();
+
+                    await client.DisconnectAsync(true);
+                }
             }
 
             catch
@@ -354,7 +358,7 @@ namespace Email_System
             }
         }
 
-        private async void removeFlagBt_Click(object sender, EventArgs e)
+        private async void removeFlagBt_Click(object sender = null!, EventArgs e = null!)
         {
             try
             {
@@ -369,7 +373,6 @@ namespace Email_System
                 await folder.OpenAsync(FolderAccess.ReadWrite);
 
                 await folder.RemoveFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
-                await client.DisconnectAsync(true);
 
                 Utility.refreshCurrentFolder();
 
