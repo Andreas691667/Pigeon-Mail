@@ -36,30 +36,34 @@
             this.recipientLabel = new System.Windows.Forms.Label();
             this.CcLabel = new System.Windows.Forms.Label();
             this.SubjectLabel = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.exitBt = new System.Windows.Forms.Button();
             this.draftBt = new System.Windows.Forms.Button();
             this.addAttachmentBt = new System.Windows.Forms.Button();
             this.attachmentsLabel = new System.Windows.Forms.Label();
             this.attachmentsLb = new System.Windows.Forms.ListBox();
+            this.removeAttachmentBt = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // sendBt
             // 
             this.sendBt.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.sendBt.Location = new System.Drawing.Point(12, 399);
+            this.sendBt.Image = global::Email_System.Properties.Resources.icons8_email_send_32;
+            this.sendBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.sendBt.Location = new System.Drawing.Point(12, 430);
             this.sendBt.Name = "sendBt";
-            this.sendBt.Size = new System.Drawing.Size(137, 64);
+            this.sendBt.Size = new System.Drawing.Size(74, 64);
             this.sendBt.TabIndex = 0;
-            this.sendBt.Text = "Send e-mail";
+            this.sendBt.Text = "Send";
+            this.sendBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.sendBt.UseVisualStyleBackColor = true;
             this.sendBt.Click += new System.EventHandler(this.sendBt_Click);
             // 
             // messageBodyTb
             // 
-            this.messageBodyTb.Location = new System.Drawing.Point(262, 229);
+            this.messageBodyTb.Location = new System.Drawing.Point(262, 168);
             this.messageBodyTb.Name = "messageBodyTb";
-            this.messageBodyTb.Size = new System.Drawing.Size(642, 265);
+            this.messageBodyTb.Size = new System.Drawing.Size(642, 326);
             this.messageBodyTb.TabIndex = 1;
             this.messageBodyTb.Text = "";
             // 
@@ -111,45 +115,44 @@
             this.SubjectLabel.TabIndex = 7;
             this.SubjectLabel.Text = "Subject";
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(262, 198);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(70, 20);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Message:";
-            this.label4.Visible = false;
-            // 
             // exitBt
             // 
             this.exitBt.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.exitBt.Location = new System.Drawing.Point(155, 399);
+            this.exitBt.Image = global::Email_System.Properties.Resources.icons8_close_32;
+            this.exitBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.exitBt.Location = new System.Drawing.Point(101, 430);
             this.exitBt.Name = "exitBt";
             this.exitBt.Size = new System.Drawing.Size(78, 64);
             this.exitBt.TabIndex = 9;
             this.exitBt.Text = "Cancel";
+            this.exitBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.exitBt.UseVisualStyleBackColor = true;
             this.exitBt.Click += new System.EventHandler(this.exitBt_Click);
             // 
             // draftBt
             // 
             this.draftBt.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.draftBt.Location = new System.Drawing.Point(12, 320);
+            this.draftBt.Image = global::Email_System.Properties.Resources.icons8_draft_32;
+            this.draftBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.draftBt.Location = new System.Drawing.Point(12, 363);
             this.draftBt.Name = "draftBt";
-            this.draftBt.Size = new System.Drawing.Size(94, 61);
+            this.draftBt.Size = new System.Drawing.Size(74, 61);
             this.draftBt.TabIndex = 10;
-            this.draftBt.Text = "Save as draft";
+            this.draftBt.Text = "Draft";
+            this.draftBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.draftBt.UseVisualStyleBackColor = true;
             this.draftBt.Click += new System.EventHandler(this.draftBt_Click);
             // 
             // addAttachmentBt
             // 
-            this.addAttachmentBt.Location = new System.Drawing.Point(12, 247);
+            this.addAttachmentBt.Image = global::Email_System.Properties.Resources.icons8_attach_32;
+            this.addAttachmentBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.addAttachmentBt.Location = new System.Drawing.Point(12, 304);
             this.addAttachmentBt.Name = "addAttachmentBt";
-            this.addAttachmentBt.Size = new System.Drawing.Size(94, 53);
+            this.addAttachmentBt.Size = new System.Drawing.Size(74, 53);
             this.addAttachmentBt.TabIndex = 11;
-            this.addAttachmentBt.Text = "Add Attachment";
+            this.addAttachmentBt.Text = "Attach";
+            this.addAttachmentBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.addAttachmentBt.UseVisualStyleBackColor = true;
             this.addAttachmentBt.Click += new System.EventHandler(this.addAttachmentBt_Click);
             // 
@@ -170,9 +173,33 @@
             this.attachmentsLb.ItemHeight = 20;
             this.attachmentsLb.Location = new System.Drawing.Point(21, 32);
             this.attachmentsLb.Name = "attachmentsLb";
-            this.attachmentsLb.Size = new System.Drawing.Size(134, 84);
+            this.attachmentsLb.Size = new System.Drawing.Size(188, 104);
             this.attachmentsLb.TabIndex = 14;
             this.attachmentsLb.Visible = false;
+            // 
+            // removeAttachmentBt
+            // 
+            this.removeAttachmentBt.Image = global::Email_System.Properties.Resources.icons8_file_delete_32;
+            this.removeAttachmentBt.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.removeAttachmentBt.Location = new System.Drawing.Point(20, 147);
+            this.removeAttachmentBt.Name = "removeAttachmentBt";
+            this.removeAttachmentBt.Size = new System.Drawing.Size(111, 45);
+            this.removeAttachmentBt.TabIndex = 15;
+            this.removeAttachmentBt.Text = "Remove";
+            this.removeAttachmentBt.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.removeAttachmentBt.UseVisualStyleBackColor = true;
+            this.removeAttachmentBt.Visible = false;
+            this.removeAttachmentBt.Click += new System.EventHandler(this.removeAttachmentBt_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(262, 130);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(70, 20);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Message:";
+            this.label4.Visible = false;
             // 
             // newEmail
             // 
@@ -180,6 +207,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(916, 506);
+            this.Controls.Add(this.removeAttachmentBt);
             this.Controls.Add(this.attachmentsLb);
             this.Controls.Add(this.attachmentsLabel);
             this.Controls.Add(this.addAttachmentBt);
@@ -194,6 +222,7 @@
             this.Controls.Add(this.recipientsTb);
             this.Controls.Add(this.messageBodyTb);
             this.Controls.Add(this.sendBt);
+            this.MinimumSize = new System.Drawing.Size(934, 553);
             this.Name = "newEmail";
             this.Text = "Form2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.newEmail_FormClosing);
@@ -212,11 +241,12 @@
         private Label recipientLabel;
         private Label CcLabel;
         private Label SubjectLabel;
-        private Label label4;
         private Button exitBt;
         private Button draftBt;
         private Button addAttachmentBt;
         private Label attachmentsLabel;
         private ListBox attachmentsLb;
+        private Button removeAttachmentBt;
+        private Label label4;
     }
 }

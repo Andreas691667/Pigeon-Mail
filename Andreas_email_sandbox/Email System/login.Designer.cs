@@ -141,7 +141,9 @@
             this.Controls.Add(this.companyImage);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(536, 466);
             this.Name = "login";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Login";
             ((System.ComponentModel.ISupportInitialize)(this.companyImage)).EndInit();
             this.ResumeLayout(false);

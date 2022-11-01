@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Linq.Expressions;
 using MimeKit;
 using System.Diagnostics;
+using MailKit.Search;
 
 namespace Email_System
 {
@@ -38,8 +39,6 @@ namespace Email_System
 
         private async Task<IMailFolder> getCurrentFolder(ImapClient client)
         {
- //         var client = await Utility.establishConnectionImap();
-
             var folder = await client.GetFolderAsync(folderLb.SelectedValue.ToString());
             return folder;
         }
@@ -179,7 +178,7 @@ namespace Email_System
             new newEmail(0).Show();
         }
 
-        private void openFolderAsDraft(IList<IMessageSummary> messages)
+        private void openFolderAsDraft(IList<IMessageSummary> messages, IMailFolder folder)
         {
             addFlagBt.Visible = false;
             removeFlagBt.Visible = false;
@@ -192,6 +191,12 @@ namespace Email_System
 
             foreach(var item in messages.Reverse())
             {
+                if (!item.Flags.Value.HasFlag(MessageFlags.Draft))
+                {
+                    folder.AddFlags(item.UniqueId, MessageFlags.Draft, true);
+                    folder.Expunge();
+                }
+
                 string subject = "(DRAFT) ";
 
                 if (item.Envelope.Subject != null)
@@ -223,7 +228,7 @@ namespace Email_System
 
                 var folder = await getCurrentFolder(client);
 
-                await folder.OpenAsync(FolderAccess.ReadOnly);
+                await folder.OpenAsync(FolderAccess.ReadWrite);
 
                 var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
 
@@ -239,7 +244,8 @@ namespace Email_System
 
                 else if(folder.Attributes.HasFlag(FolderAttributes.Drafts))
                 {
-                    openFolderAsDraft(messages);
+                    openFolderAsDraft(messages, folder);
+                    //await folder.ExpungeAsync();
                 }
 
                 else
@@ -432,6 +438,85 @@ namespace Email_System
             login l = login.GetInstance;
             l.Show();
             instance.Dispose();
+        }
+
+        private async void search(string searchQuery)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            this.Enabled = false;
+
+            var client = await Utility.establishConnectionImap();
+
+            var folder = await getCurrentFolder(client);
+
+            folder.Open(FolderAccess.ReadWrite);
+
+            if (contentRBT.Checked)
+            {
+                var uids = folder.Search(SearchQuery.BodyContains(searchQuery));
+                searchresults(uids, folder);
+            }
+
+            else if (subjectRBT.Checked)
+            {
+                var uids = folder.Search(SearchQuery.SubjectContains(searchQuery));
+                searchresults(uids, folder);
+            }
+
+            else if (senderRBT.Checked)
+            {
+                var uids = folder.Search(SearchQuery.FromContains(searchQuery));
+                searchresults(uids, folder);
+            }
+
+            else
+                MessageBox.Show("Please specify a search query");
+
+            this.Cursor = Cursors.Default;
+            this.Enabled = true;
+        }
+
+        private void searchresults(IList<UniqueId> uids, IMailFolder folder)
+        {
+            messageLb.Items.Clear();
+            IList<IMessageSummary> messages = folder.Fetch(uids, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
+
+            messageSummaries = messages;
+
+            if (messages.Count <= 0)
+            {
+                toggleButtons(false);
+                messageLb.Items.Add("No results!");
+            }
+
+            foreach (var item in messages.Reverse())
+            {
+                toggleButtons(true);
+                messageFlagCheck(item);
+            }
+        }
+
+        private void searchBt_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(searchTb.Text))
+            {
+                string searchQuery = searchTb.Text;
+                search(searchQuery);
+            }
+
+            else
+            {
+                MessageBox.Show("No search query");
+            }
+        }
+
+        private void searchTb_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Enter)
+            {
+                searchBt.PerformClick();
+                e.SuppressKeyPress = true;
+            }
         }
     }
 }

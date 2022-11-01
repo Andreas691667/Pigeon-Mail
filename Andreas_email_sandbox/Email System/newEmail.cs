@@ -7,6 +7,7 @@ using MailKit.Net.Imap;
 using System.Net.Mail;
 using System.Diagnostics;
 using System.Threading;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace Email_System
 {
@@ -15,6 +16,9 @@ namespace Email_System
         IMessageSummary messageSender = null!;
         MimeMessage message = new MimeMessage();
         BodyBuilder builder = new BodyBuilder();
+
+        Dictionary<string, string> attachments = new Dictionary<string, string>();
+
 
         static string[] DraftFolderNames = { "Drafts", "Kladder", "Draft" };
 
@@ -28,66 +32,93 @@ namespace Email_System
         // 2: reply all
         // 3: forward
         // 4: drafts (not implemented)
-        public newEmail(int typeKey, IMessageSummary m = null!, string body = null!)
+        public newEmail(int flag, IMessageSummary m = null!, string body = null!)
         {
             InitializeComponent();
 
-            if (typeKey == 1 && m != null)
+            if(m != null)
             {
                 messageSender = m;
 
-                string recipient = (messageSender.Envelope.From.ToString()).Substring(messageSender.Envelope.From.ToString().LastIndexOf("<"));  
-                recipientsTb.Text = recipient;
-                subjectTb.Text = "Re: " + messageSender.Envelope.Subject;
-            }
-
-            else if(typeKey == 2 && m != null)
-            {
-                messageSender = m;
-
-                subjectTb.Text = "Re: " + messageSender.Envelope.Subject;
-
-                string recipient = (messageSender.Envelope.From.ToString()).Substring(messageSender.Envelope.From.ToString().LastIndexOf("<"));
-                recipientsTb.Text = recipient;
-
-                string[] ccRecipients = messageSender.Envelope.Cc.ToString().Split(",");
-                
-                foreach (var rec in ccRecipients)
+                switch(flag)
                 {
-                    ccRecipientsTb.AppendText(rec + ", ");
+                    case 0:
+                        break;
+                    case 1:
+                        flagReply();
+                        break;
+                    case 2:
+                        flagReplyAll();
+                        break;
+                    case 3:
+                        flagForward(body);
+                        break;
+                    case 4:
+                        flagDraft(body);
+                        break;
                 }
-
-                ccRecipientsTb.Text = ccRecipientsTb.Text.Remove(ccRecipientsTb.Text.Length - 2);
-            }
-
-            else if(typeKey == 3 && m != null)
-            {
-                messageSender = m;
-
-                subjectTb.Text = "Fwrd: " + messageSender.Envelope.Subject;
-
-                messageBodyTb.AppendText(Environment.NewLine);
-                messageBodyTb.AppendText("-------- Forwarded message --------");
-                messageBodyTb.AppendText(Environment.NewLine);
-                messageBodyTb.AppendText(messageSender.Envelope.From.ToString());
-                messageBodyTb.AppendText(Environment.NewLine);
-                messageBodyTb.AppendText(messageSender.Date.ToString());
-                messageBodyTb.AppendText(Environment.NewLine);
-                messageBodyTb.AppendText(messageSender.Envelope.To.ToString());
-                messageBodyTb.AppendText(Environment.NewLine);
-                messageBodyTb.AppendText(body);
-            }
-
-            else if(typeKey == 4 && m!= null)
-            {
-                isDraft = true;
-
-                messageSender = m;
-                subjectTb.Text = messageSender.Envelope.Subject;
-                messageBodyTb.AppendText(body);
-                recipientsTb.Text = messageSender.Envelope.To.ToString();            
             }
         }
+
+        #region switch methods
+
+        private void flagReply()
+        {
+            //messageSender = m;
+
+            string recipient = (messageSender.Envelope.From.ToString()).Substring(messageSender.Envelope.From.ToString().LastIndexOf("<"));
+            recipientsTb.Text = recipient;
+            subjectTb.Text = "Re: " + messageSender.Envelope.Subject;
+        }
+
+        private void flagReplyAll()
+        {
+            //messageSender = m;
+
+            subjectTb.Text = "Re: " + messageSender.Envelope.Subject;
+
+            string recipient = (messageSender.Envelope.From.ToString()).Substring(messageSender.Envelope.From.ToString().LastIndexOf("<"));
+            recipientsTb.Text = recipient;
+
+            string[] ccRecipients = messageSender.Envelope.Cc.ToString().Split(",");
+
+            foreach (var rec in ccRecipients)
+            {
+                ccRecipientsTb.AppendText(rec + ", ");
+            }
+
+            ccRecipientsTb.Text = ccRecipientsTb.Text.Remove(ccRecipientsTb.Text.Length - 2);
+        }
+
+        private void flagForward(string body)
+        {
+            //messageSender = m;
+
+            subjectTb.Text = "Fwrd: " + messageSender.Envelope.Subject;
+
+            messageBodyTb.AppendText(Environment.NewLine);
+            messageBodyTb.AppendText("-------- Forwarded message --------");
+            messageBodyTb.AppendText(Environment.NewLine);
+            messageBodyTb.AppendText(messageSender.Envelope.From.ToString());
+            messageBodyTb.AppendText(Environment.NewLine);
+            messageBodyTb.AppendText(messageSender.Date.ToString());
+            messageBodyTb.AppendText(Environment.NewLine);
+            messageBodyTb.AppendText(messageSender.Envelope.To.ToString());
+            messageBodyTb.AppendText(Environment.NewLine);
+            messageBodyTb.AppendText(body);
+        }
+
+        private void flagDraft(string body)
+        {
+            isDraft = true;
+
+            //messageSender = m;
+            subjectTb.Text = messageSender.Envelope.Subject;
+            messageBodyTb.AppendText(body);
+            recipientsTb.Text = messageSender.Envelope.To.ToString();
+        }
+
+        #endregion
 
         #region Build message
 
@@ -186,8 +217,20 @@ namespace Email_System
             {
                 attachmentsLabel.Visible = true;
                 attachmentsLb.Visible = true;
+                removeAttachmentBt.Visible = true;
+
                 string fileName = openFileDialog.FileName;
-                attachmentsLb.Items.Add(fileName.Substring(fileName.LastIndexOf('\\') + 1) + " ");
+                string fileNameShort = fileName.Substring(fileName.LastIndexOf('\\') + 1) + " ";
+
+                attachmentsLb.Items.Add(fileNameShort);
+                
+/*                attachments.Add(key: fileName, value: fileNameShort);
+                attachmentsLb.DataSource = new BindingSource(attachments, null);
+
+                // specify the display member and value member
+                attachmentsLb.DisplayMember = "Value";
+                attachmentsLb.ValueMember = "Key";*/
+
                 return fileName;
             }
 
@@ -199,7 +242,6 @@ namespace Email_System
 
         private void sendBt_Click(object sender, EventArgs e)
         {
-
             message.From.Add(new MailboxAddress(Utility.username, Utility.username));            
 
             addRecipient(message);
@@ -318,11 +360,16 @@ namespace Email_System
                 MimeMessage mg = new MimeMessage();
                 buildDraftMessage(mg);
 
+
                 ImapClient client = await Utility.establishConnectionImap();
 
                 IMailFolder draftsFolder = getDraftFolder(client, CancellationToken.None);
 
                 await draftsFolder.OpenAsync(FolderAccess.ReadWrite);
+
+                
+                //draftsFolder.AddFlags(mg.MessageId, MessageFlags.Draft, true);
+
 
                 draftsFolder.Append(mg, MessageFlags.Draft);
 
@@ -369,6 +416,30 @@ namespace Email_System
         private void addAttachmentBt_Click(object sender, EventArgs e)
         {
             addAttachment(message);
+        }
+
+        private void removeAttachmentBt_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //remove item from the listbox
+                var attachmentIndex = attachmentsLb.SelectedIndex;
+                attachmentsLb.Items.RemoveAt(attachmentIndex);
+                //remove from message
+                builder.Attachments.RemoveAt(attachmentIndex);
+            }
+
+            catch
+            {
+                MessageBox.Show("No attachment selected!");
+            }
+
+            if(builder.Attachments.Count <= 0)
+            {
+                removeAttachmentBt.Visible = false;
+                attachmentsLb.Visible = false;
+                attachmentsLabel.Visible = false;
+            }
         }
     }
 }
