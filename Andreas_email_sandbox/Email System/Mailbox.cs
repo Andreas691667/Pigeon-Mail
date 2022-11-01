@@ -92,11 +92,11 @@ namespace Email_System
             RetrieveInboxMessages();
 
             bool foldersLoaded = false;
-            //new waitForm().Show();
 
             while (!foldersLoaded)
             {
                 this.Cursor = Cursors.WaitCursor;
+                this.Enabled = false;
 
                 var client = await Utility.establishConnectionImap();
 
@@ -125,12 +125,12 @@ namespace Email_System
                 folderLb.ValueMember = "Key";
 
                 foldersLoaded = true;
+
                 //disconnect from the client
                 await client.DisconnectAsync(true);
-                //this.Cursor = Cursors.Default;
-            }
-
-            
+                this.Cursor = Cursors.Default;
+                this.Enabled = true;
+            }            
         }
         private async void RetrieveInboxMessages()
         {
@@ -140,6 +140,7 @@ namespace Email_System
             if (!messagesLoaded)
             {
                 this.Cursor = Cursors.WaitCursor;
+                this.Enabled = false;
 
                 var client = await Utility.establishConnectionImap();
                 var folder = client.Inbox;
@@ -169,6 +170,7 @@ namespace Email_System
                 await client.DisconnectAsync(true);
             }
             this.Cursor = Cursors.Default;
+            this.Enabled = true;
             messagesLoaded = true;
         }
 
@@ -217,12 +219,12 @@ namespace Email_System
         // method to retrieve the messages from the folder when this folder is double clicked
         private async void RetrieveMessages(object sender = null!, MouseEventArgs e = null!)
         {
-            bool messagesLoaded = false;
-            
+            bool messagesLoaded = false;            
 
             while (!messagesLoaded)
             {
-                this.Cursor = Cursors.WaitCursor;                         
+                this.Cursor = Cursors.WaitCursor;
+                this.Enabled = false;
 
                 var client = await Utility.establishConnectionImap();
 
@@ -266,6 +268,7 @@ namespace Email_System
                 messagesLoaded = true;
             }
             this.Cursor = Cursors.Default;
+            this.Enabled = true;
             
         }
 
@@ -277,6 +280,7 @@ namespace Email_System
             if (!messageLoaded) 
             {
                 this.Cursor = Cursors.WaitCursor;
+                this.Enabled = false;
 
                 var client = await Utility.establishConnectionImap();
 
@@ -302,13 +306,15 @@ namespace Email_System
 
                     // create a new instance of the readMessage form with the retrieved message as input
                     new readMessage(currentMessage).Show();
-
                 }
 
                 await client.DisconnectAsync(true);
+
+                this.Cursor = Cursors.Default;
+                this.Enabled = true;
             }
             
-            this.Cursor = Cursors.Default;
+
             messageLoaded = true;
         }
 
@@ -344,6 +350,7 @@ namespace Email_System
                 {
 
                     this.Cursor = Cursors.WaitCursor;
+                    this.Enabled = false;
                     var client = await Utility.establishConnectionImap();
 
                     //add flag to message
@@ -355,6 +362,7 @@ namespace Email_System
                     Utility.refreshCurrentFolder();
 
                     await client.DisconnectAsync(true);
+                    this.Enabled = true;
                 }
             }
 
@@ -372,6 +380,8 @@ namespace Email_System
                 var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
 
                 this.Cursor = Cursors.WaitCursor;
+                this.Enabled = false;
+
                 var client = await Utility.establishConnectionImap();
 
                 //add flag to message
@@ -383,6 +393,7 @@ namespace Email_System
                 Utility.refreshCurrentFolder();
 
                 await client.DisconnectAsync(true);
+                this.Enabled = true;
             }
 
             catch
@@ -417,6 +428,7 @@ namespace Email_System
                 var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
 
                 this.Cursor = Cursors.WaitCursor;
+
                 Utility.moveMessageToTrash(message);
             }
 

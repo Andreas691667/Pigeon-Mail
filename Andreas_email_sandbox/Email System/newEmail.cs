@@ -25,6 +25,7 @@ namespace Email_System
 
         bool isDraft = false;
         bool exitFromBt = false;
+        bool messageSent = false;
 
         //type keys:
         // 0: blank email
@@ -261,12 +262,12 @@ namespace Email_System
                 client.Send(message);
 
                 MessageBox.Show("Message sent successfully!");
-                //messageSent = true;
+                messageSent = true;
 
-                recipientsTb.Clear();
+/*                recipientsTb.Clear();
                 ccRecipientsTb.Clear();
                 subjectTb.Clear();
-                messageBodyTb.Clear();
+                messageBodyTb.Clear();*/
                 this.Close();
             }
 
@@ -385,7 +386,12 @@ namespace Email_System
 
         private void newEmail_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!allEmpty() && !exitFromBt)
+            if(messageSent)
+            {
+                return;
+            }
+
+            else if (!allEmpty() && !exitFromBt)
             {
                 DialogResult result = MessageBox.Show("Do you wish to save the mail in 'Drafts'?", "Save as draft?", MessageBoxButtons.YesNo);
 
