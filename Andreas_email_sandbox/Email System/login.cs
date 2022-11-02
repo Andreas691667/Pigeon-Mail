@@ -39,7 +39,6 @@ namespace Email_System
             }
         }
 
-
         private void loginBt_Click(object sender, EventArgs e)
         {
             if(rememberMeCB.Checked)
@@ -60,9 +59,7 @@ namespace Email_System
             string password = passwordTb.Text;
 
             Utility.username = usernameTb.Text;
-            Utility.password = passwordTb.Text;
-
-            
+            Utility.password = passwordTb.Text;            
 
             SmtpClient client = new SmtpClient();
 
@@ -80,6 +77,9 @@ namespace Email_System
                     case "smtp.office365.com":
                         client.Connect(Properties.Settings.Default.SmtpServer, Properties.Settings.Default.SmtpPort, SecureSocketOptions.StartTls);
                         break;
+
+                    default:
+                        return;
                 }
 
                 Debug.WriteLine("connecting");
@@ -138,6 +138,10 @@ namespace Email_System
                     Imapport = 993;
                     SmtpServer = "smtp.office365.com";
                     SmtpPort = 587;
+                    break;
+
+                default:
+                    MessageBox.Show("E-mail provider not supported.");
                     break;
             }
 

@@ -8,6 +8,8 @@ using System.Net.Mail;
 using System.Diagnostics;
 using System.Threading;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
+using System.Windows.Forms.Design;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace Email_System
 {
@@ -17,7 +19,7 @@ namespace Email_System
         MimeMessage message = new MimeMessage();
         BodyBuilder builder = new BodyBuilder();
 
-        Dictionary<string, string> attachments = new Dictionary<string, string>();
+        //Dictionary<string, string> attachments = new Dictionary<string, string>();
 
 
         static string[] DraftFolderNames = { "Drafts", "Kladder", "Draft" };
@@ -109,11 +111,30 @@ namespace Email_System
             messageBodyTb.AppendText(body);
         }
 
+/*        private async void getAttachments()
+        {
+            var client = await Utility.establishConnectionImap();
+
+            var folder = getDraftFolder(client, CancellationToken.None);
+
+            var bodyPart = messageSender.Attachments.ToList();
+
+            var s = (MimeEntity)folder.GetBodyPart(messageSender.UniqueId, bodyPart);
+        }*/
+
         private void flagDraft(string body)
         {
             isDraft = true;
+            attachmentsLb.Visible = true;
+            //how to add attachments???
 
-            //messageSender = m;
+            var attachments = messageSender.Attachments.ToList();
+
+            foreach (var item in attachments)
+            {
+                attachmentsLb.Items.Add(item.FileName);
+            }
+
             subjectTb.Text = messageSender.Envelope.Subject;
             messageBodyTb.AppendText(body);
             recipientsTb.Text = messageSender.Envelope.To.ToString();
@@ -198,12 +219,16 @@ namespace Email_System
             }
         }
 
-        private void addAttachment(MimeMessage message)
+        private void addAttachment(string fileName = null!)
         {
-            string fileName = chooseAttachment();
+            if (fileName == null)
+                fileName = chooseAttachment();
 
             if (!string.IsNullOrEmpty(fileName))
+            {
+                attachmentsLb.Visible = true;
                 builder.Attachments.Add(@fileName);
+            }
         }
 
         private string chooseAttachment()
@@ -224,13 +249,6 @@ namespace Email_System
                 string fileNameShort = fileName.Substring(fileName.LastIndexOf('\\') + 1) + " ";
 
                 attachmentsLb.Items.Add(fileNameShort);
-                
-/*                attachments.Add(key: fileName, value: fileNameShort);
-                attachmentsLb.DataSource = new BindingSource(attachments, null);
-
-                // specify the display member and value member
-                attachmentsLb.DisplayMember = "Value";
-                attachmentsLb.ValueMember = "Key";*/
 
                 return fileName;
             }
@@ -243,6 +261,9 @@ namespace Email_System
 
         private void sendBt_Click(object sender, EventArgs e)
         {
+            this.Enabled = false;
+            this.Cursor = Cursors.WaitCursor;
+
             message.From.Add(new MailboxAddress(Utility.username, Utility.username));            
 
             addRecipient(message);
@@ -259,15 +280,17 @@ namespace Email_System
 
             try
             {
+                if (isDraft)
+                {
+                    Utility.deleteMessage(messageSender, true);
+                }
+
                 client.Send(message);
 
                 MessageBox.Show("Message sent successfully!");
+
                 messageSent = true;
 
-/*                recipientsTb.Clear();
-                ccRecipientsTb.Clear();
-                subjectTb.Clear();
-                messageBodyTb.Clear();*/
                 this.Close();
             }
 
@@ -278,6 +301,8 @@ namespace Email_System
 
             finally
             {
+                this.Enabled = true;
+                this.Cursor = Cursors.Default;
                 client.Disconnect(true);
                 client.Dispose();
             }
@@ -336,12 +361,20 @@ namespace Email_System
 
         private void buildDraftMessage(MimeMessage mg)
         {
+            BodyBuilder b = new BodyBuilder();
+
             mg.Subject = subjectTb.Text;
 
-            mg.Body = new TextPart("plain")
+            if (string.IsNullOrEmpty(messageBodyTb.Text))
             {
-                Text = messageBodyTb.Text
-            };
+
+                b.TextBody = @"";
+
+            }
+            else
+            {
+                b.TextBody = messageBodyTb.Text;
+            }
 
             if (!string.IsNullOrEmpty(recipientsTb.Text))
             {
@@ -352,6 +385,17 @@ namespace Email_System
                     mg.To.Add(MailboxAddress.Parse(rec));
                 }
             }
+
+            if(attachmentsLb.Items.Count > 0)
+            {
+                foreach (var item in builder.Attachments)
+                {
+                    b.Attachments.Add(item);
+                    
+                }
+            }
+
+            mg.Body = b.ToMessageBody();
         }
 
         private async void saveAsDraft()
@@ -361,16 +405,13 @@ namespace Email_System
                 MimeMessage mg = new MimeMessage();
                 buildDraftMessage(mg);
 
-
                 ImapClient client = await Utility.establishConnectionImap();
 
                 IMailFolder draftsFolder = getDraftFolder(client, CancellationToken.None);
 
                 await draftsFolder.OpenAsync(FolderAccess.ReadWrite);
-
                 
                 //draftsFolder.AddFlags(mg.MessageId, MessageFlags.Draft, true);
-
 
                 draftsFolder.Append(mg, MessageFlags.Draft);
 
@@ -421,7 +462,7 @@ namespace Email_System
 
         private void addAttachmentBt_Click(object sender, EventArgs e)
         {
-            addAttachment(message);
+            addAttachment();
         }
 
         private void removeAttachmentBt_Click(object sender, EventArgs e)

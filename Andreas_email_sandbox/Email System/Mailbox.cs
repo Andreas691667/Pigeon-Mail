@@ -297,6 +297,7 @@ namespace Email_System
                 if (folder.Attributes.HasFlag(FolderAttributes.Drafts))
                 {
                     var body = (TextPart)folder.GetBodyPart(currentMessage.UniqueId, currentMessage.TextBody);
+
                     new newEmail(4, currentMessage, body.Text).Show();
                 }
 
@@ -320,7 +321,24 @@ namespace Email_System
 
         private void refreshBt_Click(object sender, EventArgs e)
         {
-            Utility.refreshCurrentFolder();
+            try
+            {
+                this.Cursor = Cursors.WaitCursor;
+                this.Enabled = false;
+                Utility.refreshCurrentFolder();
+            }
+
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
+            finally
+            {
+                this.Cursor = Cursors.Default;
+                this.Enabled = true;
+            }
+
         }
 
         private void refreshTimer_Tick(object sender, EventArgs e)
@@ -410,12 +428,19 @@ namespace Email_System
                 var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
 
                 this.Cursor = Cursors.WaitCursor;
+                this.Enabled = false;
                 Utility.deleteMessage(message);                
             }
 
             catch
             {
                 MessageBox.Show("No message selected!");
+            }
+
+            finally
+            {
+                this.Cursor = Cursors.Default;
+                this.Enabled = true;
             }
 
         }
@@ -428,6 +453,7 @@ namespace Email_System
                 var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
 
                 this.Cursor = Cursors.WaitCursor;
+                this.Enabled = false;
 
                 Utility.moveMessageToTrash(message);
             }
@@ -435,6 +461,12 @@ namespace Email_System
             catch
             {
                 MessageBox.Show("No message selected!");
+            }
+
+            finally
+            {
+                this.Cursor = Cursors.Default;
+                this.Enabled = true;
             }
 
 
