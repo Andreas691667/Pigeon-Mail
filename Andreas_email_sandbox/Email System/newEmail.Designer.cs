@@ -73,6 +73,8 @@
             this.recipientsTb.Name = "recipientsTb";
             this.recipientsTb.Size = new System.Drawing.Size(405, 27);
             this.recipientsTb.TabIndex = 2;
+            this.recipientsTb.MouseHover += new System.EventHandler(this.recipientsTb_MouseHover);
+            this.recipientsTb.Validating += new System.ComponentModel.CancelEventHandler(this.recipientsTb_Validating);
             // 
             // ccRecipientsTb
             // 
@@ -80,6 +82,7 @@
             this.ccRecipientsTb.Name = "ccRecipientsTb";
             this.ccRecipientsTb.Size = new System.Drawing.Size(405, 27);
             this.ccRecipientsTb.TabIndex = 3;
+            this.ccRecipientsTb.Validating += new System.ComponentModel.CancelEventHandler(this.ccRecipientsTb_Validating);
             // 
             // subjectTb
             // 

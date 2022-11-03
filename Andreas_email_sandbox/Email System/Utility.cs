@@ -128,16 +128,11 @@ namespace Email_System
             else
             {
                 var client = await Utility.establishConnectionImap();
-
                 var folder = await client.GetFolderAsync(mg.Folder.ToString());
-
                 await folder.OpenAsync(FolderAccess.ReadWrite);
-
                 await folder.AddFlagsAsync(mg.UniqueId, MessageFlags.Deleted, true);
                 await folder.ExpungeAsync();
-
                 Utility.refreshCurrentFolder();
-
                 await client.DisconnectAsync(true);
             }
         }

@@ -48,3 +48,4 @@ C:\Users\Andreas\source\repos\Software_engineering_project\Andreas_email_sandbox
 C:\Users\Andreas\source\repos\Software_engineering_project\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email_System.Properties.Resources.resources
 C:\Users\Andreas\source\repos\Software_engineering_project\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\Email System.dll.config
 C:\Users\Andreas\source\repos\Software_engineering_project\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email_System.Settings.resources
+C:\Users\Andreas\source\repos\Software_engineering_project\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\EmailValidation.dll

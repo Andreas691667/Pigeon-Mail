@@ -374,7 +374,6 @@ namespace Email_System
                     //add flag to message
                     var folder = await client.GetFolderAsync(message.Folder.ToString());
                     await folder.OpenAsync(FolderAccess.ReadWrite);
-
                     await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
 
                     Utility.refreshCurrentFolder();

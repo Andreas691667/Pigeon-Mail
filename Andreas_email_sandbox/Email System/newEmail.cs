@@ -10,6 +10,10 @@ using System.Threading;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 using System.Windows.Forms.Design;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using EmailValidation;
+using System.Text.RegularExpressions;
+using Org.BouncyCastle.Cms;
+using System.Linq.Expressions;
 
 namespace Email_System
 {
@@ -39,11 +43,11 @@ namespace Email_System
         {
             InitializeComponent();
 
-            if(m != null)
+            if (m != null)
             {
                 messageSender = m;
 
-                switch(flag)
+                switch (flag)
                 {
                     case 0:
                         break;
@@ -111,33 +115,91 @@ namespace Email_System
             messageBodyTb.AppendText(body);
         }
 
-/*        private async void getAttachments()
-        {
-            var client = await Utility.establishConnectionImap();
+        /*        private async void getAttachments()
+                {
+                    var client = await Utility.establishConnectionImap();
 
-            var folder = getDraftFolder(client, CancellationToken.None);
+                    var folder = getDraftFolder(client, CancellationToken.None);
 
-            var bodyPart = messageSender.Attachments.ToList();
+                    var bodyPart = messageSender.Attachments.ToList();
 
-            var s = (MimeEntity)folder.GetBodyPart(messageSender.UniqueId, bodyPart);
-        }*/
+                    var s = (MimeEntity)folder.GetBodyPart(messageSender.UniqueId, bodyPart);
+                }*/
 
-        private void flagDraft(string body)
+        private async void flagDraft(string body)
         {
             isDraft = true;
-            attachmentsLb.Visible = true;
-            //how to add attachments???
 
-            var attachments = messageSender.Attachments.ToList();
-
-            foreach (var item in attachments)
+            if (!string.IsNullOrEmpty(messageSender.Envelope.Subject))
             {
-                attachmentsLb.Items.Add(item.FileName);
+                subjectTb.Text = messageSender.Envelope.Subject;
             }
 
-            subjectTb.Text = messageSender.Envelope.Subject;
+            if (!string.IsNullOrEmpty(messageSender.Envelope.To.ToString()))
+            {
+                recipientsTb.Text = messageSender.Envelope.To.ToString();
+            }
+
+            if (!string.IsNullOrEmpty(messageSender.Envelope.Cc.ToString()))
+            {
+                ccRecipientsTb.Text = messageSender.Envelope.Cc.ToString();
+            }
+
             messageBodyTb.AppendText(body);
-            recipientsTb.Text = messageSender.Envelope.To.ToString();
+
+            //get attachments from message
+            var attachments = messageSender.Attachments.ToList();
+
+            //traverse over the attachments
+            foreach (var item in attachments)
+            {
+                attachmentsLabel.Visible = true;
+                attachmentsLb.Visible = true;
+                removeAttachmentBt.Visible = true;
+
+                //add filename to listbox
+                attachmentsLb.Items.Add(item.FileName);
+
+                //download the attachments in the user's temp folder (same approach as in readmessage)
+                var client = await Utility.establishConnectionImap();
+                var f = client.GetFolder(messageSender.Folder.ToString());
+                f.Open(FolderAccess.ReadWrite);
+
+                MimeEntity entity = f.GetBodyPart(messageSender.UniqueId, item);
+
+                var tempFolder = Path.GetTempPath();    
+
+                if (entity is MessagePart)
+                {
+                    var rfc822 = (MessagePart)entity;
+                    var path = Path.Combine(tempFolder, item.PartSpecifier + ".eml");
+                    rfc822.Message.WriteTo(path);
+
+                    //display the file in file explorer
+                    string argument = "/select, \"" + path + "\"";
+
+                    addAttachment(path);
+                }
+
+                else
+                {
+                    var part = (MimePart)entity;
+
+                    // note: it's possible for this to be null, but most will specify a filename
+                    var fileName = part.FileName;
+
+                    var path = Path.Combine(tempFolder, fileName);
+
+                    // decode and save the content to a file
+                    using (var stream = File.Create(path))
+                        part.Content.DecodeTo(stream);
+
+                    //display the file in file explorer
+                    string argument = "/select, \"" + path + "\"";
+                    addAttachment(path);
+                }
+
+            }
         }
 
         #endregion
@@ -235,7 +297,7 @@ namespace Email_System
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             //openFileDialog.InitialDirectory = "C:\\";
-            //openFileDialog.Filter = "Database files (*.mdb, *.accdb)|*.mdb;*.accdb";
+            //openFileDialog.Filter = "Image Files(*.BMP; *.JPG; *.GIF)| *.BMP; *.JPG; *.GIF | All files(*.*) | *.*";
             openFileDialog.FilterIndex = 0;
             openFileDialog.RestoreDirectory = true;
 
@@ -264,7 +326,7 @@ namespace Email_System
             this.Enabled = false;
             this.Cursor = Cursors.WaitCursor;
 
-            message.From.Add(new MailboxAddress(Utility.username, Utility.username));            
+            message.From.Add(new MailboxAddress(Utility.username, Utility.username));
 
             addRecipient(message);
 
@@ -312,25 +374,7 @@ namespace Email_System
         {
             exitFromBt = true;
 
-            if(isDraft)
-            {
-                //implement here functionality such that the message is overwritten.
-            }
-
-            if (!allEmpty())
-            {
-                DialogResult result = MessageBox.Show("Do you wish to save the mail in 'Drafts'?", "Save as draft?", MessageBoxButtons.YesNo);
-
-                if (result == DialogResult.Yes)
-                    saveAsDraft();
-
-                else if(result == DialogResult.No)
-                {
-                    this.Close();
-                }
-            }
-
-            else
+            
                 this.Close();
         }
 
@@ -386,12 +430,21 @@ namespace Email_System
                 }
             }
 
-            if(attachmentsLb.Items.Count > 0)
+            if (!string.IsNullOrEmpty(ccRecipientsTb.Text))
+            {
+                string[] recipients = ccRecipientsTb.Text.Split(",");
+
+                foreach (var rec in recipients)
+                {
+                    mg.Cc.Add(MailboxAddress.Parse(rec));
+                }
+            }
+
+            if (attachmentsLb.Items.Count > 0)
             {
                 foreach (var item in builder.Attachments)
                 {
                     b.Attachments.Add(item);
-                    
                 }
             }
 
@@ -402,37 +455,52 @@ namespace Email_System
         {
             try
             {
+                this.Enabled = false;
+                this.Cursor = Cursors.WaitCursor;
+
+                if (isDraft)
+                {
+                    Utility.deleteMessage(messageSender, true);
+                }
+
                 MimeMessage mg = new MimeMessage();
+
                 buildDraftMessage(mg);
 
                 ImapClient client = await Utility.establishConnectionImap();
-
                 IMailFolder draftsFolder = getDraftFolder(client, CancellationToken.None);
 
                 await draftsFolder.OpenAsync(FolderAccess.ReadWrite);
-                
-                //draftsFolder.AddFlags(mg.MessageId, MessageFlags.Draft, true);
+                await draftsFolder.AppendAsync(mg, MessageFlags.Draft);
 
-                draftsFolder.Append(mg, MessageFlags.Draft);
-
-                this.Close();
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
 
+            finally
+            {
+                this.Close();
+                this.Enabled = true;
+                this.Cursor = Cursors.Default;
+            }
         }
 
         private void newEmail_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(messageSent)
+            if (messageSent)
             {
                 return;
             }
 
-            else if (!allEmpty() && !exitFromBt)
+            else if(isDraft)
+            {
+                saveAsDraft();
+            }
+
+            else if (!allEmpty() || !exitFromBt)
             {
                 DialogResult result = MessageBox.Show("Do you wish to save the mail in 'Drafts'?", "Save as draft?", MessageBoxButtons.YesNo);
 
@@ -481,12 +549,78 @@ namespace Email_System
                 MessageBox.Show("No attachment selected!");
             }
 
-            if(builder.Attachments.Count <= 0)
+            if (builder.Attachments.Count <= 0)
             {
                 removeAttachmentBt.Visible = false;
                 attachmentsLb.Visible = false;
                 attachmentsLabel.Visible = false;
             }
+        }
+
+        private void recipientsTb_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string[] recipients = recipientsTb.Text.Split(",");
+            bool valid = validateStringList(recipients);
+            sendBt.Enabled = valid;
+
+            if (!valid)
+            {
+                recipientsTb.ForeColor = Color.Red;
+
+            }
+
+            else
+            {
+                recipientsTb.ForeColor = Color.Blue;
+            }
+        }
+
+        private bool validateStringList(string[] stringIn)
+        {
+            bool valid = false;
+
+            foreach (string r in stringIn)
+            {
+                Debug.WriteLine(r);
+                string rec = r.Replace(",", "");
+                rec = rec.Trim();
+                Debug.WriteLine(rec);
+                valid = EmailValidator.Validate(rec);
+            }
+
+            return valid;
+        }
+
+        private void ccRecipientsTb_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string[] ccRecipients = ccRecipientsTb.Text.Split(",");
+            bool valid = validateStringList(ccRecipients);
+
+            if (string.IsNullOrEmpty(recipientsTb.Text)  || !string.IsNullOrEmpty(ccRecipientsTb.Text))
+            {
+                sendBt.Enabled = valid;
+            }
+
+
+            if (!valid)
+            {
+                ccRecipientsTb.ForeColor = Color.Red;
+            }
+
+            else
+            {
+                ccRecipientsTb.ForeColor = Color.Blue;
+            }
+        }
+
+        private void recipientsTb_MouseHover(object sender, EventArgs e)
+        {
+            ToolTip toolTip = new ToolTip();
+
+            toolTip.InitialDelay = 100;
+            string text = "Separate multiple recipients with ,";
+
+            toolTip.SetToolTip(recipientsTb, text);
         }
     }
 }

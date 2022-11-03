@@ -44,6 +44,7 @@ namespace Email_System
             //retrieve attachment from folder 
             var f = client.GetFolder(message.Folder.ToString());
             f.Open(FolderAccess.ReadWrite);
+
             MimeEntity entity = f.GetBodyPart(message.UniqueId, attachment);
 
             //specify download path
@@ -82,22 +83,29 @@ namespace Email_System
 
         private async void getTextBody()
         {
-            var client = await Utility.establishConnectionImap();
+            try
+            {
+                var client = await Utility.establishConnectionImap();
 
-            var bodyPart = message.TextBody;
+                var bodyPart = message.TextBody;
 
-            var folder = await client.GetFolderAsync(message.Folder.ToString());
+                var folder = await client.GetFolderAsync(message.Folder.ToString());
+                await folder.OpenAsync(FolderAccess.ReadOnly);
 
-            await folder.OpenAsync(FolderAccess.ReadOnly);
+                var body = (TextPart)folder.GetBodyPart(message.UniqueId, bodyPart);
 
-            var body = (TextPart)folder.GetBodyPart(message.UniqueId, bodyPart);
+                var text = body.Text;
+                bodyText = text;
 
-            var text = body.Text;
-            bodyText = text;
+                bodyRtb.Text = text;
 
-            bodyRtb.Text = text;
+                await client.DisconnectAsync(true);
+            }
 
-            await client.DisconnectAsync(true);
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void initializeMessage()
