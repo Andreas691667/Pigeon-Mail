@@ -373,9 +373,7 @@ namespace Email_System
         private void exitBt_Click(object sender, EventArgs e)
         {
             exitFromBt = true;
-
-            
-                this.Close();
+            this.Close();
         }
 
         private IMailFolder getDraftFolder(ImapClient client, CancellationToken cancellationToken)
@@ -583,6 +581,7 @@ namespace Email_System
             {
                 Debug.WriteLine(r);
                 string rec = r.Replace(",", "");
+
                 rec = rec.Trim();
                 Debug.WriteLine(rec);
                 valid = EmailValidator.Validate(rec);

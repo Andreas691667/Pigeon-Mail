@@ -87,8 +87,10 @@ namespace Email_System
                 Debug.WriteLine("authenticating");
                 this.Cursor = Cursors.WaitCursor;
 
+                
                 //start retrieving folders
-                //foldersBackgroundWorker.RunWorkerAsync();
+                foldersBackgroundWorker.RunWorkerAsync();
+                //messagesBackgroundWorker.RunWorkerAsync();
                 //Data.loadExistingMessages();
 
                 Mailbox m = Mailbox.GetInstance;
@@ -107,7 +109,7 @@ namespace Email_System
             {
                 client.Disconnect(true);
                 client.Dispose();
-
+                this.Cursor = Cursors.Default;
             }
         }
 
@@ -181,7 +183,6 @@ namespace Email_System
         private void foldersBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker bw = sender as BackgroundWorker;
-
             Data.loadFolders(bw);
         }
 
@@ -202,19 +203,16 @@ namespace Email_System
             {
                 // The operation completed normally.
                 //string msg = String.Format("Result = {0}", e.Result);
-                messagesBackgroundWorker.RunWorkerAsync();
+                //messagesBackgroundWorker.RunWorkerAsync();
                 //MessageBox.Show(msg);
             }
         }
         private void messagesBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker bw = sender as BackgroundWorker;
-
             Data.loadMessages(bw);
         }
 
-        #endregion
-
-        
+        #endregion        
     }
 }

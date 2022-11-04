@@ -31,6 +31,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(readMessage));
             this.fromTb = new System.Windows.Forms.TextBox();
             this.bodyRtb = new System.Windows.Forms.RichTextBox();
             this.replyBt = new System.Windows.Forms.Button();
@@ -280,6 +281,7 @@
             this.Controls.Add(this.fromTb);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.attachmentsPanel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(1117, 745);
             this.Name = "readMessage";
             this.Text = "readMessage";

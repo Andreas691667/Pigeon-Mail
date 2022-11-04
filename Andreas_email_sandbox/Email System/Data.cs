@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MailKit;
+using MailKit.Net.Imap;
 using MimeKit;
 
 namespace Email_System
@@ -16,10 +17,16 @@ namespace Email_System
 
         public struct msg
         {
-            public string Id { get; set; }
-            public string subject { get; set; }
-            public string body { get; set; }
+            public UniqueId Id { get; set; }
+            public string folder{ get; set; }
         }
+
+        //public for data,
+        //checks for new stuff
+        public static ImapClient client = new ImapClient();
+
+        public static int msgCount = 0;
+
 
         public static List<string> folderList = new List<string>();
 
@@ -27,22 +34,31 @@ namespace Email_System
 
         public static List<msg> existingMessages = new List<msg>();
 
+        public static List<MimeMessage> messages = new List<MimeMessage>();
+
+
+
         public static bool exit = false;
 
 
-        public static msg getMessageByID(UniqueId id)
+        public static List<UniqueId> uids = new List<UniqueId>();
+
+
+        public static void newMessages()
         {
-            int index = existingMessages.FindIndex(msg => msg.Id == id.Id.ToString());
-            return existingMessages[index];
+            var inboxFolder = client.Inbox;
+            
+            
+            //check for new messages, i.e. messageCount changed event.
+            //update messagelist
         }
 
         public static void loadExistingMessages()
         {
-            string filename = "messagesJson.json";
-            string jsonString = File.ReadAllText(filename);
-            var data = JsonSerializer.Deserialize<List<msg>>(jsonString)!;
+            string filename = "MimeMessages.json";
 
-            existingMessages = data;
+            string jsonString = File.ReadAllText(filename);
+            var data = JsonSerializer.Deserialize<List<UniqueId>>(jsonString);
 
             Debug.WriteLine("existing messaes loaded");
         }
@@ -95,26 +111,23 @@ namespace Email_System
 
                     await folder.OpenAsync(FolderAccess.ReadOnly);
 
-                    var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure| MessageSummaryItems.Flags);
+                    var messageSummaries = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId);
 
-                    foreach (var message in messages)
+                    foreach (var messageSummary in messageSummaries)
                     {
-                        msg mg = new msg();
+                        Debug.WriteLine(messageSummary.UniqueId.Id);
 
-                        mg.subject = message.Envelope.Subject;
-                        mg.Id = message.UniqueId.Id.ToString();
+                        //it doesn't work for mimemessages
+                        UniqueId uid = messageSummary.UniqueId;
+                        MimeMessage msg = await folder.GetMessageAsync(uid);
+                        messages.Add(msg);                        
 
-                        if (message.TextBody != null)
-                        {
-                            var body = (TextPart)folder.GetBodyPart(message.UniqueId, message.TextBody);
-                            mg.body = body.Text;
-                        }
-
-                        messageList.Add(mg);
+                        msg.WriteTo(uid.Id.ToString());
                     }
+
                 }
 
-                saveMessages();
+                //saveMessages();
 
                 if (exit)
                     break;
@@ -122,9 +135,6 @@ namespace Email_System
 
             Debug.WriteLine("messages loaded");
         }
-
-
-
         private static void saveFolders()
         {
             File.WriteAllLines("folders.txt", folderList);            
@@ -133,8 +143,8 @@ namespace Email_System
 
         private static void saveMessages()
         {
-            var json = JsonSerializer.Serialize(messageList);
-            File.WriteAllText("messagesJson.json", json);
+            var json = JsonSerializer.Serialize(messages);
+            File.WriteAllText("MimeMessages.json", json);
         }
     }
 }

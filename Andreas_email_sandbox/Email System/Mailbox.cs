@@ -1,13 +1,8 @@
-﻿
+﻿using MailKit;
 using MailKit.Net.Imap;
-using MailKit;
-using System.Threading;
-using static System.Windows.Forms.AxHost;
-using System.Windows.Forms;
-using System.Linq.Expressions;
+using MailKit.Search;
 using MimeKit;
 using System.Diagnostics;
-using MailKit.Search;
 
 namespace Email_System
 {
@@ -95,7 +90,7 @@ namespace Email_System
 
             while (!foldersLoaded)
             {
-                this.Cursor = Cursors.WaitCursor;
+                //this.Cursor = Cursors.WaitCursor;
                 this.Enabled = false;
 
                 var client = await Utility.establishConnectionImap();
@@ -108,7 +103,7 @@ namespace Email_System
 
                 // get the messages from the folder and add them to the dictionary
                 foreach (var item in folders)
-                {                  
+                {                
 
                     if (item.Exists)
                     {
@@ -128,7 +123,7 @@ namespace Email_System
 
                 //disconnect from the client
                 await client.DisconnectAsync(true);
-                this.Cursor = Cursors.Default;
+               // this.Cursor = Cursors.Default;
                 this.Enabled = true;
             }            
         }
@@ -139,7 +134,7 @@ namespace Email_System
 
             if (!messagesLoaded)
             {
-                this.Cursor = Cursors.WaitCursor;
+             //   this.Cursor = Cursors.WaitCursor;
                 this.Enabled = false;
 
                 var client = await Utility.establishConnectionImap();
@@ -169,7 +164,7 @@ namespace Email_System
 
                 await client.DisconnectAsync(true);
             }
-            this.Cursor = Cursors.Default;
+            //this.Cursor = Cursors.Default;
             this.Enabled = true;
             messagesLoaded = true;
         }
@@ -223,7 +218,7 @@ namespace Email_System
 
             while (!messagesLoaded)
             {
-                this.Cursor = Cursors.WaitCursor;
+               // this.Cursor = Cursors.WaitCursor;
                 this.Enabled = false;
 
                 var client = await Utility.establishConnectionImap();
@@ -267,7 +262,8 @@ namespace Email_System
 
                 messagesLoaded = true;
             }
-            this.Cursor = Cursors.Default;
+
+        //    this.Cursor = Cursors.Default;
             this.Enabled = true;
             
         }
@@ -279,7 +275,7 @@ namespace Email_System
 
             if (!messageLoaded) 
             {
-                this.Cursor = Cursors.WaitCursor;
+            //    this.Cursor = Cursors.WaitCursor;
                 this.Enabled = false;
 
                 var client = await Utility.establishConnectionImap();
@@ -297,21 +293,19 @@ namespace Email_System
                 if (folder.Attributes.HasFlag(FolderAttributes.Drafts))
                 {
                     var body = (TextPart)folder.GetBodyPart(currentMessage.UniqueId, currentMessage.TextBody);
-
                     new newEmail(4, currentMessage, body.Text).Show();
                 }
 
                 else
                 {
                     await folder.AddFlagsAsync(currentMessage.UniqueId, MessageFlags.Seen, true);
-
                     // create a new instance of the readMessage form with the retrieved message as input
                     new readMessage(currentMessage).Show();
                 }
 
                 await client.DisconnectAsync(true);
 
-                this.Cursor = Cursors.Default;
+             //   this.Cursor = Cursors.Default;
                 this.Enabled = true;
             }
             
@@ -323,7 +317,7 @@ namespace Email_System
         {
             try
             {
-                this.Cursor = Cursors.WaitCursor;
+        //        this.Cursor = Cursors.WaitCursor;
                 this.Enabled = false;
                 Utility.refreshCurrentFolder();
             }
@@ -335,7 +329,7 @@ namespace Email_System
 
             finally
             {
-                this.Cursor = Cursors.Default;
+       //         this.Cursor = Cursors.Default;
                 this.Enabled = true;
             }
 
@@ -367,7 +361,7 @@ namespace Email_System
                 else
                 {
 
-                    this.Cursor = Cursors.WaitCursor;
+        //            this.Cursor = Cursors.WaitCursor;
                     this.Enabled = false;
                     var client = await Utility.establishConnectionImap();
 
@@ -379,7 +373,7 @@ namespace Email_System
                     Utility.refreshCurrentFolder();
 
                     await client.DisconnectAsync(true);
-                    this.Enabled = true;
+                    //this.Enabled = true;
                 }
             }
 
@@ -396,7 +390,7 @@ namespace Email_System
                 var messageIndex = messageLb.SelectedIndex;
                 var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
 
-                this.Cursor = Cursors.WaitCursor;
+        //        this.Cursor = Cursors.WaitCursor;
                 this.Enabled = false;
 
                 var client = await Utility.establishConnectionImap();
@@ -410,7 +404,8 @@ namespace Email_System
                 Utility.refreshCurrentFolder();
 
                 await client.DisconnectAsync(true);
-                this.Enabled = true;
+
+                //this.Enabled = true;
             }
 
             catch
@@ -426,7 +421,7 @@ namespace Email_System
                 var messageIndex = messageLb.SelectedIndex;
                 var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
 
-                this.Cursor = Cursors.WaitCursor;
+   //             this.Cursor = Cursors.WaitCursor;
                 this.Enabled = false;
                 Utility.deleteMessage(message);                
             }
@@ -438,7 +433,7 @@ namespace Email_System
 
             finally
             {
-                this.Cursor = Cursors.Default;
+    //            this.Cursor = Cursors.Default;
                 this.Enabled = true;
             }
 
@@ -451,7 +446,7 @@ namespace Email_System
                 var messageIndex = messageLb.SelectedIndex;
                 var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
 
-                this.Cursor = Cursors.WaitCursor;
+    //            this.Cursor = Cursors.WaitCursor;
                 this.Enabled = false;
 
                 Utility.moveMessageToTrash(message);
@@ -464,7 +459,7 @@ namespace Email_System
 
             finally
             {
-                this.Cursor = Cursors.Default;
+    //            this.Cursor = Cursors.Default;
                 this.Enabled = true;
             }
 
@@ -485,7 +480,7 @@ namespace Email_System
 
         private async void search(string searchQuery)
         {
-            this.Cursor = Cursors.WaitCursor;
+   //         this.Cursor = Cursors.WaitCursor;
             this.Enabled = false;
 
             var client = await Utility.establishConnectionImap();
@@ -515,7 +510,7 @@ namespace Email_System
             else
                 MessageBox.Show("Please specify a search query");
 
-            this.Cursor = Cursors.Default;
+   //         this.Cursor = Cursors.Default;
             this.Enabled = true;
         }
 
@@ -560,6 +555,15 @@ namespace Email_System
                 searchBt.PerformClick();
                 e.SuppressKeyPress = true;
             }
+        }
+
+        private void Mailbox_EnabledChanged(object sender, EventArgs e)
+        {
+            if (this.Enabled == false)
+                this.Cursor = Cursors.WaitCursor;
+
+            else
+                this.Cursor = Cursors.Default;
         }
     }
 }

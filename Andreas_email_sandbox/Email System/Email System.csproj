@@ -7,7 +7,12 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>308652776_1159547471625191_8962619546181163215_n.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="308652776_1159547471625191_8962619546181163215_n.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="EmailValidation" Version="1.0.8" />

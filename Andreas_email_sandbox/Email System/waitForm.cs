@@ -16,10 +16,5 @@ namespace Email_System
         {
             InitializeComponent();
         }
-
-        private void OnLoad(EventArgs e)
-        {
-
-        }
     }
 }

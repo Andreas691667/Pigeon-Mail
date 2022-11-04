@@ -34,7 +34,6 @@ namespace Email_System
 
         //code from: http://www.mimekit.net/docs/html/P_MailKit_IMessageSummary_Attachments.htm
         //method downloads selected attachments and saves it on user's desktop
-
         private void downloadAttachment(ImapClient client)
         {
             //get attachment from listbox

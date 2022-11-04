@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Mailbox));
             this.folderLb = new System.Windows.Forms.ListBox();
             this.messageLb = new System.Windows.Forms.ListBox();
             this.newEmailBt = new System.Windows.Forms.Button();
@@ -182,7 +183,7 @@
             this.panel1.Controls.Add(this.newEmailBt);
             this.panel1.Controls.Add(this.moveToTrashBt);
             this.panel1.Controls.Add(this.removeFlagBt);
-            this.panel1.Location = new System.Drawing.Point(12, 2);
+            this.panel1.Location = new System.Drawing.Point(12, 8);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1071, 81);
             this.panel1.TabIndex = 8;
@@ -276,11 +277,13 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.messageLb);
             this.Controls.Add(this.folderLb);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(1124, 635);
             this.Name = "Mailbox";
             this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds;
             this.Text = "Mailbox";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Mailbox_FormClosed);
+            this.EnabledChanged += new System.EventHandler(this.Mailbox_EnabledChanged);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -298,7 +301,6 @@
         private Button removeFlagBt;
         private Button moveToTrashBt;
         private Button deleteBt;
-        private PictureBox pictureBox1;
         private Panel panel1;
         private Button settingsBt;
         private Button logoutBt;

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(newEmail));
             this.sendBt = new System.Windows.Forms.Button();
             this.messageBodyTb = new System.Windows.Forms.RichTextBox();
             this.recipientsTb = new System.Windows.Forms.TextBox();
@@ -225,6 +226,7 @@
             this.Controls.Add(this.recipientsTb);
             this.Controls.Add(this.messageBodyTb);
             this.Controls.Add(this.sendBt);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(934, 553);
             this.Name = "newEmail";
             this.Text = "Form2";
