@@ -90,13 +90,7 @@ namespace Email_System
                 
                 //start retrieving folders
                 foldersBackgroundWorker.RunWorkerAsync();
-                //messagesBackgroundWorker.RunWorkerAsync();
-                //Data.loadExistingMessages();
 
-                Mailbox m = Mailbox.GetInstance;
-                m.Show();
-
-                this.Hide();
             }
 
             catch (Exception ex)
@@ -172,12 +166,10 @@ namespace Email_System
             }
             else
             {
-                /*                string msg = String.Format("Result = {0}", e.Result);
-                                MessageBox.Show(msg);*/
-
-                // The operation completed normally.
+                Mailbox m = Mailbox.GetInstance;
+                m.Show();
+                this.Hide();
             }
-
         }
 
         private void foldersBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -199,16 +191,16 @@ namespace Email_System
                 string msg = String.Format("An error occurred: {0}", e.Error.Message);
                 MessageBox.Show(msg);
             }
-            else
+            else            
             {
-                // The operation completed normally.
-                //string msg = String.Format("Result = {0}", e.Result);
-                //messagesBackgroundWorker.RunWorkerAsync();
-                //MessageBox.Show(msg);
+                Debug.WriteLine("runworker folder finished");
+                messagesBackgroundWorker.RunWorkerAsync();
             }
         }
         private void messagesBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            Debug.WriteLine("start message worker");
+
             BackgroundWorker bw = sender as BackgroundWorker;
             Data.loadMessages(bw);
         }

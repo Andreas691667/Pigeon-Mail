@@ -1,6 +1,8 @@
 ﻿using MailKit;
 using MailKit.Net.Imap;
+using MailKit.Search;
 using MimeKit;
+using System.Diagnostics;
 using System.IO;
 
 namespace Email_System
@@ -9,78 +11,113 @@ namespace Email_System
     {
         string bodyText = null!;
 
+        Data.msg msg = new Data.msg();
+
         IMessageSummary message;
 
-        public readMessage(IMessageSummary m)
+        public readMessage(string body, string from, string to, string date, string subject, string attachments, string folder)
         {
             Utility.refreshCurrentFolder();
             InitializeComponent();
 
-            message = m;
-            getTextBody();
+            msg.from = from;
+            msg.subject = subject;
+            msg.date = date;
+            msg.to = to;
+            msg.body = body;
+            msg.attachments = attachments;
+            msg.folder = folder;
+
+            //message = m;
+            //getTextBody();
             initializeMessage();
         }
 
         //adds attachments from message to listbox
         private void getAttachments()
         {
-            foreach(var attachment in message.Attachments)
+            if (msg.attachments != null)
             {
-                attachmentsPanel.Visible = true;
-                attachmentsLb.Items.Add(attachment.FileName);
+                string[] attachments = msg.attachments.Split(';');
+
+                foreach (var attachment in attachments)
+                {
+                    attachmentsPanel.Visible = true;
+                    attachmentsLb.Items.Add(attachment);
+                }
             }
         }
 
 
         //code from: http://www.mimekit.net/docs/html/P_MailKit_IMessageSummary_Attachments.htm
         //method downloads selected attachments and saves it on user's desktop
+
         private void downloadAttachment(ImapClient client)
         {
             //get attachment from listbox
             int attachmentIndex = attachmentsLb.SelectedIndex;
-            var attachment = message.Attachments.ElementAt(attachmentIndex);
+
+            //var attachment = message.Attachments.ElementAt(attachmentIndex);
 
             //retrieve attachment from folder 
-            var f = client.GetFolder(message.Folder.ToString());
+            var f = client.GetFolder(msg.folder);            
+
             f.Open(FolderAccess.ReadWrite);
+            
+            var query = SearchQuery.SubjectContains(msg.subject);
 
-            MimeEntity entity = f.GetBodyPart(message.UniqueId, attachment);
+            var uids = f.Search(query);            
 
-            //specify download path
-            string Desktopfolder = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            var items = f.Fetch(uids, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure);
 
-            //download the attachment
-            // attachments can be either message/rfc822 parts or regular MIME parts
-            if (entity is MessagePart)
+            foreach (var item in items)
             {
-                var rfc822 = (MessagePart)entity;
-                var path = Path.Combine(Desktopfolder, attachment.PartSpecifier + ".eml");
-                rfc822.Message.WriteTo(path);
+                //foreach (var attachment in item.Attachments)
+                //{
+                    var attachment = item.Attachments.ElementAt(attachmentIndex);
 
-                //display the file in file explorer
-                string argument = "/select, \"" + path + "\"";
-                System.Diagnostics.Process.Start("explorer.exe", argument);
-            }
-            else
-            {
-                var part = (MimePart)entity;
 
-                // note: it's possible for this to be null, but most will specify a filename
-                var fileName = part.FileName;
+                    MimeEntity entity = f.GetBodyPart(item.UniqueId, attachment);
 
-                var path = Path.Combine(Desktopfolder, fileName);
+                    //specify download path
+                    string Desktopfolder = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
-                // decode and save the content to a file
-                using (var stream = File.Create(path))
-                    part.Content.DecodeTo(stream);
+                    //download the attachment
+                    // attachments can be either message/rfc822 parts or regular MIME parts
+                    if (entity is MessagePart)
+                    {
+                        var rfc822 = (MessagePart)entity;
+                        var path = Path.Combine(Desktopfolder, attachment.PartSpecifier + ".eml");
+                        rfc822.Message.WriteTo(path);
 
-                //display the file in file explorer
-                string argument = "/select, \"" + path + "\"";
-                System.Diagnostics.Process.Start("explorer.exe", argument);
-            }
+                        //display the file in file explorer
+                        string argument = "/select, \"" + path + "\"";
+                        System.Diagnostics.Process.Start("explorer.exe", argument);
+                    }
+                    else
+                    {
+                        var part = (MimePart)entity;
+
+                        // note: it's possible for this to be null, but most will specify a filename
+                        //var fileName = part.FileName;
+                        string fileName = attachment.FileName;
+
+                        var path = Path.Combine(Desktopfolder, fileName);
+
+                        // decode and save the content to a file
+                        using (var stream = File.Create(path))
+                            part.Content.DecodeTo(stream);
+
+                        //display the file in file explorer
+                        string argument = "/select, \"" + path + "\"";
+                        System.Diagnostics.Process.Start("explorer.exe", argument);
+                    }
+                }
+            //}
         }
+        
 
-        private async void getTextBody()
+/*        private async void getTextBody()
         {
             try
             {
@@ -105,20 +142,26 @@ namespace Email_System
             {
                 MessageBox.Show(ex.Message);
             }
-        }
+        }*/
 
         private void initializeMessage()
         {
-            fromTb.Text += message.Envelope.From.ToString();
+            /*            fromTb.Text += message.Envelope.From.ToString();
 
-            toTb.Text += message.Envelope.To.ToString();
+                        toTb.Text += message.Envelope.To.ToString();
 
-            dateTb.Text +=  message.Envelope.Date.ToString();
+                        dateTb.Text +=  message.Envelope.Date.ToString();
 
-            //NEED TO CHECK IF THIS IS NULL
-            subjectTb.Text = message.Envelope.Subject.ToString();
+                        //NEED TO CHECK IF THIS IS NULL
+                        subjectTb.Text = message.Envelope.Subject.ToString();*/
 
             //ccRecipientsTb.Text = message.Envelope.Cc.ToString();
+
+            fromTb.Text += msg.from;
+            toTb.Text += msg.to;
+            dateTb.Text += msg.date;
+            subjectTb.Text += msg.subject;
+            bodyRtb.Text += msg.body;
 
             getAttachments(); 
         }
@@ -164,7 +207,7 @@ namespace Email_System
                 downloadAttachment(client);
             }
 
-            catch
+            catch(Exception ex)
             {
                 MessageBox.Show("No attachment selected");
             }

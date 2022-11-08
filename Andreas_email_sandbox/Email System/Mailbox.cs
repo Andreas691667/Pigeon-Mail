@@ -10,13 +10,27 @@ namespace Email_System
     {
 
         IList<IMessageSummary> messageSummaries = null!;
+
+
+        List<Data.msg> currentFolderMessages = null!;
+
         private static Mailbox instance = null!;
 
         //constructor
         private Mailbox()
         {
             InitializeComponent();
-            RetrieveFolders();
+
+           foreach(var f in Data.existingFolders)
+            {
+                folderLb.Items.Add(f);
+            }
+
+           /*
+            foreach(var m in Data.existingMessages[0])
+            {
+                messageLb.Items.Add(m.subject);
+            }*/
         }
 
         //ensures singleton pattern is maintained (only one instance at all times)
@@ -38,35 +52,38 @@ namespace Email_System
             return folder;
         }
 
-        private void messageFlagCheck(IMessageSummary item)
+        private void messageFlagCheck(Data.msg item)
         {
             string subject = "";
 
-            if (item.Flags.Value.HasFlag(MessageFlags.Flagged))
+            string flagString = item.flags;
+
+
+            if (flagString.Contains("Flagged"))
             {
                 subject += "(FLAGGED) ";
             }
 
-            if(item.Flags.Value.HasFlag(MessageFlags.Draft))
+            if(flagString.Contains("Draft"))
             {
                 subject += "(DRAFT) ";
             }
 
-            if (!(item.Flags.Value.HasFlag(MessageFlags.Seen)))
+            if (!(flagString.Contains("Seen")))
             {
                 subject += "(UNREAD) ";
             }
 
-            if (item.Envelope.Subject != null)
+            if (item.subject != null)
             {
-                subject += item.Envelope.Subject;
+                subject += item.subject;
                 messageLb.Items.Add(subject);
             }
 
             else
             {
-                item.Envelope.Subject = "<no subject>";
-                subject += item.Envelope.Subject;
+                item.subject = "<no subject>";
+                subject += item.subject;
                 messageLb.Items.Add(subject);
             }
         }
@@ -157,7 +174,7 @@ namespace Email_System
 
                     foreach (var item in messages.Reverse())
                     {
-                        messageFlagCheck(item);
+                        //messageFlagCheck(item);
                     }
 
                 }
@@ -212,59 +229,79 @@ namespace Email_System
         }
 
         // method to retrieve the messages from the folder when this folder is double clicked
-        private async void RetrieveMessages(object sender = null!, MouseEventArgs e = null!)
+        private void RetrieveMessages(object sender = null!, MouseEventArgs e = null!)
         {
-            bool messagesLoaded = false;            
+            /*            bool messagesLoaded = false;            
 
-            while (!messagesLoaded)
+                        while (!messagesLoaded)
+                        {
+                           // this.Cursor = Cursors.WaitCursor;
+                            this.Enabled = false;
+
+                            var client = await Utility.establishConnectionImap();
+
+                            var folder = await getCurrentFolder(client);
+
+                            await folder.OpenAsync(FolderAccess.ReadWrite);
+
+                            var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
+
+                            messageLb.Items.Clear();
+
+                            if (folder.Count <= 0)
+                            {
+                                toggleButtons(false);
+                                messageLb.Items.Add("No messages in this folder!");
+                            }
+
+                            else if(folder.Attributes.HasFlag(FolderAttributes.Drafts))
+                            {
+                                openFolderAsDraft(messages, folder);
+                                //await folder.ExpungeAsync();
+                            }
+
+                            else
+                            {
+                                toggleButtons(true);
+
+                                messageSummaries = messages;                    
+
+                                foreach (var item in messages.Reverse())
+                                {
+                                    messageFlagCheck(item);
+                                }
+                            }
+
+                            // disconnect from the client
+                            await client.DisconnectAsync(true);
+
+                            messagesLoaded = true;
+                        }
+
+                    //    this.Cursor = Cursors.Default;
+                        this.Enabled = true;*/
+
+
+            messageLb.Items.Clear();
+
+            int folder = folderLb.SelectedIndex;
+
+            if (Data.existingMessages[folder].Count <= 0)
             {
-               // this.Cursor = Cursors.WaitCursor;
-                this.Enabled = false;
-
-                var client = await Utility.establishConnectionImap();
-
-                var folder = await getCurrentFolder(client);
-
-                await folder.OpenAsync(FolderAccess.ReadWrite);
-
-                var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
-
-
-                messageLb.Items.Clear();
-
-                if (folder.Count <= 0)
-                {
-                    toggleButtons(false);
-                    messageLb.Items.Add("No messages in this folder!");
-
-                }
-
-                else if(folder.Attributes.HasFlag(FolderAttributes.Drafts))
-                {
-                    openFolderAsDraft(messages, folder);
-                    //await folder.ExpungeAsync();
-                }
-
-                else
-                {
-                    toggleButtons(true);
-
-                    messageSummaries = messages;                    
-
-                    foreach (var item in messages.Reverse())
-                    {
-                        messageFlagCheck(item);
-                    }
-                }
-
-                // disconnect from the client
-                await client.DisconnectAsync(true);
-
-                messagesLoaded = true;
+                toggleButtons(false);
+                messageLb.Items.Add("No messages in this folder!");
             }
 
-        //    this.Cursor = Cursors.Default;
-            this.Enabled = true;
+            else
+            {
+                toggleButtons(true);
+                currentFolderMessages = Data.existingMessages[folder];
+
+                foreach (var item in Data.existingMessages[folder])
+                {
+                    messageFlagCheck(item);
+                }
+            }
             
         }
 
@@ -273,42 +310,50 @@ namespace Email_System
         {
             bool messageLoaded = false;
 
-            if (!messageLoaded) 
-            {
-            //    this.Cursor = Cursors.WaitCursor;
-                this.Enabled = false;
+            /*            if (!messageLoaded) 
+                        {
+                        //    this.Cursor = Cursors.WaitCursor;
+                            this.Enabled = false;
 
-                var client = await Utility.establishConnectionImap();
+                            var client = await Utility.establishConnectionImap();
 
-                // get the value of the selected item
-                var messageItem = (((ListBox)sender).SelectedIndex);
+                            // get the value of the selected item
+                            var messageItem = (((ListBox)sender).SelectedIndex);
 
-                var currentMessage = messageSummaries[messageSummaries.Count - messageItem - 1];
+                            var currentMessage = messageSummaries[messageSummaries.Count - messageItem - 1];
 
-                //add 'seen' flag to message
-                var folder = await client.GetFolderAsync(currentMessage.Folder.ToString());
-                await folder.OpenAsync(FolderAccess.ReadWrite);
+                            //add 'seen' flag to message
+                            var folder = await client.GetFolderAsync(currentMessage.Folder.ToString());
+                            await folder.OpenAsync(FolderAccess.ReadWrite);
 
-                //if the message is draft, open as draft!
-                if (folder.Attributes.HasFlag(FolderAttributes.Drafts))
-                {
-                    var body = (TextPart)folder.GetBodyPart(currentMessage.UniqueId, currentMessage.TextBody);
-                    new newEmail(4, currentMessage, body.Text).Show();
-                }
+                            //if the message is draft, open as draft!
+                            if (folder.Attributes.HasFlag(FolderAttributes.Drafts))
+                            {
+                                var body = (TextPart)folder.GetBodyPart(currentMessage.UniqueId, currentMessage.TextBody);
+                                new newEmail(4, currentMessage, body.Text).Show();
+                            }
 
-                else
-                {
-                    await folder.AddFlagsAsync(currentMessage.UniqueId, MessageFlags.Seen, true);
-                    // create a new instance of the readMessage form with the retrieved message as input
-                    new readMessage(currentMessage).Show();
-                }
+                            else
+                            {
+                                await folder.AddFlagsAsync(currentMessage.UniqueId, MessageFlags.Seen, true);
+                                // create a new instance of the readMessage form with the retrieved message as input
+                                new readMessage(currentMessage).Show();
+                            }
 
-                await client.DisconnectAsync(true);
+                            await client.DisconnectAsync(true);
 
-             //   this.Cursor = Cursors.Default;
-                this.Enabled = true;
-            }
-            
+                         //   this.Cursor = Cursors.Default;
+                            this.Enabled = true;
+                        }*/
+
+
+            int messageIndex = messageLb.SelectedIndex;
+            Data.msg m = currentFolderMessages[messageIndex];
+
+            new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder).Show();
+
+            //new readMessage().Show();
+
 
             messageLoaded = true;
         }
@@ -530,7 +575,7 @@ namespace Email_System
             foreach (var item in messages.Reverse())
             {
                 toggleButtons(true);
-                messageFlagCheck(item);
+                //messageFlagCheck(item);
             }
         }
 
