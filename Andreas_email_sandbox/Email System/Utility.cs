@@ -173,18 +173,32 @@ namespace Email_System
 
         public static async void deleteMsgServer(string f, int index)
         {
-            var client = await Utility.establishConnectionImap();
-            var folder = await client.GetFolderAsync(f);
-            await folder.OpenAsync(FolderAccess.ReadWrite);
-            await folder.AddFlagsAsync(index, MessageFlags.Deleted, true);
-            await folder.ExpungeAsync();
-            await client.DisconnectAsync(true);
+            try
+            {
+                var client = await Utility.establishConnectionImap();
+                var folder = await client.GetFolderAsync(f);
+                await folder.OpenAsync(FolderAccess.ReadWrite);
+                await folder.AddFlagsAsync(index, MessageFlags.Deleted, true);
+                await folder.ExpungeAsync();
 
-            Debug.WriteLine("msg deleted from server");
 
-            //begin listening on inbox again
-            var l = login.GetInstance;
-            l.inboxBackgroundWorker.RunWorkerAsync();
+
+                await client.DisconnectAsync(true);
+
+                Debug.WriteLine("msg deleted from server");
+            }
+
+            catch
+            {
+
+            }
+
+            finally
+            {
+                //begin listening on inbox again
+                var l = login.GetInstance;
+                l.inboxBackgroundWorker.RunWorkerAsync();
+            }
         }
 
 

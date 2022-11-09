@@ -40,6 +40,8 @@
             this.messagesBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.foldersBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.inboxBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.allFoldersbackgroundWorker = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.companyImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -134,6 +136,15 @@
             this.inboxBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.inboxBackgroundWorker_DoWork);
             this.inboxBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.inboxBackgroundWorker_RunWorkerCompleted);
             // 
+            // backgroundWorker1
+            // 
+            this.backgroundWorker1.WorkerSupportsCancellation = true;
+            // 
+            // allFoldersbackgroundWorker
+            // 
+            this.allFoldersbackgroundWorker.WorkerSupportsCancellation = true;
+            this.allFoldersbackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.allFoldersbackgroundWorker_DoWork);
+            // 
             // login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -174,5 +185,7 @@
         private System.ComponentModel.BackgroundWorker messagesBackgroundWorker;
         private System.ComponentModel.BackgroundWorker foldersBackgroundWorker;
         public System.ComponentModel.BackgroundWorker inboxBackgroundWorker;
+        public System.ComponentModel.BackgroundWorker backgroundWorker1;
+        public System.ComponentModel.BackgroundWorker allFoldersbackgroundWorker;
     }
 }

@@ -63,8 +63,6 @@ namespace Email_System
 
             while (!bw.CancellationPending)
             {
-                //Debug.WriteLine("listening");
-
                 int currentCount = existingMessages[0].Count;
 
                 inboxFolder.Open(FolderAccess.ReadOnly);
@@ -72,34 +70,20 @@ namespace Email_System
 
                 if (newCount != currentCount)
                 {
-                    //Debug.WriteLine("inbox count changed");
-
                     if (newCount > currentCount)
                     {
-                        //Debug.WriteLine("difference = " + (newCount - currentCount));
                         var Task = addNewMessage(inboxFolder.FullName, newCount - currentCount);
-                        Task.Wait();
-                        
+                        Task.Wait();                        
                     }
 
                     if(newCount < currentCount)
                     {
-
+                        //not implemented
                     }                    
                 }
             }
 
-            Debug.WriteLine("stopped listening");
-
-/*            if(bw.CancellationPending)
-            {
-                bw.Dispose();
-                //e.Cancel = true;
-                return;
-            }*/
-            
-            //check for new messages, i.e. messageCount changed event.
-            //update messagelist
+            client.Disconnect(true);
         }
 
         public static async Task addNewMessage(string folder, int N)
@@ -132,18 +116,56 @@ namespace Email_System
                     message.body = "";
                 }
 
-                existingMessages[0].Add(message);
+                int i = existingFolders.IndexOf(folder);
+
+                existingMessages[i].Add(message);
 
                 Debug.WriteLine("new message added");
             }
+
+            client.Disconnect(true);
 
 
             //Debug.WriteLine(message.Subject);
         }
 
-        public static void listenAllFolders(BackgroundWorker bw)
+        public static async void listenAllFolders()
         {
+            var client = await Utility.establishConnectionImap();
 
+            var i = login.GetInstance;
+            var bw = i.allFoldersbackgroundWorker;
+
+            while (!bw.CancellationPending)
+            {
+
+                foreach (string folder in existingFolders)
+                {
+                    IMailFolder f = client.GetFolder(folder);
+                    f.Open(FolderAccess.ReadOnly);
+
+                    int index = existingFolders.IndexOf(folder);
+
+                    int currentCount = existingMessages[index].Count;
+                    int newCount = f.Count;
+
+                    if (newCount != currentCount)
+                    {
+                        if (newCount > currentCount)
+                        {
+                            var Task = addNewMessage(folder, newCount - currentCount);
+                            Task.Wait();
+                        }
+
+                        if (newCount < currentCount)
+                        {
+                            //not implemented
+                        }
+                    }
+                }
+            }
+
+            client.Disconnect(true);
         }
 
         public static void loadExistingMessages()

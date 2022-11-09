@@ -188,7 +188,10 @@ namespace Email_System
 
         private void deleteMessageBt_Click(object sender, EventArgs e)
         {
-            Utility.deleteMessage(message);
+            Utility.deleteMsg(msg.uid, msg.subject);
+
+
+
             this.Close();
         }
 

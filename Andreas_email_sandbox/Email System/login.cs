@@ -167,6 +167,8 @@ namespace Email_System
             else
             {
                 inboxBackgroundWorker.RunWorkerAsync();
+                allFoldersbackgroundWorker.RunWorkerAsync();
+
                 Mailbox m = Mailbox.GetInstance;
                 m.Show();
                 this.Hide();
@@ -218,8 +220,7 @@ namespace Email_System
 
             Debug.WriteLine("inbox bw started");
 
-            Task t = Data.listenInboxFolder();         
-            
+            Task t = Data.listenInboxFolder();                
 
             
         }
@@ -239,6 +240,11 @@ namespace Email_System
                 //inboxBackgroundWorker.RunWorkerAsync();
             
             
+        }
+
+        private void allFoldersbackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Data.listenAllFolders();
         }
     }
 }
