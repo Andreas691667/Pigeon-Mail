@@ -166,6 +166,7 @@ namespace Email_System
             }
             else
             {
+                inboxBackgroundWorker.RunWorkerAsync();
                 Mailbox m = Mailbox.GetInstance;
                 m.Show();
                 this.Hide();
@@ -175,7 +176,8 @@ namespace Email_System
         private void foldersBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker bw = sender as BackgroundWorker;
-            Data.loadFolders(bw);
+            Task task = Data.loadFolders(bw);
+            task.Wait();
         }
 
         private void foldersBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -202,9 +204,41 @@ namespace Email_System
             Debug.WriteLine("start message worker");
 
             BackgroundWorker bw = sender as BackgroundWorker;
-            Data.loadMessages(bw);
+
+            Task task = Data.loadMessages(bw);
+            task.Wait();
         }
 
-        #endregion        
+        #endregion
+
+        private void inboxBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker bw = new BackgroundWorker();
+
+
+            Debug.WriteLine("inbox bw started");
+
+            Task t = Data.listenInboxFolder();         
+            
+
+            
+        }
+
+        private void login_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Data.saveMessages(Data.existingMessages);
+        }
+
+        private void inboxBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            //inboxBackgroundWorker.Dispose();
+
+            Debug.WriteLine("inbox background worker completed");
+
+            //if (!inboxBackgroundWorker.IsBusy)
+                //inboxBackgroundWorker.RunWorkerAsync();
+            
+            
+        }
     }
 }

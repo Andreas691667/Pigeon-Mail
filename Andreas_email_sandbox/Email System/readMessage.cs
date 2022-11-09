@@ -13,7 +13,7 @@ namespace Email_System
 
         Data.msg msg = new Data.msg();
 
-        IMessageSummary message;
+        IMessageSummary message = null!;
 
         public readMessage(string body, string from, string to, string date, string subject, string attachments, string folder)
         {
@@ -113,7 +113,7 @@ namespace Email_System
                         System.Diagnostics.Process.Start("explorer.exe", argument);
                     }
                 }
-            //}
+            
         }
         
 

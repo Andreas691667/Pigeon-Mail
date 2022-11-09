@@ -39,6 +39,7 @@
             this.rememberMeCB = new System.Windows.Forms.CheckBox();
             this.messagesBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.foldersBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.inboxBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.companyImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -127,6 +128,12 @@
             this.foldersBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.foldersBackgroundWorker_DoWork);
             this.foldersBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.foldersBackgroundWorker_RunWorkerCompleted);
             // 
+            // inboxBackgroundWorker
+            // 
+            this.inboxBackgroundWorker.WorkerSupportsCancellation = true;
+            this.inboxBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.inboxBackgroundWorker_DoWork);
+            this.inboxBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.inboxBackgroundWorker_RunWorkerCompleted);
+            // 
             // login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -147,6 +154,7 @@
             this.Name = "login";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Login";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.login_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.companyImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -165,5 +173,6 @@
         private CheckBox rememberMeCB;
         private System.ComponentModel.BackgroundWorker messagesBackgroundWorker;
         private System.ComponentModel.BackgroundWorker foldersBackgroundWorker;
+        public System.ComponentModel.BackgroundWorker inboxBackgroundWorker;
     }
 }

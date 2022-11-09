@@ -2,7 +2,9 @@
 using MailKit.Net.Imap;
 using MailKit.Search;
 using MimeKit;
+using Org.BouncyCastle.Asn1.X509;
 using System.Diagnostics;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace Email_System
 {
@@ -21,10 +23,7 @@ namespace Email_System
         {
             InitializeComponent();
 
-           foreach(var f in Data.existingFolders)
-            {
-                folderLb.Items.Add(f);
-            }
+            RetrieveFolders();
 
            /*
             foreach(var m in Data.existingMessages[0])
@@ -74,7 +73,7 @@ namespace Email_System
                 subject += "(UNREAD) ";
             }
 
-            if (item.subject != null)
+            if (item.subject != "")
             {
                 subject += item.subject;
                 messageLb.Items.Add(subject);
@@ -101,89 +100,104 @@ namespace Email_System
         // method that retrieve folders and add the names to the listbox
         private async void RetrieveFolders()
         {
-            RetrieveInboxMessages();
+            /*            RetrieveInboxMessages();
 
-            bool foldersLoaded = false;
+                        bool foldersLoaded = false;
 
-            while (!foldersLoaded)
+                        while (!foldersLoaded)
+                        {
+                            //this.Cursor = Cursors.WaitCursor;
+                            this.Enabled = false;
+
+                            var client = await Utility.establishConnectionImap();
+
+                            // get the folders from the server (to a List)
+                            var folders = await client.GetFoldersAsync(new FolderNamespace('.', ""));
+
+                            //dictionary for storing all folders
+                            Dictionary<string, string> foldersMap = new Dictionary<string, string>();
+
+                            // get the messages from the folder and add them to the dictionary
+                            foreach (var item in folders)
+                            {                
+
+                                if (item.Exists)
+                                {
+                                    var folderName = item.FullName.Substring(item.FullName.LastIndexOf('/') + 1);
+                                    foldersMap.Add(key: item.FullName, value: folderName);
+                                }
+                            }
+
+                            // specify the data source for the listbox
+                            folderLb.DataSource = new BindingSource(foldersMap, null);
+
+                            // specify the display member and value member
+                            folderLb.DisplayMember = "Value";
+                            folderLb.ValueMember = "Key";
+
+                            foldersLoaded = true;
+
+                            //disconnect from the client
+                            await client.DisconnectAsync(true);
+                           // this.Cursor = Cursors.Default;
+                            this.Enabled = true;
+                        }  */
+
+
+            foreach (var f in Data.existingFolders)
             {
-                //this.Cursor = Cursors.WaitCursor;
-                this.Enabled = false;
+                folderLb.Items.Add(f);
+            }
 
-                var client = await Utility.establishConnectionImap();
-
-                // get the folders from the server (to a List)
-                var folders = await client.GetFoldersAsync(new FolderNamespace('.', ""));
-
-                //dictionary for storing all folders
-                Dictionary<string, string> foldersMap = new Dictionary<string, string>();
-
-                // get the messages from the folder and add them to the dictionary
-                foreach (var item in folders)
-                {                
-
-                    if (item.Exists)
-                    {
-                        var folderName = item.FullName.Substring(item.FullName.LastIndexOf('/') + 1);
-                        foldersMap.Add(key: item.FullName, value: folderName);
-                    }
-                }
-
-                // specify the data source for the listbox
-                folderLb.DataSource = new BindingSource(foldersMap, null);
-
-                // specify the display member and value member
-                folderLb.DisplayMember = "Value";
-                folderLb.ValueMember = "Key";
-
-                foldersLoaded = true;
-
-                //disconnect from the client
-                await client.DisconnectAsync(true);
-               // this.Cursor = Cursors.Default;
-                this.Enabled = true;
-            }            
+            //RetrieveInboxMessages();
         }
         private async void RetrieveInboxMessages()
         {
-            bool messagesLoaded = false;
-            messageLb.Items.Clear();
+            /*            bool messagesLoaded = false;
+                        messageLb.Items.Clear();
 
-            if (!messagesLoaded)
+                        if (!messagesLoaded)
+                        {
+                         //   this.Cursor = Cursors.WaitCursor;
+                            this.Enabled = false;
+
+                            var client = await Utility.establishConnectionImap();
+                            var folder = client.Inbox;
+                            await folder.OpenAsync(FolderAccess.ReadOnly);
+
+                            var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
+
+                            if (folder.Count <= 0)
+                            {
+                                toggleButtons(false);
+                                messageLb.Items.Add("No messages in this folder!");                    
+                            }
+
+                            else
+                            {
+                                toggleButtons(true);
+
+                                messageSummaries = messages;                   
+
+                                foreach (var item in messages.Reverse())
+                                {
+                                    //messageFlagCheck(item);
+                                }
+
+                            }
+
+                            await client.DisconnectAsync(true);
+                        }
+                        //this.Cursor = Cursors.Default;
+                        this.Enabled = true;
+                        messagesLoaded = true;*/
+            toggleButtons(true);
+
+/*            foreach (var item in Data.existingMessages[0])
             {
-             //   this.Cursor = Cursors.WaitCursor;
-                this.Enabled = false;
+                messageFlagCheck(item);
+            }*/
 
-                var client = await Utility.establishConnectionImap();
-                var folder = client.Inbox;
-                await folder.OpenAsync(FolderAccess.ReadOnly);
-
-                var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
-
-                if (folder.Count <= 0)
-                {
-                    toggleButtons(false);
-                    messageLb.Items.Add("No messages in this folder!");                    
-                }
-
-                else
-                {
-                    toggleButtons(true);
-
-                    messageSummaries = messages;                   
-
-                    foreach (var item in messages.Reverse())
-                    {
-                        //messageFlagCheck(item);
-                    }
-
-                }
-
-                await client.DisconnectAsync(true);
-            }
-            //this.Cursor = Cursors.Default;
-            this.Enabled = true;
-            messagesLoaded = true;
         }
 
         // open instance of newEmail form when the button is clicked (typeKey 0 = blank email)
@@ -347,13 +361,20 @@ namespace Email_System
                         }*/
 
 
+
+
             int messageIndex = messageLb.SelectedIndex;
             Data.msg m = currentFolderMessages[messageIndex];
 
-            new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder).Show();
+            if (m.flags.Contains("Draft"))
+            {
+                new newEmail(4, null!, m.body, m.subject, m.to, m.cc, m.attachments, m.folder).Show();
+            }
 
-            //new readMessage().Show();
-
+            else
+            {
+                new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder).Show();
+            }
 
             messageLoaded = true;
         }
@@ -387,6 +408,7 @@ namespace Email_System
 
         public static void refreshCurrentFolder()
         {
+
             instance.RetrieveMessages();
         }
 
@@ -463,12 +485,19 @@ namespace Email_System
         {
             try
             {
-                var messageIndex = messageLb.SelectedIndex;
-                var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
+                /*                var messageIndex = messageLb.SelectedIndex;
+                                var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
 
-   //             this.Cursor = Cursors.WaitCursor;
-                this.Enabled = false;
-                Utility.deleteMessage(message);                
+                                //             this.Cursor = Cursors.WaitCursor;
+                                this.Enabled = false;
+
+                                Utility.deleteMessage(message);*/
+
+                int messageIndex = messageLb.SelectedIndex;
+                Data.msg m = currentFolderMessages[messageIndex];
+
+
+                Utility.deleteMsg(m.uid, m.subject);
             }
 
             catch
@@ -478,9 +507,10 @@ namespace Email_System
 
             finally
             {
-    //            this.Cursor = Cursors.Default;
+                //            this.Cursor = Cursors.Default;
                 this.Enabled = true;
             }
+            
 
         }
 

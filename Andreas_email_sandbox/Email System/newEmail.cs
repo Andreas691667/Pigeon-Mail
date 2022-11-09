@@ -14,6 +14,7 @@ using EmailValidation;
 using System.Text.RegularExpressions;
 using Org.BouncyCastle.Cms;
 using System.Linq.Expressions;
+using MailKit.Search;
 
 namespace Email_System
 {
@@ -24,7 +25,7 @@ namespace Email_System
         BodyBuilder builder = new BodyBuilder();
 
         //Dictionary<string, string> attachments = new Dictionary<string, string>();
-
+        Data.msg msg = new Data.msg();
 
         static string[] DraftFolderNames = { "Drafts", "Kladder", "Draft" };
 
@@ -39,13 +40,19 @@ namespace Email_System
         // 2: reply all
         // 3: forward
         // 4: drafts (not implemented)
-        public newEmail(int flag, IMessageSummary m = null!, string body = null!)
+        public newEmail(int flag, IMessageSummary m = null!, string body = null!, string subject = null!, string rec = null!, string ccRec = null!, string attachments = null!, string folder = null!)
         {
             InitializeComponent();
 
-            if (m != null)
-            {
-                messageSender = m;
+            //msg.from = from;
+            msg.subject = subject;
+            msg.to = rec;
+            msg.body = body;
+            msg.attachments = attachments;
+            msg.folder = folder;
+            msg.cc = ccRec;
+
+                //messageSender = m;
 
                 switch (flag)
                 {
@@ -64,7 +71,7 @@ namespace Email_System
                         flagDraft(body);
                         break;
                 }
-            }
+            
         }
 
         #region switch methods
@@ -115,91 +122,88 @@ namespace Email_System
             messageBodyTb.AppendText(body);
         }
 
-        /*        private async void getAttachments()
-                {
-                    var client = await Utility.establishConnectionImap();
-
-                    var folder = getDraftFolder(client, CancellationToken.None);
-
-                    var bodyPart = messageSender.Attachments.ToList();
-
-                    var s = (MimeEntity)folder.GetBodyPart(messageSender.UniqueId, bodyPart);
-                }*/
-
         private async void flagDraft(string body)
         {
             isDraft = true;
 
-            if (!string.IsNullOrEmpty(messageSender.Envelope.Subject))
-            {
-                subjectTb.Text = messageSender.Envelope.Subject;
-            }
-
-            if (!string.IsNullOrEmpty(messageSender.Envelope.To.ToString()))
-            {
-                recipientsTb.Text = messageSender.Envelope.To.ToString();
-            }
-
-            if (!string.IsNullOrEmpty(messageSender.Envelope.Cc.ToString()))
-            {
-                ccRecipientsTb.Text = messageSender.Envelope.Cc.ToString();
-            }
-
-            messageBodyTb.AppendText(body);
+            subjectTb.Text = msg.subject;
+            recipientsTb.Text = msg.to;
+            ccRecipientsTb.Text = msg.cc;
+            messageBodyTb.AppendText(msg.body);
 
             //get attachments from message
-            var attachments = messageSender.Attachments.ToList();
-
-            //traverse over the attachments
-            foreach (var item in attachments)
+            if (msg.attachments != null)
             {
-                attachmentsLabel.Visible = true;
-                attachmentsLb.Visible = true;
-                removeAttachmentBt.Visible = true;
+                string[] attachments = msg.attachments.Split(';');
 
-                //add filename to listbox
-                attachmentsLb.Items.Add(item.FileName);
 
-                //download the attachments in the user's temp folder (same approach as in readmessage)
+
+
+
                 var client = await Utility.establishConnectionImap();
-                var f = client.GetFolder(messageSender.Folder.ToString());
+                var f = client.GetFolder(msg.folder);
                 f.Open(FolderAccess.ReadWrite);
+                var query = SearchQuery.SubjectContains(msg.subject);
+                var uids = f.Search(query);
+                var items = f.Fetch(uids, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure);
 
-                MimeEntity entity = f.GetBodyPart(messageSender.UniqueId, item);
 
-                var tempFolder = Path.GetTempPath();    
 
-                if (entity is MessagePart)
+                //traverse over the attachments
+                foreach (var item in items)
                 {
-                    var rfc822 = (MessagePart)entity;
-                    var path = Path.Combine(tempFolder, item.PartSpecifier + ".eml");
-                    rfc822.Message.WriteTo(path);
+                    attachmentsLabel.Visible = true;
+                    attachmentsLb.Visible = true;
+                    removeAttachmentBt.Visible = true;
 
-                    //display the file in file explorer
-                    string argument = "/select, \"" + path + "\"";
+                    foreach (var attachment in item.Attachments)
+                    {
+                        //add filename to listbox
+                        attachmentsLb.Items.Add(attachment.FileName);
 
-                    addAttachment(path);
+                        MimeEntity entity = f.GetBodyPart(messageSender.UniqueId, attachment);
+
+                        var tempFolder = Path.GetTempPath();
+
+                        if (entity is MessagePart)
+                        {
+                            var rfc822 = (MessagePart)entity;
+                            var path = Path.Combine(tempFolder, attachment.PartSpecifier + ".eml");
+                            rfc822.Message.WriteTo(path);
+
+                            //display the file in file explorer
+                            string argument = "/select, \"" + path + "\"";
+
+                            addAttachment(path);
+                        }
+
+                        else
+                        {
+                            var part = (MimePart)entity;
+
+                            // note: it's possible for this to be null, but most will specify a filename
+                            var fileName = part.FileName;
+
+                            var path = Path.Combine(tempFolder, fileName);
+
+                            // decode and save the content to a file
+                            using (var stream = File.Create(path))
+                                part.Content.DecodeTo(stream);
+
+                            //display the file in file explorer
+                            string argument = "/select, \"" + path + "\"";
+
+                            addAttachment(path);
+                        }
+                    }
+
                 }
-
-                else
-                {
-                    var part = (MimePart)entity;
-
-                    // note: it's possible for this to be null, but most will specify a filename
-                    var fileName = part.FileName;
-
-                    var path = Path.Combine(tempFolder, fileName);
-
-                    // decode and save the content to a file
-                    using (var stream = File.Create(path))
-                        part.Content.DecodeTo(stream);
-
-                    //display the file in file explorer
-                    string argument = "/select, \"" + path + "\"";
-                    addAttachment(path);
-                }
-
             }
+        }
+
+        private void downloadAttachments()
+        {
+
         }
 
         #endregion

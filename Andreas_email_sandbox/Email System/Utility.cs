@@ -2,8 +2,12 @@
 using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using MimeKit.Encodings;
 using Org.BouncyCastle.Asn1.X509;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
+using static Email_System.Data;
 
 namespace Email_System
 {
@@ -129,13 +133,61 @@ namespace Email_System
             {
                 var client = await Utility.establishConnectionImap();
                 var folder = await client.GetFolderAsync(mg.Folder.ToString());
+
                 await folder.OpenAsync(FolderAccess.ReadWrite);
                 await folder.AddFlagsAsync(mg.UniqueId, MessageFlags.Deleted, true);
+
                 await folder.ExpungeAsync();
                 Utility.refreshCurrentFolder();
+
                 await client.DisconnectAsync(true);
             }
         }
+
+
+        public static void deleteMsg(uint uid, string sub)
+        {
+            var l = login.GetInstance;
+            l.inboxBackgroundWorker.CancelAsync();      
+
+            foreach (var list in Data.existingMessages)
+            {
+                var items1 = list.FindAll(x => x.uid == uid);
+                var items = items1.FindAll(x => x.subject == sub);
+
+                int i = 0;
+
+                foreach (var msg in items)
+                {
+                    deleteMsgServer(msg.folder, i);
+
+                    Debug.WriteLine(msg.subject + msg.folder);
+
+                    i = list.IndexOf(msg);
+
+                    list.Remove(msg);
+                    refreshCurrentFolder();
+                }
+            }
+        }
+
+        public static async void deleteMsgServer(string f, int index)
+        {
+            var client = await Utility.establishConnectionImap();
+            var folder = await client.GetFolderAsync(f);
+            await folder.OpenAsync(FolderAccess.ReadWrite);
+            await folder.AddFlagsAsync(index, MessageFlags.Deleted, true);
+            await folder.ExpungeAsync();
+            await client.DisconnectAsync(true);
+
+            Debug.WriteLine("msg deleted from server");
+
+            //begin listening on inbox again
+            var l = login.GetInstance;
+            l.inboxBackgroundWorker.RunWorkerAsync();
+        }
+
+
         public static async void moveMessageToTrash(IMessageSummary mg)
         {
             DialogResult result = MessageBox.Show("The message will be moved to trash. Do you wish to continue?", "Continue?", MessageBoxButtons.YesNo);
