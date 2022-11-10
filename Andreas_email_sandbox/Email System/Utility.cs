@@ -148,22 +148,35 @@ namespace Email_System
         public static void deleteMsg(uint uid, string sub)
         {
             var l = login.GetInstance;
-            l.inboxBackgroundWorker.CancelAsync();      
+
 
             foreach (var list in Data.existingMessages)
             {
+                var folderIndex = Data.existingMessages.IndexOf(list);
+
+                if(folderIndex == 0)
+                {
+                    l.inboxBackgroundWorker.CancelAsync();
+                }
+
+                else
+                {
+                    l.allFoldersbackgroundWorker.CancelAsync();
+                }
+
+
                 var items1 = list.FindAll(x => x.uid == uid);
                 var items = items1.FindAll(x => x.subject == sub);
 
-                int i = 0;
-
                 foreach (var msg in items)
                 {
-                    deleteMsgServer(msg.folder, i);
+                    Debug.WriteLine(msg.uid);
 
                     Debug.WriteLine(msg.subject + msg.folder);
 
-                    i = list.IndexOf(msg);
+                    int i = list.IndexOf(msg);
+
+                    deleteMsgServer(msg.folder, i, folderIndex);
 
                     list.Remove(msg);
                     refreshCurrentFolder();
@@ -171,7 +184,7 @@ namespace Email_System
             }
         }
 
-        public static async void deleteMsgServer(string f, int index)
+        public static async void deleteMsgServer(string f, int index, int folderInd)
         {
             try
             {
@@ -180,9 +193,6 @@ namespace Email_System
                 await folder.OpenAsync(FolderAccess.ReadWrite);
                 await folder.AddFlagsAsync(index, MessageFlags.Deleted, true);
                 await folder.ExpungeAsync();
-
-
-
                 await client.DisconnectAsync(true);
 
                 Debug.WriteLine("msg deleted from server");
@@ -197,7 +207,16 @@ namespace Email_System
             {
                 //begin listening on inbox again
                 var l = login.GetInstance;
-                l.inboxBackgroundWorker.RunWorkerAsync();
+
+                if (folderInd == 0)
+                {
+                    l.inboxBackgroundWorker.RunWorkerAsync();
+                }
+
+                else
+                {
+                    l.allFoldersbackgroundWorker.RunWorkerAsync();
+                }
             }
         }
 

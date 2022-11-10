@@ -46,9 +46,11 @@ namespace Email_System
 
         public static List<List<msg>> msgs = new List<List<msg>>();
 
+
+        //these are currently not used
         public static bool stop = false;
 
-
+        public static Mutex listenMutex = new Mutex();
 
         public static Semaphore s;
 
@@ -64,7 +66,6 @@ namespace Email_System
             while (!bw.CancellationPending)
             {
                 int currentCount = existingMessages[0].Count;
-
                 inboxFolder.Open(FolderAccess.ReadOnly);
                 int newCount = inboxFolder.Count;
 
@@ -120,7 +121,7 @@ namespace Email_System
 
                 existingMessages[i].Add(message);
 
-                Debug.WriteLine("new message added");
+                Debug.WriteLine("new message added to: " + folder);
             }
 
             client.Disconnect(true);
@@ -138,28 +139,30 @@ namespace Email_System
 
             while (!bw.CancellationPending)
             {
-
                 foreach (string folder in existingFolders)
                 {
                     IMailFolder f = client.GetFolder(folder);
-                    f.Open(FolderAccess.ReadOnly);
+                    f.Open(FolderAccess.ReadOnly);                    
 
                     int index = existingFolders.IndexOf(folder);
 
-                    int currentCount = existingMessages[index].Count;
-                    int newCount = f.Count;
-
-                    if (newCount != currentCount)
+                    if (index != 0)
                     {
-                        if (newCount > currentCount)
-                        {
-                            var Task = addNewMessage(folder, newCount - currentCount);
-                            Task.Wait();
-                        }
+                        int currentCount = existingMessages[index].Count;
+                        int newCount = f.Count;
 
-                        if (newCount < currentCount)
+                        if (newCount != currentCount)
                         {
-                            //not implemented
+                            if (newCount > currentCount)
+                            {
+                                var Task = addNewMessage(folder, newCount - currentCount);
+                                Task.Wait();
+                            }
+
+                            if (newCount < currentCount)
+                            {
+                                //not implemented
+                            }
                         }
                     }
                 }
@@ -288,8 +291,6 @@ namespace Email_System
                             {
                                 message.body = "";
                             }
-
-                            Debug.WriteLine(message.flags);
 
                             messages.Add(message);
 

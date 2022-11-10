@@ -327,6 +327,11 @@ namespace Email_System
 
         private void sendBt_Click(object sender, EventArgs e)
         {
+
+            var l = login.GetInstance;
+            l.inboxBackgroundWorker.CancelAsync();
+
+
             this.Enabled = false;
             this.Cursor = Cursors.WaitCursor;
 
@@ -371,6 +376,10 @@ namespace Email_System
                 this.Cursor = Cursors.Default;
                 client.Disconnect(true);
                 client.Dispose();
+
+
+                l = login.GetInstance;
+                l.inboxBackgroundWorker.RunWorkerAsync();
             }
         }
 

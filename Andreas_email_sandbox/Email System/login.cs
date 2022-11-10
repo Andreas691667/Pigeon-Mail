@@ -217,7 +217,6 @@ namespace Email_System
         {
             BackgroundWorker bw = new BackgroundWorker();
 
-
             Debug.WriteLine("inbox bw started");
 
             Task t = Data.listenInboxFolder();                
@@ -244,6 +243,8 @@ namespace Email_System
 
         private void allFoldersbackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            Debug.WriteLine("folder bw started");
+
             Data.listenAllFolders();
         }
     }
