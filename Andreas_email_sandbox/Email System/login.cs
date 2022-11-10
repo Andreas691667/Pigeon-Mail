@@ -87,7 +87,8 @@ namespace Email_System
                 Debug.WriteLine("authenticating");
                 this.Cursor = Cursors.WaitCursor;
 
-                
+
+
                 //start retrieving folders
                 foldersBackgroundWorker.RunWorkerAsync();
 
@@ -169,9 +170,9 @@ namespace Email_System
                 inboxBackgroundWorker.RunWorkerAsync();
                 allFoldersbackgroundWorker.RunWorkerAsync();
 
-                Mailbox m = Mailbox.GetInstance;
+/*                Mailbox m = Mailbox.GetInstance;
                 m.Show();
-                this.Hide();
+                this.Hide();*/
             }
         }
 
@@ -197,6 +198,10 @@ namespace Email_System
             }
             else            
             {
+                Mailbox m = Mailbox.GetInstance;
+                m.Show();
+                this.Hide();
+
                 Debug.WriteLine("runworker folder finished");
                 messagesBackgroundWorker.RunWorkerAsync();
             }

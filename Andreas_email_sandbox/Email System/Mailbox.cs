@@ -297,24 +297,34 @@ namespace Email_System
 
 
             messageLb.Items.Clear();
-
             int folder = folderLb.SelectedIndex;
 
-            if (Data.existingMessages[folder].Count <= 0)
+            try
             {
-                toggleButtons(false);
-                messageLb.Items.Add("No messages in this folder!");
+
+
+                if (Data.existingMessages[folder].Count <= 0)
+                {
+                    toggleButtons(false);
+                    messageLb.Items.Add("No messages in this folder!");
+                }
+
+                else
+                {
+                    toggleButtons(true);
+                    currentFolderMessages = Data.existingMessages[folder];
+
+                    foreach (var item in Data.existingMessages[folder])
+                    {
+                        messageFlagCheck(item);
+                    }
+                }
             }
 
-            else
+            catch
             {
-                toggleButtons(true);
-                currentFolderMessages = Data.existingMessages[folder];
-
-                foreach (var item in Data.existingMessages[folder])
-                {
-                    messageFlagCheck(item);
-                }
+                toggleButtons(false);
+                messageLb.Items.Add("Messages are being fetched from the server! Please be patient:)");
             }
             
         }

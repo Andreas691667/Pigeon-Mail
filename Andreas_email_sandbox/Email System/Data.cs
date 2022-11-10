@@ -172,7 +172,7 @@ namespace Email_System
             client.Disconnect(true);
         }
 
-        public static void loadExistingMessages()
+        public static async Task loadExistingMessages()
         {
             string filename = "messages.json";
 
@@ -254,7 +254,6 @@ namespace Email_System
 
         public static async Task loadMessages(BackgroundWorker bw)
         {
-
             if (!File.Exists("messages.json"))
             {
                 while (!bw.CancellationPending)
@@ -298,6 +297,9 @@ namespace Email_System
                         }
 
                         msgs.Add(messages);
+                        saveMessages(msgs);
+                        Task task = loadExistingMessages();
+                        task.Wait();
 
                     }
 
@@ -390,7 +392,6 @@ namespace Email_System
             return message;
         }
 
-
         private static void saveFolders()
         {
             var json = JsonSerializer.Serialize(folderList);
@@ -403,5 +404,31 @@ namespace Email_System
             File.WriteAllText("messages.json", json);
             Debug.WriteLine("all messages saved");
         }
+
+
+        //method to quickly fetch message subjects when they are not yet stored locally
+        public static async void quickFetch(BackgroundWorker bw)
+        {
+
+
+
+            var client = await Utility.establishConnectionImap();
+            var folder = client.Inbox;
+
+            await folder.OpenAsync(FolderAccess.ReadOnly);
+
+            var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.Envelope | MessageSummaryItems.Flags);
+
+            foreach (var item in messages.Reverse())
+            {
+                //messageFlagCheck(item);
+            }
+
+            await client.DisconnectAsync(true);
+        }
+
+
+        
+
     }
 }
