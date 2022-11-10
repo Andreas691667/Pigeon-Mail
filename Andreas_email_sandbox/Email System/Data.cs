@@ -30,21 +30,20 @@ namespace Email_System
 
         }
 
-        //public for data,
-        //checks for new stuff
-        public static ImapClient client = new ImapClient();
 
-        public static int msgCount = 0;
+        //list to load folders on login
+        private static List<string> folderList = new List<string>();
 
-        public static List<string> folderList = new List<string>();
-
+        //list to store folders
         public static List<string> existingFolders = new List<string>();
 
+        //list to store messages
         public static List<List<msg>> existingMessages = new List<List<msg>>();
 
         public static bool exit = false;
 
-        public static List<List<msg>> msgs = new List<List<msg>>();
+        //private list to load messages on login
+        private static List<List<msg>> msgs = new List<List<msg>>();
 
 
         //these are currently not used
@@ -122,6 +121,8 @@ namespace Email_System
                 existingMessages[i].Add(message);
 
                 Debug.WriteLine("new message added to: " + folder);
+
+                Utility.refreshCurrentFolder();
             }
 
             client.Disconnect(true);
