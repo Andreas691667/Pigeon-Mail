@@ -90,7 +90,8 @@ namespace Email_System
 
 
                 //start retrieving folders
-                foldersBackgroundWorker.RunWorkerAsync();
+                if (!foldersBackgroundWorker.IsBusy)
+                    foldersBackgroundWorker.RunWorkerAsync();
 
             }
 
@@ -167,8 +168,8 @@ namespace Email_System
             }
             else
             {
-                inboxBackgroundWorker.RunWorkerAsync();
-                allFoldersbackgroundWorker.RunWorkerAsync();
+                folderListenerBW.RunWorkerAsync();
+                //allFoldersbackgroundWorker.RunWorkerAsync();
             }
         }
 
@@ -210,19 +211,18 @@ namespace Email_System
 
             Task task = Data.loadMessages(bw);
             task.Wait();
-        }
+        }        
 
-        
-
-        private void inboxBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void folderListenerBW_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker bw = new BackgroundWorker();
 
-            Debug.WriteLine("inbox bw started");
+            Debug.WriteLine("listener bw started");
 
-            Task t = Data.listenInboxFolder();                
+            Thread.Sleep(10000);
 
-            
+            Data.listenAllFolders();
+            Data.listenInboxFolder();           
         }
 
         private void login_FormClosed(object sender, FormClosedEventArgs e)
@@ -230,7 +230,7 @@ namespace Email_System
             //Data.saveMessages(Data.existingMessages);
         }
 
-        private void inboxBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void folderListenerBW_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
 
             if (e.Cancelled)
@@ -251,34 +251,7 @@ namespace Email_System
             }
 
 
-        }
-
-        private void allFoldersbackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            Debug.WriteLine("folder bw started");
-
-            Data.listenAllFolders();
-        }
-
-        private void allFoldersbackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (e.Cancelled)
-            {
-                // The user canceled the operation.
-                MessageBox.Show("Operation was canceled");
-            }
-            else if (e.Error != null)
-            {
-                // There was an error during the operation.
-                string msg = String.Format("An error occurred: {0}", e.Error.Message);
-                MessageBox.Show(msg);
-            }
-            else
-            {
-
-                Debug.WriteLine("runworker all folders listen finished (no problem)");
-            }
-        }
+        }        
 
         #endregion
 

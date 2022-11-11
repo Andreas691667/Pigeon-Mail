@@ -24,12 +24,6 @@ namespace Email_System
             InitializeComponent();
 
             RetrieveFolders();
-
-           /*
-            foreach(var m in Data.existingMessages[0])
-            {
-                messageLb.Items.Add(m.subject);
-            }*/
         }
 
         //ensures singleton pattern is maintained (only one instance at all times)
@@ -98,7 +92,7 @@ namespace Email_System
         }
 
         // method that retrieve folders and add the names to the listbox
-        private async void RetrieveFolders()
+        private void RetrieveFolders()
         {
             /*            RetrieveInboxMessages();
 
@@ -144,14 +138,39 @@ namespace Email_System
                         }  */
 
 
+
+
+            folderLb.Items.Clear();
+
+
             foreach (var f in Data.existingFolders)
             {
-                folderLb.Items.Add(f);
-            }
+                string folderString = "";
 
-            //RetrieveInboxMessages();
+                folderString += f;
+
+
+                int folderIndex = Data.existingFolders.IndexOf(f);
+
+                try
+                {
+                    int count = Data.existingMessages[folderIndex].Count;
+                    folderString += " (" + count + ")";
+
+                }
+
+                catch
+                {
+                    folderString += " (0)";
+                }
+
+                finally
+                {
+                    folderLb.Items.Add(folderString);
+                }
+            }
         }
-        private async void RetrieveInboxMessages()
+        private void RetrieveInboxMessages()
         {
             /*            bool messagesLoaded = false;
                         messageLb.Items.Clear();
@@ -191,7 +210,6 @@ namespace Email_System
                         //this.Cursor = Cursors.Default;
                         this.Enabled = true;
                         messagesLoaded = true;*/
-            toggleButtons(true);
 
 /*            foreach (var item in Data.existingMessages[0])
             {
@@ -326,14 +344,12 @@ namespace Email_System
                 toggleButtons(false);
                 messageLb.Items.Add("Messages are being fetched from the server! Please be patient:)");
             }
-            
+
         }
 
         // method to read the message when it is double clicked
-        private async void ReadMessage(object sender, MouseEventArgs e)
+        private void ReadMessage(object sender, MouseEventArgs e)
         {
-            bool messageLoaded = false;
-
             /*            if (!messageLoaded) 
                         {
                         //    this.Cursor = Cursors.WaitCursor;
@@ -387,8 +403,6 @@ namespace Email_System
                 //m.flags.Replace("(UNREAD)", "");
                 new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder).Show();               
             }
-
-            messageLoaded = true;
         }
 
         private void refreshBt_Click(object sender, EventArgs e)
@@ -420,7 +434,13 @@ namespace Email_System
 
         public static void refreshCurrentFolder()
         {
+            int folderIndex = instance.folderLb.SelectedIndex;
+            instance.RetrieveFolders();
+            instance.folderLb.SelectedIndex = folderIndex;
+            instance.folderLb.Update();
+            instance.folderLb.Focus();
 
+            Thread.Sleep(100);
             instance.RetrieveMessages();
         }
 
@@ -497,24 +517,15 @@ namespace Email_System
         {
             try
             {
-                /*                var messageIndex = messageLb.SelectedIndex;
-                                var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
-
-                                //             this.Cursor = Cursors.WaitCursor;
-                                this.Enabled = false;
-
-                                Utility.deleteMessage(message);*/
-
                 int messageIndex = messageLb.SelectedIndex;
                 Data.msg m = currentFolderMessages[messageIndex];
-
-
                 Utility.deleteMsg(m.uid, m.subject, m.folder);
             }
 
-            catch
+            catch(Exception ex)
             {
-                MessageBox.Show("No message selected!");
+                Debug.WriteLine(ex.Message);
+                //MessageBox.Show("No message selected!");
             }
 
             finally
@@ -563,8 +574,7 @@ namespace Email_System
             login l = login.GetInstance;
             l.Show();
 
-            l.inboxBackgroundWorker.CancelAsync();
-            l.allFoldersbackgroundWorker.CancelAsync();
+            l.folderListenerBW.CancelAsync();
             Data.saveMessages(Data.existingMessages);
 
             instance.Dispose();

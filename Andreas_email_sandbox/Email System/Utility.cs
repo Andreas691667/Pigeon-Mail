@@ -111,89 +111,76 @@ namespace Email_System
         //stops listening on folders and deletes message locally
         public static void deleteMsg(uint uid, string sub, string folder)
         {
+            //we should search other folders in case the message is in several folders
+            //perhaps just traverse the entire list 'existingMessages'? shouldn't be that slow
+
             var l = login.GetInstance;
 
             var folderIndex = Data.existingFolders.IndexOf(folder);
 
-
-            if (folderIndex == 0)
+            if (!l.folderListenerBW.CancellationPending)
             {
-                l.inboxBackgroundWorker.CancelAsync();
+                l.folderListenerBW.CancelAsync();
+                l.folderListenerBW.Dispose();
             }
+            Thread.Sleep(500);
+            Queue<Tuple<string, int>> deleteQueue = new Queue<Tuple<string, int>>();
 
-            else
+            foreach (var f in Data.existingMessages.ToList())
             {
-                l.allFoldersbackgroundWorker.CancelAsync();
-            }
-
-
-            foreach (var msg in Data.existingMessages[folderIndex])
-            {
-
-                if(msg.uid == uid && msg.subject == sub)
+                foreach (var m in f.ToList())
                 {
-                    Debug.WriteLine(msg.uid);
+                    if (m.uid == uid && m.subject == sub)
+                    {
+                        Debug.WriteLine(m.uid);
 
-                    Debug.WriteLine(msg.subject + msg.folder);
+                        Debug.WriteLine(m.subject + m.folder);
 
-                    int i = Data.existingMessages[folderIndex].IndexOf(msg);
+                        int i = Data.existingMessages[folderIndex].IndexOf(m);
+                        Data.existingMessages[folderIndex].Remove(m);
 
-                    deleteMsgServer(msg.folder, i, folderIndex);
+                        Tuple<string, int> t = new Tuple<string,int>(m.folder, i);
 
-                    Data.existingMessages[folderIndex].Remove(msg);
+                        deleteQueue.Enqueue(t);
 
-                    refreshCurrentFolder();
+                        refreshCurrentFolder();
+                    }
                 }
-
-
-
-/*
-                //var folderIndex = Data.existingMessages.IndexOf(list);
-
-                var items1 = msgs.FindAll(x => x.uid == uid);
-
-                msgs.fin
-
-                var items = items1.FindAll(x => x.subject == sub);
-
-                //var folderIndex = Data.existingMessages.IndexOf(items);
-
-
-
-
-
-
-                foreach (var msg in items)
-                {
-                    Debug.WriteLine(msg.uid);
-
-                    Debug.WriteLine(msg.subject + msg.folder);
-
-                    int i = list.IndexOf(msg);
-
-                    deleteMsgServer(msg.folder, i, folderIndex);
-
-                    list.Remove(msg);
-
-                    refreshCurrentFolder();
-                }*/
             }
+
+            deleteMsgServer(deleteQueue);
         }
+
         //deletes message from server and starts listening on folders again
-        public static async void deleteMsgServer(string f, int index, int folderInd)
+        public static async void deleteMsgServer(Queue<Tuple<string, int>> q)
         {
             try
             {
-                var client = await Utility.establishConnectionImap();
-                var folder = await client.GetFolderAsync(f);
-                await folder.OpenAsync(FolderAccess.ReadWrite);
-                await folder.AddFlagsAsync(index, MessageFlags.Deleted, true);
-                await folder.ExpungeAsync();
+                foreach (var item in q)
+                {
+                    var f = item.Item1;
+                    var index = item.Item2;
 
-                Debug.WriteLine("msg deleted from server from folder: " + folder.FullName);
+                    var client = await Utility.establishConnectionImap();
+                    var folder = await client.GetFolderAsync(f);
+                    await folder.OpenAsync(FolderAccess.ReadWrite);
+
+                    int oldCount = folder.Count;
+
+                    await folder.AddFlagsAsync(index, MessageFlags.Deleted, true);
+                    await folder.ExpungeAsync();
+
+                    Debug.WriteLine("msg deleted from server from folder: " + folder.FullName);
+
+                    var task = client.DisconnectAsync(true);
+                    task.Wait();
+                }
 
 
-                await client.DisconnectAsync(true);
+                var l = login.GetInstance;
+
+                l.folderListenerBW.RunWorkerAsync();
+                
 
             }
 
@@ -205,17 +192,12 @@ namespace Email_System
             finally
             {
                 //begin listening on inbox again
-                var l = login.GetInstance;
+/*                var l = login.GetInstance;
 
-                if (folderInd == 0)
+                if (!l.folderListenerBW.IsBusy)
                 {
-                    l.inboxBackgroundWorker.RunWorkerAsync();
-                }
-
-                else
-                {
-                    l.allFoldersbackgroundWorker.RunWorkerAsync();
-                }
+                    l.folderListenerBW.RunWorkerAsync();
+                }*/
             }
         }
 

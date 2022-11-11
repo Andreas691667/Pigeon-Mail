@@ -45,39 +45,34 @@ namespace Email_System
         //private list to load messages on login
         private static List<List<msg>> msgs = new List<List<msg>>();
 
-
-        //these are currently not used
-        public static bool stop = false;
-
-        public static Mutex listenMutex = new Mutex();
-
-        public static Semaphore s;
-
-
-        public static async Task listenInboxFolder()
+        public static async void listenInboxFolder()
         {
             var client = await Utility.establishConnectionImap();
             var inboxFolder = client.Inbox;
 
             var i = login.GetInstance;
-            var bw = i.inboxBackgroundWorker;
+            var bw = i.folderListenerBW;
             
             while (!bw.CancellationPending)
             {
-                int currentCount = existingMessages[0].Count;
+                int currentCount = existingMessages[0].Count; //local count
                 inboxFolder.Open(FolderAccess.ReadOnly);
-                int newCount = inboxFolder.Count;
+                int newCount = inboxFolder.Count; //server cocunt
 
                 if (newCount != currentCount)
                 {
+                    //if there is more messages on the server than we have locally
                     if (newCount > currentCount)
                     {
+                        Debug.WriteLine("New count = " + newCount + " Old count: " + currentCount);
+
                         var Task = addNewMessage(inboxFolder.FullName, newCount - currentCount);
                         Task.Wait();                        
                     }
 
                     if(newCount < currentCount)
                     {
+                        //this is when a message is deleted on server
                         //not implemented
                     }                    
                 }
@@ -138,7 +133,7 @@ namespace Email_System
             var client = await Utility.establishConnectionImap();
 
             var i = login.GetInstance;
-            var bw = i.allFoldersbackgroundWorker;
+            var bw = i.folderListenerBW;
 
             while (!bw.CancellationPending)
             {
@@ -158,6 +153,7 @@ namespace Email_System
                         {
                             if (newCount > currentCount)
                             {
+                               Debug.WriteLine("New count = " + newCount + " Old count: " + currentCount);
                                var Task = addNewMessage(folder, newCount - currentCount);
                                Task.Wait();
                             }

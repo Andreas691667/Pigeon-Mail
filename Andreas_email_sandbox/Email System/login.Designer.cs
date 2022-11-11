@@ -39,9 +39,8 @@
             this.rememberMeCB = new System.Windows.Forms.CheckBox();
             this.messagesBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.foldersBackgroundWorker = new System.ComponentModel.BackgroundWorker();
-            this.inboxBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.folderListenerBW = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.allFoldersbackgroundWorker = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.companyImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -130,21 +129,15 @@
             this.foldersBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.foldersBackgroundWorker_DoWork);
             this.foldersBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.foldersBackgroundWorker_RunWorkerCompleted);
             // 
-            // inboxBackgroundWorker
+            // folderListenerBW
             // 
-            this.inboxBackgroundWorker.WorkerSupportsCancellation = true;
-            this.inboxBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.inboxBackgroundWorker_DoWork);
-            this.inboxBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.inboxBackgroundWorker_RunWorkerCompleted);
+            this.folderListenerBW.WorkerSupportsCancellation = true;
+            this.folderListenerBW.DoWork += new System.ComponentModel.DoWorkEventHandler(this.folderListenerBW_DoWork);
+            this.folderListenerBW.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.folderListenerBW_RunWorkerCompleted);
             // 
             // backgroundWorker1
             // 
             this.backgroundWorker1.WorkerSupportsCancellation = true;
-            // 
-            // allFoldersbackgroundWorker
-            // 
-            this.allFoldersbackgroundWorker.WorkerSupportsCancellation = true;
-            this.allFoldersbackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.allFoldersbackgroundWorker_DoWork);
-            this.allFoldersbackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.allFoldersbackgroundWorker_RunWorkerCompleted);
             // 
             // login
             // 
@@ -185,8 +178,7 @@
         private CheckBox rememberMeCB;
         private System.ComponentModel.BackgroundWorker messagesBackgroundWorker;
         private System.ComponentModel.BackgroundWorker foldersBackgroundWorker;
-        public System.ComponentModel.BackgroundWorker inboxBackgroundWorker;
+        public System.ComponentModel.BackgroundWorker folderListenerBW;
         public System.ComponentModel.BackgroundWorker backgroundWorker1;
-        public System.ComponentModel.BackgroundWorker allFoldersbackgroundWorker;
     }
 }

@@ -329,7 +329,7 @@ namespace Email_System
         {
 
             var l = login.GetInstance;
-            l.inboxBackgroundWorker.CancelAsync();
+            l.folderListenerBW.CancelAsync();
 
 
             this.Enabled = false;
@@ -379,7 +379,7 @@ namespace Email_System
 
 
                 l = login.GetInstance;
-                l.inboxBackgroundWorker.RunWorkerAsync();
+                l.folderListenerBW.RunWorkerAsync();
             }
         }
 
