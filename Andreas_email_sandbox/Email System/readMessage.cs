@@ -188,7 +188,7 @@ namespace Email_System
 
         private void deleteMessageBt_Click(object sender, EventArgs e)
         {
-            Utility.deleteMsg(msg.uid, msg.subject);
+         //   Utility.deleteMsg(msg.uid, msg.subject);
 
 
 

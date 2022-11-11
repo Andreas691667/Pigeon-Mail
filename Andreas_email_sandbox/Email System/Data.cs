@@ -61,7 +61,7 @@ namespace Email_System
 
             var i = login.GetInstance;
             var bw = i.inboxBackgroundWorker;
-
+            
             while (!bw.CancellationPending)
             {
                 int currentCount = existingMessages[0].Count;
@@ -122,7 +122,9 @@ namespace Email_System
 
                 Debug.WriteLine("new message added to: " + folder);
 
-                Utility.refreshCurrentFolder();
+
+                //we shouldn't refresh here, since it causes a non thread-safe call to messageLb
+                //Utility.refreshCurrentFolder();
             }
 
             client.Disconnect(true);
@@ -156,8 +158,8 @@ namespace Email_System
                         {
                             if (newCount > currentCount)
                             {
-                                var Task = addNewMessage(folder, newCount - currentCount);
-                                Task.Wait();
+                               var Task = addNewMessage(folder, newCount - currentCount);
+                               Task.Wait();
                             }
 
                             if (newCount < currentCount)
@@ -403,32 +405,7 @@ namespace Email_System
             var json = JsonSerializer.Serialize(list);
             File.WriteAllText("messages.json", json);
             Debug.WriteLine("all messages saved");
-        }
-
-
-        //method to quickly fetch message subjects when they are not yet stored locally
-        public static async void quickFetch(BackgroundWorker bw)
-        {
-
-
-
-            var client = await Utility.establishConnectionImap();
-            var folder = client.Inbox;
-
-            await folder.OpenAsync(FolderAccess.ReadOnly);
-
-            var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.Envelope | MessageSummaryItems.Flags);
-
-            foreach (var item in messages.Reverse())
-            {
-                //messageFlagCheck(item);
-            }
-
-            await client.DisconnectAsync(true);
-        }
-
-
-        
+        }       
 
     }
 }

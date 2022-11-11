@@ -169,10 +169,6 @@ namespace Email_System
             {
                 inboxBackgroundWorker.RunWorkerAsync();
                 allFoldersbackgroundWorker.RunWorkerAsync();
-
-/*                Mailbox m = Mailbox.GetInstance;
-                m.Show();
-                this.Hide();*/
             }
         }
 
@@ -216,7 +212,7 @@ namespace Email_System
             task.Wait();
         }
 
-        #endregion
+        
 
         private void inboxBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -231,19 +227,30 @@ namespace Email_System
 
         private void login_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Data.saveMessages(Data.existingMessages);
+            //Data.saveMessages(Data.existingMessages);
         }
 
         private void inboxBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            //inboxBackgroundWorker.Dispose();
 
-            Debug.WriteLine("inbox background worker completed");
+            if (e.Cancelled)
+            {
+                // The user canceled the operation.
+                MessageBox.Show("Operation was canceled");
+            }
+            else if (e.Error != null)
+            {
+                // There was an error during the operation.
+                string msg = String.Format("An error occurred: {0}", e.Error.Message);
+                MessageBox.Show(msg);
+            }
+            else
+            {
 
-            //if (!inboxBackgroundWorker.IsBusy)
-                //inboxBackgroundWorker.RunWorkerAsync();
-            
-            
+                Debug.WriteLine("runworker inbox listen finished (no problem)");
+            }
+
+
         }
 
         private void allFoldersbackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -252,5 +259,29 @@ namespace Email_System
 
             Data.listenAllFolders();
         }
+
+        private void allFoldersbackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled)
+            {
+                // The user canceled the operation.
+                MessageBox.Show("Operation was canceled");
+            }
+            else if (e.Error != null)
+            {
+                // There was an error during the operation.
+                string msg = String.Format("An error occurred: {0}", e.Error.Message);
+                MessageBox.Show(msg);
+            }
+            else
+            {
+
+                Debug.WriteLine("runworker all folders listen finished (no problem)");
+            }
+        }
+
+        #endregion
+
+
     }
 }

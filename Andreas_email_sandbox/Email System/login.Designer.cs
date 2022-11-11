@@ -144,6 +144,7 @@
             // 
             this.allFoldersbackgroundWorker.WorkerSupportsCancellation = true;
             this.allFoldersbackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.allFoldersbackgroundWorker_DoWork);
+            this.allFoldersbackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.allFoldersbackgroundWorker_RunWorkerCompleted);
             // 
             // login
             // 

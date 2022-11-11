@@ -381,9 +381,11 @@ namespace Email_System
                 new newEmail(4, null!, m.body, m.subject, m.to, m.cc, m.attachments, m.folder).Show();
             }
 
+            //how do we remove the 'unread' part??
             else
             {
-                new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder).Show();
+                //m.flags.Replace("(UNREAD)", "");
+                new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder).Show();               
             }
 
             messageLoaded = true;
@@ -507,7 +509,7 @@ namespace Email_System
                 Data.msg m = currentFolderMessages[messageIndex];
 
 
-                Utility.deleteMsg(m.uid, m.subject);
+                Utility.deleteMsg(m.uid, m.subject, m.folder);
             }
 
             catch
@@ -560,6 +562,11 @@ namespace Email_System
         {
             login l = login.GetInstance;
             l.Show();
+
+            l.inboxBackgroundWorker.CancelAsync();
+            l.allFoldersbackgroundWorker.CancelAsync();
+            Data.saveMessages(Data.existingMessages);
+
             instance.Dispose();
         }
 

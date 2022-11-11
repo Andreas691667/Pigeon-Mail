@@ -4,6 +4,7 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit.Encodings;
 using Org.BouncyCastle.Asn1.X509;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -108,28 +109,59 @@ namespace Email_System
         }
 
         //stops listening on folders and deletes message locally
-        public static void deleteMsg(uint uid, string sub)
+        public static void deleteMsg(uint uid, string sub, string folder)
         {
             var l = login.GetInstance;
 
+            var folderIndex = Data.existingFolders.IndexOf(folder);
 
-            foreach (var list in Data.existingMessages)
+
+            if (folderIndex == 0)
             {
-                var folderIndex = Data.existingMessages.IndexOf(list);
+                l.inboxBackgroundWorker.CancelAsync();
+            }
 
-                if(folderIndex == 0)
+            else
+            {
+                l.allFoldersbackgroundWorker.CancelAsync();
+            }
+
+
+            foreach (var msg in Data.existingMessages[folderIndex])
+            {
+
+                if(msg.uid == uid && msg.subject == sub)
                 {
-                    l.inboxBackgroundWorker.CancelAsync();
+                    Debug.WriteLine(msg.uid);
+
+                    Debug.WriteLine(msg.subject + msg.folder);
+
+                    int i = Data.existingMessages[folderIndex].IndexOf(msg);
+
+                    deleteMsgServer(msg.folder, i, folderIndex);
+
+                    Data.existingMessages[folderIndex].Remove(msg);
+
+                    refreshCurrentFolder();
                 }
 
-                else
-                {
-                    l.allFoldersbackgroundWorker.CancelAsync();
-                }
 
 
-                var items1 = list.FindAll(x => x.uid == uid);
+/*
+                //var folderIndex = Data.existingMessages.IndexOf(list);
+
+                var items1 = msgs.FindAll(x => x.uid == uid);
+
+                msgs.fin
+
                 var items = items1.FindAll(x => x.subject == sub);
+
+                //var folderIndex = Data.existingMessages.IndexOf(items);
+
+
+
+
+
 
                 foreach (var msg in items)
                 {
@@ -142,11 +174,12 @@ namespace Email_System
                     deleteMsgServer(msg.folder, i, folderIndex);
 
                     list.Remove(msg);
+
                     refreshCurrentFolder();
-                }
+                }*/
             }
         }
-        //deletes message from server and starts listening on golders again
+        //deletes message from server and starts listening on folders again
         public static async void deleteMsgServer(string f, int index, int folderInd)
         {
             try
@@ -156,9 +189,12 @@ namespace Email_System
                 await folder.OpenAsync(FolderAccess.ReadWrite);
                 await folder.AddFlagsAsync(index, MessageFlags.Deleted, true);
                 await folder.ExpungeAsync();
+
+                Debug.WriteLine("msg deleted from server from folder: " + folder.FullName);
+
+
                 await client.DisconnectAsync(true);
 
-                Debug.WriteLine("msg deleted from server");
             }
 
             catch
