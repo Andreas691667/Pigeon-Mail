@@ -40,11 +40,11 @@ namespace Email_System
         // 2: reply all
         // 3: forward
         // 4: drafts (not implemented)
-        public newEmail(int flag, IMessageSummary m = null!, string body = null!, string subject = null!, string rec = null!, string ccRec = null!, string attachments = null!, string folder = null!)
+        public newEmail(int flag, IMessageSummary m = null!, string body = null!, string subject = null!, string rec = null!, string from = null!, string ccRec = null!, string attachments = null!, string folder = null!)
         {
             InitializeComponent();
 
-            //msg.from = from;
+            msg.from = from;
             msg.subject = subject;
             msg.to = rec;
             msg.body = body;
@@ -52,74 +52,90 @@ namespace Email_System
             msg.folder = folder;
             msg.cc = ccRec;
 
-                //messageSender = m;
+            //messageSender = m;
 
-                switch (flag)
-                {
-                    case 0:
-                        break;
-                    case 1:
-                        flagReply();
-                        break;
-                    case 2:
-                        flagReplyAll();
-                        break;
-                    case 3:
-                        flagForward(body);
-                        break;
-                    case 4:
-                        flagDraft(body);
-                        break;
-                }
-            
+            switch (flag)
+            {
+                case 0:
+                    break;
+                case 1:
+                    flagReply();
+                    break;
+                case 2:
+                    flagReplyAll();
+                    break;
+                case 3:
+                    flagForward();
+                    break;
+                case 4:
+                    flagDraft(body);
+                    break;
+            }
+
         }
 
         #region switch methods
 
         private void flagReply()
         {
-            //messageSender = m;
+            string recipient = (msg.from).Substring(msg.from.LastIndexOf("<"));
+            recipient = recipient.Replace('<', ' ');
+            recipient = recipient.Replace('>', ' ');
+            recipient = recipient.Trim();
 
-            string recipient = (messageSender.Envelope.From.ToString()).Substring(messageSender.Envelope.From.ToString().LastIndexOf("<"));
             recipientsTb.Text = recipient;
-            subjectTb.Text = "Re: " + messageSender.Envelope.Subject;
+
+            subjectTb.Text = "Re: " + msg.subject;
         }
 
         private void flagReplyAll()
         {
             //messageSender = m;
 
-            subjectTb.Text = "Re: " + messageSender.Envelope.Subject;
+            subjectTb.Text = "Re: " + msg.subject;
 
-            string recipient = (messageSender.Envelope.From.ToString()).Substring(messageSender.Envelope.From.ToString().LastIndexOf("<"));
-            recipientsTb.Text = recipient;
+            string recipient = (msg.from).Substring(msg.from.LastIndexOf("<"));
+            recipient = recipient.Replace('<', ' ');
+            recipient = recipient.Replace('>', ' ');
+            recipient = recipient.Trim();
 
-            string[] ccRecipients = messageSender.Envelope.Cc.ToString().Split(",");
-
-            foreach (var rec in ccRecipients)
+            try
             {
-                ccRecipientsTb.AppendText(rec + ", ");
+                if (msg.cc != "" || msg.cc != null)
+                {
+                    string[] ccRecipients = msg.cc.Split(",");
+
+                    foreach (var rec in ccRecipients)
+                    {
+                        ccRecipientsTb.AppendText(rec + ", ");
+                    }
+
+                    ccRecipientsTb.Text = ccRecipientsTb.Text.Remove(ccRecipientsTb.Text.Length - 2);
+                }
             }
 
-            ccRecipientsTb.Text = ccRecipientsTb.Text.Remove(ccRecipientsTb.Text.Length - 2);
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
-        private void flagForward(string body)
+        private void flagForward()
         {
             //messageSender = m;
 
-            subjectTb.Text = "Fwrd: " + messageSender.Envelope.Subject;
+            subjectTb.Text = "Fwrd: " + msg.subject;
 
             messageBodyTb.AppendText(Environment.NewLine);
             messageBodyTb.AppendText("-------- Forwarded message --------");
             messageBodyTb.AppendText(Environment.NewLine);
-            messageBodyTb.AppendText(messageSender.Envelope.From.ToString());
+            messageBodyTb.AppendText(msg.from);
             messageBodyTb.AppendText(Environment.NewLine);
-            messageBodyTb.AppendText(messageSender.Date.ToString());
+            messageBodyTb.AppendText(msg.date);
             messageBodyTb.AppendText(Environment.NewLine);
-            messageBodyTb.AppendText(messageSender.Envelope.To.ToString());
+            messageBodyTb.AppendText(msg.to);
             messageBodyTb.AppendText(Environment.NewLine);
-            messageBodyTb.AppendText(body);
+            messageBodyTb.AppendText(msg.body);
         }
 
         private async void flagDraft(string body)
@@ -135,10 +151,6 @@ namespace Email_System
             if (msg.attachments != null)
             {
                 string[] attachments = msg.attachments.Split(';');
-
-
-
-
 
                 var client = await Utility.establishConnectionImap();
                 var f = client.GetFolder(msg.folder);

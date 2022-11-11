@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -386,6 +384,7 @@ namespace Email_System
             }
 
             message.flags = messageSummary.Flags.ToString();
+            Debug.WriteLine(message.flags);
 
             return message;
         }

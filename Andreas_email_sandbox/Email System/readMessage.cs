@@ -28,8 +28,6 @@ namespace Email_System
             msg.attachments = attachments;
             msg.folder = folder;
 
-            //message = m;
-            //getTextBody();
             initializeMessage();
         }
 
@@ -172,18 +170,17 @@ namespace Email_System
 
         private void replyBt_Click(object sender, EventArgs e)
         {
-            string rec = fromTb.Text.Substring(fromTb.Text.IndexOf("<"));
-            new newEmail(1, message).Show();
+            new newEmail(1, null!, msg.body, msg.subject, msg.to,msg.from, msg.cc, msg.attachments, msg.folder).Show();
         }
 
         private void forwardBt_Click(object sender, EventArgs e)
         {
-            new newEmail(3, message, bodyText).Show();
+            new newEmail(3, null!, msg.body, msg.subject, msg.to, msg.from, msg.cc, msg.attachments, msg.folder).Show();
         }
 
         private void replyAllBt_Click(object sender, EventArgs e)
         {
-            new newEmail(2, message).Show();
+            new newEmail(2, null!, msg.body, msg.subject, msg.to, msg.from, msg.cc, msg.attachments, msg.folder).Show();
         }
 
         private void deleteMessageBt_Click(object sender, EventArgs e)

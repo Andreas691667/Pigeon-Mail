@@ -59,7 +59,7 @@
             this.folderLb.ItemHeight = 28;
             this.folderLb.Location = new System.Drawing.Point(15, 89);
             this.folderLb.Name = "folderLb";
-            this.folderLb.Size = new System.Drawing.Size(237, 480);
+            this.folderLb.Size = new System.Drawing.Size(365, 480);
             this.folderLb.TabIndex = 0;
             this.folderLb.MouseClick += new System.Windows.Forms.MouseEventHandler(this.RetrieveMessages);
             this.folderLb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.RetrieveMessages);
@@ -73,9 +73,9 @@
             this.messageLb.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.messageLb.FormattingEnabled = true;
             this.messageLb.ItemHeight = 25;
-            this.messageLb.Location = new System.Drawing.Point(255, 89);
+            this.messageLb.Location = new System.Drawing.Point(386, 89);
             this.messageLb.Name = "messageLb";
-            this.messageLb.Size = new System.Drawing.Size(831, 479);
+            this.messageLb.Size = new System.Drawing.Size(700, 479);
             this.messageLb.TabIndex = 1;
             this.messageLb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ReadMessage);
             // 

@@ -169,6 +169,7 @@ namespace Email_System
                     folderLb.Items.Add(folderString);
                 }
             }
+
         }
         private void RetrieveInboxMessages()
         {
@@ -344,7 +345,6 @@ namespace Email_System
                 toggleButtons(false);
                 messageLb.Items.Add("Messages are being fetched from the server! Please be patient:)");
             }
-
         }
 
         // method to read the message when it is double clicked
@@ -394,13 +394,21 @@ namespace Email_System
 
             if (m.flags.Contains("Draft"))
             {
-                new newEmail(4, null!, m.body, m.subject, m.to, m.cc, m.attachments, m.folder).Show();
+                new newEmail(4, null!, m.body, m.subject,m.to, m.from, m.cc, m.attachments, m.folder).Show();
             }
 
             //how do we remove the 'unread' part??
             else
             {
-                //m.flags.Replace("(UNREAD)", "");
+/*                m.flags = m.flags.Replace("(UNREAD)", "");
+
+                int folder = folderLb.SelectedIndex;
+
+                var msgs = Data.existingMessages[folder];
+                var i = msgs.FindIndex[m];
+
+                var i = Data.existingMessages[folder];*/
+                
                 new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder).Show();               
             }
         }
@@ -440,7 +448,7 @@ namespace Email_System
             instance.folderLb.Update();
             instance.folderLb.Focus();
 
-            Thread.Sleep(100);
+            Thread.Sleep(50);
             instance.RetrieveMessages();
         }
 
@@ -526,14 +534,7 @@ namespace Email_System
             {
                 Debug.WriteLine(ex.Message);
                 //MessageBox.Show("No message selected!");
-            }
-
-            finally
-            {
-                //            this.Cursor = Cursors.Default;
-                this.Enabled = true;
-            }
-            
+            }         
 
         }
 
@@ -541,27 +542,18 @@ namespace Email_System
         {
             try
             {
-                var messageIndex = messageLb.SelectedIndex;
-                var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
+                int messageIndex = messageLb.SelectedIndex;
+                Data.msg m = currentFolderMessages[messageIndex];
 
-    //            this.Cursor = Cursors.WaitCursor;
                 this.Enabled = false;
 
-                Utility.moveMessageToTrash(message);
+                Utility.moveMsgTrash(m.uid, m.subject, m.folder);
             }
 
-            catch
+            catch(Exception ex)
             {
-                MessageBox.Show("No message selected!");
+                Debug.WriteLine(ex.Message);
             }
-
-            finally
-            {
-    //            this.Cursor = Cursors.Default;
-                this.Enabled = true;
-            }
-
-
         }
 
         private void Mailbox_FormClosed(object sender, FormClosedEventArgs e)

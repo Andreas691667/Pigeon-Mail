@@ -48,6 +48,25 @@ namespace Email_System
             return null;
         }
 
+        public static void killListeners()
+        {
+            var l = login.GetInstance;
+
+            if (!l.folderListenerBW.CancellationPending)
+            {
+                l.folderListenerBW.CancelAsync();
+                l.folderListenerBW.Dispose();
+            }
+
+            Thread.Sleep(500);
+        }
+
+        public static void startListeners()
+        {
+            var l = login.GetInstance;
+            l.folderListenerBW.RunWorkerAsync();
+        }
+
         //establish an imap connection and return the client
         public static async Task<ImapClient>  establishConnectionImap()
         {
@@ -108,22 +127,25 @@ namespace Email_System
             Mailbox.refreshCurrentFolder();
         }
 
+        public static void moveMsgTrash(uint uid, string sub, string folder)
+        {
+            killListeners();
+
+            //
+        }
+
+        public static async void moveMsgTrashServer()
+        {
+
+        }
+
         //stops listening on folders and deletes message locally
         public static void deleteMsg(uint uid, string sub, string folder)
         {
-            //we should search other folders in case the message is in several folders
-            //perhaps just traverse the entire list 'existingMessages'? shouldn't be that slow
-
-            var l = login.GetInstance;
+            killListeners();
 
             var folderIndex = Data.existingFolders.IndexOf(folder);
 
-            if (!l.folderListenerBW.CancellationPending)
-            {
-                l.folderListenerBW.CancelAsync();
-                l.folderListenerBW.Dispose();
-            }
-            Thread.Sleep(500);
             Queue<Tuple<string, int>> deleteQueue = new Queue<Tuple<string, int>>();
 
             foreach (var f in Data.existingMessages.ToList())
@@ -177,27 +199,13 @@ namespace Email_System
                 }
 
 
-                var l = login.GetInstance;
-
-                l.folderListenerBW.RunWorkerAsync();
-                
+                startListeners();
 
             }
 
-            catch
+            catch(Exception ex)
             {
-
-            }
-
-            finally
-            {
-                //begin listening on inbox again
-/*                var l = login.GetInstance;
-
-                if (!l.folderListenerBW.IsBusy)
-                {
-                    l.folderListenerBW.RunWorkerAsync();
-                }*/
+                Debug.WriteLine(ex.Message);
             }
         }
 
