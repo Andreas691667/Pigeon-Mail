@@ -3,6 +3,11 @@ using MailKit.Security;
 using System.ComponentModel;
 using System.Diagnostics;
 
+/*
+ The login window is the window that is first seen by the client
+ */
+
+
 namespace Email_System
 {
     public partial class login : Form
@@ -10,11 +15,13 @@ namespace Email_System
 
         private static login instance = null!;
 
-        //constructor
+        // ------ CONSTRUCTOR -----
         private login()
         {
             InitializeComponent();
 
+            // SHOULD BE MOVED TO A DISTINCT PRIVATE METHOD
+            // Auto fill username (email) and password field if details are stored locally
             if (Properties.Settings.Default.Password != null)
             {
                 passwordTb.Text = Properties.Settings.Default.Password;
@@ -26,6 +33,7 @@ namespace Email_System
             }
         }
 
+        // ----- Get Instance -----
         //ensures singleton pattern is maintained (only one instance at all times)
         public static login GetInstance
         {
@@ -39,8 +47,11 @@ namespace Email_System
             }
         }
 
+        // ----- BUTTON CLICK METHODS ----
+        // ----- Login button clicked -----
         private void loginBt_Click(object sender, EventArgs e)
         {
+            // Store login details locally if chosen by the client
             if(rememberMeCB.Checked)
             {
                 Properties.Settings.Default.Username = usernameTb.Text;
@@ -55,19 +66,29 @@ namespace Email_System
                 Properties.Settings.Default.Save();
             }
 
+            // Get username and password
             string username = usernameTb.Text;
             string password = passwordTb.Text;
 
+            // SHOULD BE DONE USING SETTER FUNCTIONS!
+            // Set username and password in Utility class
             Utility.username = usernameTb.Text;
             Utility.password = passwordTb.Text;            
 
+            // Get SMTP Client
             SmtpClient client = new SmtpClient();
 
+            // Connect to the SMTP client corresponding to the provider
             try
             {
-                //string mail = username.Substring(username.LastIndexOf("@") + 1);
+                // Should the comment below be removed?
+                // string mail = username.Substring(username.LastIndexOf("@") + 1);
+
+                // Gets and stores provider details
+                // Details are used in the switch below
                 setProviderSettings(username);
 
+                // Connect to client
                 switch (Properties.Settings.Default.SmtpServer)
                 {
                     case "smtp.gmail.com":
@@ -80,16 +101,17 @@ namespace Email_System
 
                     default:
                         return;
-                }
-
+                } 
                 Debug.WriteLine("connecting");
+                
+                // Authentication! 
                 client.Authenticate(username, password);
-                Debug.WriteLine("authenticating");
+                Debug.WriteLine("authenticating"); // Write to debug terminal
+
+                // Indicate action
                 this.Cursor = Cursors.WaitCursor;
 
-
-
-                //start retrieving folders
+                // Start retrieving folders
                 if (!foldersBackgroundWorker.IsBusy)
                     foldersBackgroundWorker.RunWorkerAsync();
 
@@ -108,12 +130,15 @@ namespace Email_System
                 this.Cursor = Cursors.Default;
             }
         }
-
+        // ----- exit button clicked -----
         private void exitBt_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
+        // ------ HELPER FUNCTIONS ------
+        // ------ Set Provider Settings -----
+        // Set provider settings coresponding to the provider given by the client
         private void setProviderSettings(string username)
         {
             string Imapserver = "";

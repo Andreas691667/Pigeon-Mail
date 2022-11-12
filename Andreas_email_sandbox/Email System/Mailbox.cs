@@ -6,27 +6,35 @@ using Org.BouncyCastle.Asn1.X509;
 using System.Diagnostics;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
+/*
+ Mailbox is the window where mails previews are shown, and partioned into folders
+ 
+*/
+
+
 namespace Email_System
 {
     public partial class Mailbox : Form
     {
-
+        // Data structure for storing summaries locally
         IList<IMessageSummary> messageSummaries = null!;
 
-
+        // Data structure for ???
         List<Data.msg> currentFolderMessages = null!;
 
+        // What does this do?
         private static Mailbox instance = null!;
 
-        //constructor
+        // Constructor
         private Mailbox()
         {
             InitializeComponent();
 
+            // 
             RetrieveFolders();
         }
 
-        //ensures singleton pattern is maintained (only one instance at all times)
+        // Ensures singleton pattern is maintained (only one instance at all times)
         public static Mailbox GetInstance
         {
             get
@@ -140,9 +148,10 @@ namespace Email_System
 
 
 
+            
             folderLb.Items.Clear();
 
-
+            // What is happening here?
             foreach (var f in Data.existingFolders)
             {
                 string folderString = "";
