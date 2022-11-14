@@ -29,6 +29,9 @@ namespace Email_System
         }
 
 
+
+        public static string trashFolderName = "";
+
         //list to load folders on login
         private static List<string> folderList = new List<string>();
 
@@ -400,7 +403,47 @@ namespace Email_System
             var json = JsonSerializer.Serialize(list);
             File.WriteAllText("messages.json", json);
             Debug.WriteLine("all messages saved");
-        }       
+        }
+
+
+        //maybe add even more names?
+        static string[] TrashFolderNames = { "Deleted", "Trash", "Papirkurv" };
+
+        //get the trashFolder and return the Imailfolder
+        public static async Task<IMailFolder> GetTrashFolder(ImapClient client = null!)
+        {
+            if (client == null)
+            {
+                client = await Utility.establishConnectionImap();
+            }
+
+            if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0)
+            {
+                var trashFolder = client.GetFolder(SpecialFolder.Trash);
+                trashFolderName = trashFolder.FullName;
+                return trashFolder;
+            }
+
+            else
+            {
+                var personal = client.GetFolder(client.PersonalNamespaces[0]);
+
+                foreach (var folder in personal.GetSubfolders(false, CancellationToken.None))
+                {
+                    foreach (var name in TrashFolderNames)
+                    {
+                        if (folder.Name == name)
+                        {
+                            trashFolderName = folder.FullName;
+                            return folder;
+                        }
+                    }
+                }
+            }
+
+            return null!;
+        }
+
 
     }
 }

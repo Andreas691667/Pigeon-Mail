@@ -47,6 +47,7 @@
             this.searchBt = new System.Windows.Forms.Button();
             this.logoutBt = new System.Windows.Forms.Button();
             this.settingsBt = new System.Windows.Forms.Button();
+            this.logLabel = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -59,7 +60,7 @@
             this.folderLb.ItemHeight = 28;
             this.folderLb.Location = new System.Drawing.Point(15, 89);
             this.folderLb.Name = "folderLb";
-            this.folderLb.Size = new System.Drawing.Size(365, 480);
+            this.folderLb.Size = new System.Drawing.Size(365, 452);
             this.folderLb.TabIndex = 0;
             this.folderLb.MouseClick += new System.Windows.Forms.MouseEventHandler(this.RetrieveMessages);
             this.folderLb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.RetrieveMessages);
@@ -75,7 +76,7 @@
             this.messageLb.ItemHeight = 25;
             this.messageLb.Location = new System.Drawing.Point(386, 89);
             this.messageLb.Name = "messageLb";
-            this.messageLb.Size = new System.Drawing.Size(700, 479);
+            this.messageLb.Size = new System.Drawing.Size(700, 454);
             this.messageLb.TabIndex = 1;
             this.messageLb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ReadMessage);
             // 
@@ -270,11 +271,22 @@
             this.settingsBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.settingsBt.UseVisualStyleBackColor = true;
             // 
+            // logLabel
+            // 
+            this.logLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.logLabel.AutoSize = true;
+            this.logLabel.Enabled = false;
+            this.logLabel.Location = new System.Drawing.Point(15, 559);
+            this.logLabel.Name = "logLabel";
+            this.logLabel.Size = new System.Drawing.Size(0, 20);
+            this.logLabel.TabIndex = 9;
+            // 
             // Mailbox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1106, 588);
+            this.Controls.Add(this.logLabel);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.messageLb);
             this.Controls.Add(this.folderLb);
@@ -288,6 +300,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -310,5 +323,6 @@
         private RadioButton senderRBT;
         private RadioButton contentRBT;
         private RadioButton subjectRBT;
+        private Label logLabel;
     }
 }

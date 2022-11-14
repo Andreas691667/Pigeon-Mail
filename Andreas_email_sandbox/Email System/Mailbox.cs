@@ -409,15 +409,22 @@ namespace Email_System
             //how do we remove the 'unread' part??
             else
             {
-/*                m.flags = m.flags.Replace("(UNREAD)", "");
 
-                int folder = folderLb.SelectedIndex;
+/*                var index = Data.existingMessages[folderLb.SelectedIndex].IndexOf(m);
+                m.flags = m.flags.Replace("(UNREAD)", "");
+                Data.msg msg = new Data.msg();
+                msg = m;
+                Data.existingMessages[folderLb.SelectedIndex][index] =  msg;*/
 
-                var msgs = Data.existingMessages[folder];
-                var i = msgs.FindIndex[m];
+                /*                m.flags = m.flags.Replace("(UNREAD)", "");
 
-                var i = Data.existingMessages[folder];*/
-                
+                                int folder = folderLb.SelectedIndex;
+
+                                var msgs = Data.existingMessages[folder];
+                                var i = msgs.FindIndex[m];
+
+                                var i = Data.existingMessages[folder];*/
+
                 new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder).Show();               
             }
         }
@@ -465,17 +472,18 @@ namespace Email_System
         {
             try
             {
-                var messageIndex = messageLb.SelectedIndex;
-                var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
+                int messageIndex = messageLb.SelectedIndex;
+                Data.msg m = currentFolderMessages[messageIndex];
 
-                if (message.Flags.Value.HasFlag(MessageFlags.Flagged))
+/*                if (message.Flags.Value.HasFlag(MessageFlags.Flagged))
                 {
                     removeFlagBt_Click();
                     Debug.WriteLine("Removing flag");
-                }
+                }*//*
 
                 else
                 {
+
 
         //            this.Cursor = Cursors.WaitCursor;
                     this.Enabled = false;
@@ -490,7 +498,7 @@ namespace Email_System
 
                     await client.DisconnectAsync(true);
                     //this.Enabled = true;
-                }
+                }*/
             }
 
             catch
@@ -553,9 +561,6 @@ namespace Email_System
             {
                 int messageIndex = messageLb.SelectedIndex;
                 Data.msg m = currentFolderMessages[messageIndex];
-
-                this.Enabled = false;
-
                 Utility.moveMsgTrash(m.uid, m.subject, m.folder);
             }
 
@@ -667,6 +672,11 @@ namespace Email_System
 
             else
                 this.Cursor = Cursors.Default;
+        }
+
+        public static void setText(string message)
+        {
+            instance.logLabel.Text = message;
         }
     }
 }

@@ -19,53 +19,7 @@ namespace Email_System
         public static string username = null!;
         public static string password = null!;
 
-        //maybe add even more names?
-        static string[] TrashFolderNames = { "Deleted", "Trash", "Papirkurv"};
 
-        //get the trashFolder and return the Imailfolder
-        static IMailFolder GetTrashFolder(ImapClient client, CancellationToken cancellationToken)
-        {
-            if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0)
-            {
-                var trashFolder = client.GetFolder(SpecialFolder.Trash);
-                return trashFolder;
-            }
-
-            else
-            {
-                var personal = client.GetFolder(client.PersonalNamespaces[0]);
-
-                foreach (var folder in personal.GetSubfolders(false, cancellationToken))
-                {
-                    foreach (var name in TrashFolderNames)
-                    {
-                        if (folder.Name == name)
-                            return folder;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        public static void killListeners()
-        {
-            var l = login.GetInstance;
-
-            if (!l.folderListenerBW.CancellationPending)
-            {
-                l.folderListenerBW.CancelAsync();
-                l.folderListenerBW.Dispose();
-            }
-
-            Thread.Sleep(500);
-        }
-
-        public static void startListeners()
-        {
-            var l = login.GetInstance;
-            l.folderListenerBW.RunWorkerAsync();
-        }
 
         //establish an imap connection and return the client
         public static async Task<ImapClient>  establishConnectionImap()
@@ -129,20 +83,46 @@ namespace Email_System
 
         public static void moveMsgTrash(uint uid, string sub, string folder)
         {
-            killListeners();
+            server.killListeners();
 
-            //
+            var trashFolderIndex = Data.existingFolders.IndexOf(Data.trashFolderName);
+            var folderIndex = Data.existingFolders.IndexOf(folder);
+
+            Queue<Tuple<string, int>> trashQueue = new Queue<Tuple<string, int>>();
+
+            foreach (var f in Data.existingMessages.ToList())
+            {
+                foreach (var m in f.ToList())
+                {
+                    if (m.uid == uid && m.subject == sub)
+                    {
+                        Debug.WriteLine(m.uid);
+
+                        Debug.WriteLine(m.subject + m.folder);
+
+                        int i = Data.existingMessages[folderIndex].IndexOf(m);
+
+                        Data.existingMessages[folderIndex].Remove(m);
+                        Data.existingMessages[trashFolderIndex].Add(m);
+
+                        //move to trash on server here
+                        Tuple<string, int> t = new Tuple<string, int>(m.folder, i);
+                        trashQueue.Enqueue(t);
+
+                        refreshCurrentFolder();
+                    }
+                }
+            }
+
+            server.moveMsgTrashServer(trashQueue);
         }
 
-        public static async void moveMsgTrashServer()
-        {
 
-        }
 
         //stops listening on folders and deletes message locally
         public static void deleteMsg(uint uid, string sub, string folder)
         {
-            killListeners();
+            server.killListeners();
 
             var folderIndex = Data.existingFolders.IndexOf(folder);
 
@@ -159,9 +139,10 @@ namespace Email_System
                         Debug.WriteLine(m.subject + m.folder);
 
                         int i = Data.existingMessages[folderIndex].IndexOf(m);
+
                         Data.existingMessages[folderIndex].Remove(m);
 
-                        Tuple<string, int> t = new Tuple<string,int>(m.folder, i);
+                        Tuple<string, int> t = new Tuple<string, int>(m.folder, i);
 
                         deleteQueue.Enqueue(t);
 
@@ -170,46 +151,13 @@ namespace Email_System
                 }
             }
 
-            deleteMsgServer(deleteQueue);
+            server.deleteMsgServer(deleteQueue);
         }
 
-        //deletes message from server and starts listening on folders again
-        public static async void deleteMsgServer(Queue<Tuple<string, int>> q)
+        public static void logMessage(string message)
         {
-            try
-            {
-                foreach (var item in q)
-                {
-                    var f = item.Item1;
-                    var index = item.Item2;
-
-                    var client = await Utility.establishConnectionImap();
-                    var folder = await client.GetFolderAsync(f);
-                    await folder.OpenAsync(FolderAccess.ReadWrite);
-
-                    int oldCount = folder.Count;
-
-                    await folder.AddFlagsAsync(index, MessageFlags.Deleted, true);
-                    await folder.ExpungeAsync();
-
-                    Debug.WriteLine("msg deleted from server from folder: " + folder.FullName);
-
-                    var task = client.DisconnectAsync(true);
-                    task.Wait();
-                }
-
-
-                startListeners();
-
-            }
-
-            catch(Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
+             Mailbox.setText(message);
         }
-
-
 
 
         #region old methods
@@ -229,7 +177,7 @@ namespace Email_System
             {
                 try
                 {
-                    var client = await Utility.establishConnectionImap();
+/*                    var client = await Utility.establishConnectionImap();
                     var folder = await client.GetFolderAsync(mg.Folder.ToString());
 
                     IMailFolder trashFolder = GetTrashFolder(client, CancellationToken.None);
@@ -243,7 +191,7 @@ namespace Email_System
 
                     await client.DisconnectAsync(true);
 
-                    MessageBox.Show("The message has been moved to trash succesfully!");
+                    MessageBox.Show("The message has been moved to trash succesfully!");*/
                 }
 
                 catch (Exception ex)

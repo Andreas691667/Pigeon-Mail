@@ -234,6 +234,8 @@ namespace Email_System
 
             BackgroundWorker bw = sender as BackgroundWorker;
 
+            Data.GetTrashFolder();
+
             Task task = Data.loadMessages(bw);
             task.Wait();
         }        
