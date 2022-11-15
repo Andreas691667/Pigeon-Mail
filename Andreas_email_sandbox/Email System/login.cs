@@ -246,7 +246,7 @@ namespace Email_System
 
             Debug.WriteLine("listener bw started");
 
-            Thread.Sleep(10000);
+            Thread.Sleep(5000);
 
             Data.listenAllFolders();
             Data.listenInboxFolder();           

@@ -39,7 +39,7 @@ namespace Email_System
         // 1: reply
         // 2: reply all
         // 3: forward
-        // 4: drafts (not implemented)
+        // 4: drafts
         public newEmail(int flag, IMessageSummary m = null!, string body = null!, string subject = null!, string rec = null!, string from = null!, string ccRec = null!, string attachments = null!, string folder = null!)
         {
             InitializeComponent();
@@ -51,8 +51,6 @@ namespace Email_System
             msg.attachments = attachments;
             msg.folder = folder;
             msg.cc = ccRec;
-
-            //messageSender = m;
 
             switch (flag)
             {
@@ -68,7 +66,7 @@ namespace Email_System
                     flagForward();
                     break;
                 case 4:
-                    flagDraft(body);
+                    flagDraft();
                     break;
             }
 
@@ -97,7 +95,7 @@ namespace Email_System
             string recipient = (msg.from).Substring(msg.from.LastIndexOf("<"));
             recipient = recipient.Replace('<', ' ');
             recipient = recipient.Replace('>', ' ');
-            recipient = recipient.Trim();
+            recipient.Trim();
 
             try
             {
@@ -138,7 +136,7 @@ namespace Email_System
             messageBodyTb.AppendText(msg.body);
         }
 
-        private async void flagDraft(string body)
+        private async void flagDraft()
         {
             isDraft = true;
 
@@ -370,7 +368,7 @@ namespace Email_System
 
                 client.Send(message);
 
-                MessageBox.Show("Message sent successfully!");
+                Utility.logMessage("Message sent successfully!");
 
                 messageSent = true;
 

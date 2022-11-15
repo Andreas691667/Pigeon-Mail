@@ -14,7 +14,7 @@ namespace Email_System
         {
             var l = login.GetInstance;
 
-            if (!l.folderListenerBW.CancellationPending)
+            if (!l.folderListenerBW.CancellationPending || l.folderListenerBW.IsBusy)
             {
                 l.folderListenerBW.CancelAsync();
                 l.folderListenerBW.Dispose();
@@ -26,7 +26,9 @@ namespace Email_System
         public static void startListeners()
         {
             var l = login.GetInstance;
-            l.folderListenerBW.RunWorkerAsync();
+
+            if(!l.folderListenerBW.IsBusy)
+                l.folderListenerBW.RunWorkerAsync();
         }
 
         //deletes message from server and starts listening on folders again

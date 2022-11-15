@@ -586,59 +586,100 @@ namespace Email_System
             instance.Dispose();
         }
 
-        private async void search(string searchQuery)
+        private void search(string searchQuery)
         {
-   //         this.Cursor = Cursors.WaitCursor;
-            this.Enabled = false;
+            /*   //         this.Cursor = Cursors.WaitCursor;
+                        this.Enabled = false;
 
-            var client = await Utility.establishConnectionImap();
+                        var client = await Utility.establishConnectionImap();
 
-            var folder = await getCurrentFolder(client);
+                        var folder = await getCurrentFolder(client);
 
-            folder.Open(FolderAccess.ReadWrite);
+                        folder.Open(FolderAccess.ReadWrite);
 
-            if (contentRBT.Checked)
+                        if (contentRBT.Checked)
+                        {
+                            var uids = folder.Search(SearchQuery.BodyContains(searchQuery));
+                            searchresults(uids, folder);
+                        }
+
+                        else if (subjectRBT.Checked)
+                        {
+                            var uids = folder.Search(SearchQuery.SubjectContains(searchQuery));
+                            searchresults(uids, folder);
+                        }
+
+                        else if (senderRBT.Checked)
+                        {
+                            var uids = folder.Search(SearchQuery.FromContains(searchQuery));
+                            searchresults(uids, folder);
+                        }
+
+                        else
+                            MessageBox.Show("Please specify a search query");
+
+               //         this.Cursor = Cursors.Default;
+                        this.Enabled = true;*/
+
+
+            List<Data.msg> searchResults = new List<Data.msg>();
+
+            foreach(var folder in Data.existingMessages)
             {
-                var uids = folder.Search(SearchQuery.BodyContains(searchQuery));
-                searchresults(uids, folder);
+                foreach(var msg in folder)
+                {
+                    if (contentRBT.Checked)
+                    {
+                        if(msg.body.Contains(searchQuery))
+                        {
+                            searchResults.Add(msg);
+                        }
+                    }
+
+                    else if (subjectRBT.Checked)
+                    {
+                        if (msg.subject.Contains(searchQuery))
+                        {
+                            searchResults.Add(msg);
+                        }
+                    }
+
+                    else if (senderRBT.Checked)
+                    {
+                        if (msg.from.Contains(searchQuery))
+                        {
+                            searchResults.Add(msg);
+                        }
+                    }
+
+                    else
+                        MessageBox.Show("Please specify a search query");
+                }
             }
 
-            else if (subjectRBT.Checked)
-            {
-                var uids = folder.Search(SearchQuery.SubjectContains(searchQuery));
-                searchresults(uids, folder);
-            }
+            showSearchResults(searchResults);
 
-            else if (senderRBT.Checked)
-            {
-                var uids = folder.Search(SearchQuery.FromContains(searchQuery));
-                searchresults(uids, folder);
-            }
-
-            else
-                MessageBox.Show("Please specify a search query");
-
-   //         this.Cursor = Cursors.Default;
-            this.Enabled = true;
         }
 
-        private void searchresults(IList<UniqueId> uids, IMailFolder folder)
+        private void showSearchResults(List<Data.msg> msgs)
         {
-            messageLb.Items.Clear();
-            IList<IMessageSummary> messages = folder.Fetch(uids, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
+            currentFolderMessages = msgs;
 
-            messageSummaries = messages;
-
-            if (messages.Count <= 0)
+            if (currentFolderMessages.Count <= 0)
             {
                 toggleButtons(false);
                 messageLb.Items.Add("No results!");
             }
 
-            foreach (var item in messages.Reverse())
+            else
             {
-                toggleButtons(true);
-                //messageFlagCheck(item);
+                messageLb.Items.Clear();
+
+                foreach (var item in currentFolderMessages)
+                {
+                    toggleButtons(true);
+                    messageFlagCheck(item);
+                }
             }
         }
 

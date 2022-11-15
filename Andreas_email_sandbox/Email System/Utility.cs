@@ -110,11 +110,13 @@ namespace Email_System
                         trashQueue.Enqueue(t);
 
                         refreshCurrentFolder();
+
+                        goto moveOnServer;
                     }
                 }
             }
-
-            server.moveMsgTrashServer(trashQueue);
+            moveOnServer:
+                server.moveMsgTrashServer(trashQueue);
         }
 
 
@@ -156,7 +158,19 @@ namespace Email_System
 
         public static void logMessage(string message)
         {
-             Mailbox.setText(message);
+            Mailbox.setText(message);
+
+            var t = new System.Windows.Forms.Timer();
+
+            t.Interval = 3000; // it will Tick in 3 seconds
+
+            t.Tick += (s, e) =>
+            {
+                Mailbox.setText("");
+                t.Stop();
+            };
+
+            t.Start();             
         }
 
 

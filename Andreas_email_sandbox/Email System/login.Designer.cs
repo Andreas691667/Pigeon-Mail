@@ -176,9 +176,9 @@
         private Label label2;
         private PictureBox companyImage;
         private CheckBox rememberMeCB;
-        private System.ComponentModel.BackgroundWorker messagesBackgroundWorker;
         private System.ComponentModel.BackgroundWorker foldersBackgroundWorker;
         public System.ComponentModel.BackgroundWorker folderListenerBW;
         public System.ComponentModel.BackgroundWorker backgroundWorker1;
+        public System.ComponentModel.BackgroundWorker messagesBackgroundWorker;
     }
 }
