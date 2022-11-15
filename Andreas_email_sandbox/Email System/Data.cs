@@ -31,6 +31,8 @@ namespace Email_System
 
 
         public static string trashFolderName = "";
+        public static string draftFolderName = "";
+        public static string flaggedFolderName = "";
 
         //list to load folders on login
         private static List<string> folderList = new List<string>();
@@ -443,6 +445,78 @@ namespace Email_System
 
             return null!;
         }
+
+        static string[] DraftFolderNames = { "Drafts", "Kladder", "Draft" };
+        public static async Task<IMailFolder> GetDraftFolder(ImapClient client = null!)
+        {
+            if (client == null)
+            {
+                client = await Utility.establishConnectionImap();
+            }
+
+            if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0)
+            {
+                var draftFolder = client.GetFolder(SpecialFolder.Drafts);
+                trashFolderName = draftFolder.FullName;
+                return draftFolder;
+            }
+
+            else
+            {
+                var personal = client.GetFolder(client.PersonalNamespaces[0]);
+
+                foreach (var folder in personal.GetSubfolders(false, CancellationToken.None))
+                {
+                    foreach (var name in DraftFolderNames)
+                    {
+                        if (folder.Name == name)
+                        {
+                            draftFolderName = folder.FullName;
+                            return folder;
+                        }
+                    }
+                }
+            }
+
+            return null!;
+        }
+
+
+        static string[] FlaggedFolderNames = { "Flagged", "Starred", "Important" };
+        public static async Task<IMailFolder> GetFlaggedFolder(ImapClient client = null!)
+        {
+            if (client == null)
+            {
+                client = await Utility.establishConnectionImap();
+            }
+
+            if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0)
+            {
+                var flaggedFolder = client.GetFolder(SpecialFolder.Flagged);
+                flaggedFolderName = flaggedFolder.FullName;
+                return flaggedFolder;
+            }
+
+            else
+            {
+                var personal = client.GetFolder(client.PersonalNamespaces[0]);
+
+                foreach (var folder in personal.GetSubfolders(false, CancellationToken.None))
+                {
+                    foreach (var name in FlaggedFolderNames)
+                    {
+                        if (folder.Name == name)
+                        {
+                            flaggedFolderName = folder.FullName;
+                            return folder;
+                        }
+                    }
+                }
+            }
+
+            return null!;
+        }
+
 
 
     }

@@ -119,7 +119,7 @@ namespace Email_System
 
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Username and password combination not known");
 
             }
 
@@ -235,6 +235,8 @@ namespace Email_System
             BackgroundWorker bw = sender as BackgroundWorker;
 
             Data.GetTrashFolder();
+            Data.GetFlaggedFolder();
+            Data.GetDraftFolder();
 
             Task task = Data.loadMessages(bw);
             task.Wait();

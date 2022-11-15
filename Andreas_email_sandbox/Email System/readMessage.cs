@@ -15,11 +15,12 @@ namespace Email_System
 
         IMessageSummary message = null!;
 
-        public readMessage(string body, string from, string to, string date, string subject, string attachments, string folder)
+        public readMessage(string body, string from, string to, string date, string subject, string attachments, string folder, uint uid)
         {
             Utility.refreshCurrentFolder();
             InitializeComponent();
 
+            msg.uid = uid;
             msg.from = from;
             msg.subject = subject;
             msg.date = date;
@@ -72,6 +73,9 @@ namespace Email_System
             {
                 //foreach (var attachment in item.Attachments)
                 //{
+
+                if (item.UniqueId.Id == msg.uid)
+                {
                     var attachment = item.Attachments.ElementAt(attachmentIndex);
 
 
@@ -110,6 +114,7 @@ namespace Email_System
                         string argument = "/select, \"" + path + "\"";
                         System.Diagnostics.Process.Start("explorer.exe", argument);
                     }
+                }
                 }
             
         }
@@ -185,16 +190,13 @@ namespace Email_System
 
         private void deleteMessageBt_Click(object sender, EventArgs e)
         {
-         //   Utility.deleteMsg(msg.uid, msg.subject);
-
-
-
+           Utility.deleteMsg(msg.uid, msg.subject, msg.folder);
             this.Close();
         }
 
         private void moveToTrashBT_Click(object sender, EventArgs e)
         {
-            Utility.moveMessageToTrash(message);
+            Utility.moveMsgTrash(msg.uid, msg.subject, msg.folder);
             this.Close();            
         }
 
@@ -207,7 +209,7 @@ namespace Email_System
                 downloadAttachment(client);
             }
 
-            catch(Exception ex)
+            catch
             {
                 MessageBox.Show("No attachment selected");
             }

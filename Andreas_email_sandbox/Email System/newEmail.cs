@@ -84,6 +84,9 @@ namespace Email_System
             recipientsTb.Text = recipient;
 
             subjectTb.Text = "Re: " + msg.subject;
+
+
+            //addAttachment(msg.attachments);
         }
 
         private void flagReplyAll()

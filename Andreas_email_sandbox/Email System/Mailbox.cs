@@ -60,7 +60,7 @@ namespace Email_System
             string flagString = item.flags;
 
 
-            if (flagString.Contains("Flagged"))
+            if (flagString.Contains("Flagged") || flagString.Contains("(FLAGGED)"))
             {
                 subject += "(FLAGGED) ";
             }
@@ -406,26 +406,18 @@ namespace Email_System
                 new newEmail(4, null!, m.body, m.subject,m.to, m.from, m.cc, m.attachments, m.folder).Show();
             }
 
-            //how do we remove the 'unread' part??
             else
             {
+                string subject = messageLb.SelectedItem.ToString();
+                if (subject.Contains("(UNREAD)"))
+                {
+                    var index = Data.existingMessages[folderLb.SelectedIndex].IndexOf(m);
+                    m.flags = m.flags.Replace("(UNREAD)", "");
+                    m.flags += ", Seen";
+                    Data.existingMessages[folderLb.SelectedIndex][index] = m;
+                }
 
-/*                var index = Data.existingMessages[folderLb.SelectedIndex].IndexOf(m);
-                m.flags = m.flags.Replace("(UNREAD)", "");
-                Data.msg msg = new Data.msg();
-                msg = m;
-                Data.existingMessages[folderLb.SelectedIndex][index] =  msg;*/
-
-                /*                m.flags = m.flags.Replace("(UNREAD)", "");
-
-                                int folder = folderLb.SelectedIndex;
-
-                                var msgs = Data.existingMessages[folder];
-                                var i = msgs.FindIndex[m];
-
-                                var i = Data.existingMessages[folder];*/
-
-                new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder).Show();               
+                new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder, m.uid).Show();               
             }
         }
 
@@ -475,30 +467,69 @@ namespace Email_System
                 int messageIndex = messageLb.SelectedIndex;
                 Data.msg m = currentFolderMessages[messageIndex];
 
-/*                if (message.Flags.Value.HasFlag(MessageFlags.Flagged))
+                string subject = messageLb.SelectedItem.ToString();
+
+                if (!subject.Contains("(FLAGGED)"))
                 {
-                    removeFlagBt_Click();
-                    Debug.WriteLine("Removing flag");
-                }*//*
+                    server.killListeners();
 
-                else
+                    var index = Data.existingMessages[folderLb.SelectedIndex].IndexOf(m);
+                    m.flags = "(FLAGGED) " + m.flags;
+
+                    Data.existingMessages[folderLb.SelectedIndex][index] = m;
+
+                    int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
+
+                    Data.existingMessages[folderIndex].Add(m);
+
+                    refreshCurrentFolder();
+
+                    server.addFlagServer(m.folder, index);
+                }
+
+                else if (subject.Contains("(FLAGGED)"))
                 {
+                    server.killListeners();
+
+                    int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
+                    Data.existingMessages[folderIndex].Remove(m);
+
+                    var index = Data.existingMessages[folderLb.SelectedIndex].IndexOf(m);
+
+                    if (index != -1)
+                    {
+                        m.flags = m.flags.Replace("(FLAGGED)", "");
+                        Data.existingMessages[folderLb.SelectedIndex][index] = m;
+                        refreshCurrentFolder();
+                        server.removeFlagServer(m.folder, index);
+                        return;
+                    }
+
+                    refreshCurrentFolder();
+
+                    /*else
+                    {
+                        foreach (var folder in Data.existingMessages)
+                        {
+                            foreach (var msg in folder)
+                            {
+                                if (msg.uid == m.uid)
+                                {
+                                    //message found
+                                    m.flags = m.flags.Replace("(FLAGGED)", "");
+                                    folderIndex = Data.existingMessages.IndexOf(folder);
+                                    var msgIndex = Data.existingMessages[folderIndex].IndexOf(msg);
+                                    Data.existingMessages[folderIndex][msgIndex] = m;
+
+                                    server.removeFlagServer(m.folder, msgIndex);
+
+                                }
+                            }
+                        }
+                    }*/
 
 
-        //            this.Cursor = Cursors.WaitCursor;
-                    this.Enabled = false;
-                    var client = await Utility.establishConnectionImap();
-
-                    //add flag to message
-                    var folder = await client.GetFolderAsync(message.Folder.ToString());
-                    await folder.OpenAsync(FolderAccess.ReadWrite);
-                    await folder.AddFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
-
-                    Utility.refreshCurrentFolder();
-
-                    await client.DisconnectAsync(true);
-                    //this.Enabled = true;
-                }*/
+                }
             }
 
             catch
@@ -509,33 +540,26 @@ namespace Email_System
 
         private async void removeFlagBt_Click(object sender = null!, EventArgs e = null!)
         {
-            try
+/*            try
             {
-                var messageIndex = messageLb.SelectedIndex;
-                var message = messageSummaries[messageSummaries.Count - messageIndex - 1];
+                var index = Data.existingMessages[folderLb.SelectedIndex].IndexOf(m);
+                m.flags = "(FLAGGED) " + m.flags;
 
-        //        this.Cursor = Cursors.WaitCursor;
-                this.Enabled = false;
+                Data.existingMessages[folderLb.SelectedIndex][index] = m;
 
-                var client = await Utility.establishConnectionImap();
+                int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
 
-                //add flag to message
-                var folder = await client.GetFolderAsync(message.Folder.ToString());
-                await folder.OpenAsync(FolderAccess.ReadWrite);
+                Data.existingMessages[folderIndex].Add(m);
 
-                await folder.RemoveFlagsAsync(message.UniqueId, MessageFlags.Flagged, true);
+                refreshCurrentFolder();
 
-                Utility.refreshCurrentFolder();
-
-                await client.DisconnectAsync(true);
-
-                //this.Enabled = true;
+                server.removeFlagServer(m.folder, (int)m.uid);
             }
 
             catch
             {
                 MessageBox.Show("No message selected!");
-            }
+            }*/
         }
 
         private void deleteBt_Click(object sender, EventArgs e)

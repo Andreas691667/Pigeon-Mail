@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Email_System
 {
@@ -103,14 +105,45 @@ namespace Email_System
             }
         }
 
-        public static async void removeFlagSever()
+        public static async void removeFlagServer(string folderIn, int index)
         {
 
+            var client = await Utility.establishConnectionImap();         
+
+            var folder = await client.GetFolderAsync(folderIn);
+
+/*            if (folderIn == folder.FullName)
+            {
+                await folder.AddFlagsAsync(index, MessageFlags.Deleted, true);
+                await folder.ExpungeAsync();
+            }*/
+
+            await folder.OpenAsync(FolderAccess.ReadWrite);
+            await folder.RemoveFlagsAsync(index, MessageFlags.Flagged, true);
+
+            folder.Expunge();
+
+            await client.DisconnectAsync(true);
+
+            Utility.logMessage("Message unflagged");
+
+            Thread.Sleep(100);
+
+            startListeners();
         }
 
-        public static async void addFlagServer()
+        public static async void addFlagServer(string folderIn, int index)
         {
+            var client = await Utility.establishConnectionImap();
+            //add flag to message
+            var folder = await client.GetFolderAsync(folderIn);
+            await folder.OpenAsync(FolderAccess.ReadWrite);
+            await folder.AddFlagsAsync(index, MessageFlags.Flagged, true);
+            await client.DisconnectAsync(true);
 
+            Utility.logMessage("Message flagged");
+
+            startListeners();
         }
 
         public static async void saveDraftServer()
