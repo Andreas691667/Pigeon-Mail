@@ -67,10 +67,10 @@ namespace Email_System
                     //if there is more messages on the server than we have locally
                     if (newCount > currentCount)
                     {
-                        Debug.WriteLine("New count = " + newCount + " Old count: " + currentCount);
+                        //Debug.WriteLine("New count = " + newCount + " Old count: " + currentCount);
 
-                        var Task = addNewMessage(inboxFolder.FullName, newCount - currentCount);
-                        Task.Wait();
+                       // var Task = addNewMessage(inboxFolder.FullName, newCount - currentCount);
+                        //Task.Wait();
                     }
 
                     if(newCount < currentCount)
@@ -147,7 +147,7 @@ namespace Email_System
 
                     int index = existingFolders.IndexOf(folder);
 
-                    if (index != 0)
+                    if (index != -1)
                     {
                         int currentCount = existingMessages[index].Count;
                         int newCount = f.Count;
@@ -262,8 +262,13 @@ namespace Email_System
                 {
                     var client = await Utility.establishConnectionImap();
 
+                    int i = 0;
+
                     foreach (string folderName in existingFolders)
                     {
+                        List<msg> newlist = new List<msg>();
+                        msgs.Add(newlist);
+
                         var folder = await client.GetFolderAsync(folderName);
 
                         await folder.OpenAsync(FolderAccess.ReadOnly);
@@ -296,17 +301,29 @@ namespace Email_System
 
                             messages.Add(message);
 
+                            if (messages.Count % 10 == 0 && messages.Count != 0)
+                            {
+                                msgs[i].AddRange(messages);
+                                saveMessages(msgs);
+                                Task t = loadExistingMessages();
+                                t.Wait();
+                                messages.Clear();
+                            }
+
+
+
                         }
 
-                        msgs.Add(messages);
+                        msgs[i].AddRange(messages);
                         saveMessages(msgs);
                         Task task = loadExistingMessages();
                         task.Wait();
 
+                        i++;
                     }
 
                     saveMessages(msgs);
-                    break;
+                        break;
 
                     if (exit)
                         break;
