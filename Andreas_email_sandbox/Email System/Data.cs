@@ -175,9 +175,10 @@ namespace Email_System
 
         public static async Task loadExistingMessages()
         {
-            string filename = "messages.json";
+            string filename = Utility.username + "messages.json";
 
-            while(!File.Exists(filename))
+
+            while (!File.Exists(filename))
             {
             }
 
@@ -194,7 +195,7 @@ namespace Email_System
 
         public static void loadExistingFolders()
         {
-            string filename = "folders.json";
+            string filename = Utility.username + "folders.json";
 
             while (!File.Exists(filename))
             {
@@ -214,7 +215,7 @@ namespace Email_System
         public static async Task loadFolders(BackgroundWorker bw)
         {
 
-            if (!File.Exists("folders.json"))
+            if (!File.Exists(Utility.username + "folders.json"))
             {
                 while (!bw.CancellationPending)
                 {
@@ -255,7 +256,7 @@ namespace Email_System
 
         public static async Task loadMessages(BackgroundWorker bw)
         {
-            if (!File.Exists("messages.json"))
+            if (!File.Exists(Utility.username + "messages.json"))
             {
                 while (!bw.CancellationPending)
                 {
@@ -407,13 +408,14 @@ namespace Email_System
         private static void saveFolders()
         {
             var json = JsonSerializer.Serialize(folderList);
-            File.WriteAllText("folders.json", json);            
+            File.WriteAllText(Utility.username + "folders.json", json);            
             exit = true;
         }
         public static void saveMessages(List<List<msg>> list)
         {
             var json = JsonSerializer.Serialize(list);
-            File.WriteAllText("messages.json", json);
+//            File.WriteAllText("messages.json", json);
+            File.WriteAllText(Utility.username + "messages.json", json);
             Debug.WriteLine("all messages saved");
         }
 
