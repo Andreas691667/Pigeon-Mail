@@ -1,10 +1,6 @@
 ﻿using MailKit;
 using MailKit.Net.Imap;
-using MailKit.Search;
-using MimeKit;
-using Org.BouncyCastle.Asn1.X509;
 using System.Diagnostics;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 /*
  Mailbox is the window where mails previews are shown, and partioned into folders
@@ -22,7 +18,7 @@ namespace Email_System
         // Data structure for ???
         List<Data.msg> currentFolderMessages = null!;
 
-        // What does this do?
+        // maintains singleton pattern
         private static Mailbox instance = null!;
 
         // Constructor
@@ -53,11 +49,13 @@ namespace Email_System
             return folder;
         }
 
-        private void messageFlagCheck(Data.msg item)
+        private void addMessageToMailbox(Data.msg item)
         {
             string subject = "";
 
             string flagString = item.flags;
+
+
 
 
             if (flagString.Contains("Flagged") || flagString.Contains("(FLAGGED)"))
@@ -78,15 +76,16 @@ namespace Email_System
             if (item.subject != "")
             {
                 subject += item.subject;
-                messageLb.Items.Add(subject);
             }
 
             else
             {
                 item.subject = "<no subject>";
                 subject += item.subject;
-                messageLb.Items.Add(subject);
             }
+
+            string[] row = new string[] { item.folder, item.sender + " " + item.from, subject, item.body, item.date };
+            messagesDGV.Rows.Add(row);
         }
 
         private void toggleButtons(bool value)
@@ -96,7 +95,7 @@ namespace Email_System
             moveToTrashBt.Visible = value;
             deleteBt.Visible = value;
 
-            messageLb.Enabled = value;
+            messagesDGV.Enabled = value;
         }
 
         // method that retrieve folders and add the names to the listbox
@@ -210,7 +209,7 @@ namespace Email_System
 
                                 foreach (var item in messages.Reverse())
                                 {
-                                    //messageFlagCheck(item);
+                                    //addMessageToMailbox(item);
                                 }
 
                             }
@@ -223,7 +222,7 @@ namespace Email_System
 
 /*            foreach (var item in Data.existingMessages[0])
             {
-                messageFlagCheck(item);
+                addMessageToMailbox(item);
             }*/
 
         }
@@ -310,7 +309,7 @@ namespace Email_System
 
                                 foreach (var item in messages.Reverse())
                                 {
-                                    messageFlagCheck(item);
+                                    addMessageToMailbox(item);
                                 }
                             }
 
@@ -323,8 +322,8 @@ namespace Email_System
                     //    this.Cursor = Cursors.Default;
                         this.Enabled = true;*/
 
+            messagesDGV.Rows.Clear();
 
-            messageLb.Items.Clear();
             int folder = folderLb.SelectedIndex;
 
             try
@@ -334,17 +333,18 @@ namespace Email_System
                 if (Data.existingMessages[folder].Count <= 0)
                 {
                     toggleButtons(false);
-                    messageLb.Items.Add("No messages in this folder!");
+                    Utility.logMessage("No messages in this folder!");
                 }
 
                 else
                 {
                     toggleButtons(true);
+
                     currentFolderMessages = Data.existingMessages[folder];
 
                     foreach (var item in Data.existingMessages[folder])
                     {
-                        messageFlagCheck(item);
+                        addMessageToMailbox(item);
                     }
                 }
             }
@@ -352,11 +352,12 @@ namespace Email_System
             catch
             {
                 toggleButtons(false);
-                messageLb.Items.Add("Messages are being fetched from the server! Please be patient:)");
+                Utility.logMessage("Messages are being fetched from the server! Please be patient:)");
             }
         }
 
         // method to read the message when it is double clicked
+        //NOT USED ANYMORE
         private void ReadMessage(object sender, MouseEventArgs e)
         {
             /*            if (!messageLoaded) 
@@ -398,7 +399,7 @@ namespace Email_System
 
 
 
-            int messageIndex = messageLb.SelectedIndex;
+/*            int messageIndex = messageLb.SelectedIndex;
             Data.msg m = currentFolderMessages[messageIndex];
 
             if (m.flags.Contains("Draft"))
@@ -418,7 +419,7 @@ namespace Email_System
                 }
 
                 new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder, m.uid).Show();               
-            }
+            }*/
         }
 
         private void refreshBt_Click(object sender, EventArgs e)
@@ -464,10 +465,10 @@ namespace Email_System
         {
             try
             {
-                int messageIndex = messageLb.SelectedIndex;
+                int messageIndex = messagesDGV.CurrentCell.RowIndex;
                 Data.msg m = currentFolderMessages[messageIndex];
 
-                string subject = messageLb.SelectedItem.ToString();
+                string subject = messagesDGV[2, messageIndex].Value.ToString();
 
                 if (!subject.Contains("(FLAGGED)"))
                 {
@@ -487,6 +488,7 @@ namespace Email_System
                     server.addFlagServer(m.folder, index);
                 }
 
+                //we have a bug right here when removing flags from messages
                 else if (subject.Contains("(FLAGGED)"))
                 {
                     server.killListeners();
@@ -499,6 +501,7 @@ namespace Email_System
                     if (index != -1)
                     {
                         m.flags = m.flags.Replace("(FLAGGED)", "");
+                        m.flags = m.flags.Replace("Flagged", "");
                         Data.existingMessages[folderLb.SelectedIndex][index] = m;
                         refreshCurrentFolder();
                         server.removeFlagServer(m.folder, index);
@@ -538,43 +541,23 @@ namespace Email_System
             }
         }
 
-        private async void removeFlagBt_Click(object sender = null!, EventArgs e = null!)
+        private void removeFlagBt_Click(object sender = null!, EventArgs e = null!)
         {
-/*            try
-            {
-                var index = Data.existingMessages[folderLb.SelectedIndex].IndexOf(m);
-                m.flags = "(FLAGGED) " + m.flags;
-
-                Data.existingMessages[folderLb.SelectedIndex][index] = m;
-
-                int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
-
-                Data.existingMessages[folderIndex].Add(m);
-
-                refreshCurrentFolder();
-
-                server.removeFlagServer(m.folder, (int)m.uid);
-            }
-
-            catch
-            {
-                MessageBox.Show("No message selected!");
-            }*/
         }
 
         private void deleteBt_Click(object sender, EventArgs e)
         {
             try
             {
-                int messageIndex = messageLb.SelectedIndex;
+                int messageIndex = messagesDGV.CurrentCell.RowIndex;
                 Data.msg m = currentFolderMessages[messageIndex];
                 Utility.deleteMsg(m.uid, m.subject, m.folder);
             }
 
             catch(Exception ex)
             {
+                Utility.logMessage("No message selected!");
                 Debug.WriteLine(ex.Message);
-                //MessageBox.Show("No message selected!");
             }         
 
         }
@@ -583,13 +566,14 @@ namespace Email_System
         {
             try
             {
-                int messageIndex = messageLb.SelectedIndex;
+                int messageIndex = messagesDGV.CurrentCell.RowIndex;
                 Data.msg m = currentFolderMessages[messageIndex];
                 Utility.moveMsgTrash(m.uid, m.subject, m.folder);
             }
 
             catch(Exception ex)
             {
+                Utility.logMessage("No message selected!");
                 Debug.WriteLine(ex.Message);
             }
         }
@@ -612,39 +596,6 @@ namespace Email_System
 
         private void search(string searchQuery)
         {
-            /*   //         this.Cursor = Cursors.WaitCursor;
-                        this.Enabled = false;
-
-                        var client = await Utility.establishConnectionImap();
-
-                        var folder = await getCurrentFolder(client);
-
-                        folder.Open(FolderAccess.ReadWrite);
-
-                        if (contentRBT.Checked)
-                        {
-                            var uids = folder.Search(SearchQuery.BodyContains(searchQuery));
-                            searchresults(uids, folder);
-                        }
-
-                        else if (subjectRBT.Checked)
-                        {
-                            var uids = folder.Search(SearchQuery.SubjectContains(searchQuery));
-                            searchresults(uids, folder);
-                        }
-
-                        else if (senderRBT.Checked)
-                        {
-                            var uids = folder.Search(SearchQuery.FromContains(searchQuery));
-                            searchresults(uids, folder);
-                        }
-
-                        else
-                            MessageBox.Show("Please specify a search query");
-
-               //         this.Cursor = Cursors.Default;
-                        this.Enabled = true;*/
-
 
             List<Data.msg> searchResults = new List<Data.msg>();
 
@@ -692,17 +643,18 @@ namespace Email_System
             if (currentFolderMessages.Count <= 0)
             {
                 toggleButtons(false);
-                messageLb.Items.Add("No results!");
+                Utility.logMessage("No results!");
+                messagesDGV.Rows.Clear();
             }
 
             else
             {
-                messageLb.Items.Clear();
+                messagesDGV.Rows.Clear();
 
                 foreach (var item in currentFolderMessages)
                 {
                     toggleButtons(true);
-                    messageFlagCheck(item);
+                    addMessageToMailbox(item);
                 }
             }
         }
@@ -742,6 +694,34 @@ namespace Email_System
         public static void setText(string message)
         {
             instance.logLabel.Text = message;
+        }
+
+        private void messagesDGV_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            int messageIndex = messagesDGV.CurrentCell.RowIndex;
+            Data.msg m = currentFolderMessages[messageIndex];
+
+            if (m.flags.Contains("Draft"))
+            {
+                new newEmail(4, null!, m.body, m.subject, m.to, m.from, m.cc, m.attachments, m.folder).Show();
+            }
+
+            else
+            {
+                string subject = messagesDGV[2, messageIndex].Value.ToString();
+
+                Debug.WriteLine(subject);
+
+                if (subject.Contains("(UNREAD)"))
+                {
+                    var index = Data.existingMessages[folderLb.SelectedIndex].IndexOf(m);
+                    m.flags = m.flags.Replace("(UNREAD)", "");
+                    m.flags += ", Seen";
+                    Data.existingMessages[folderLb.SelectedIndex][index] = m;
+                }
+
+                new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder, m.uid).Show();
+            }
         }
     }
 }

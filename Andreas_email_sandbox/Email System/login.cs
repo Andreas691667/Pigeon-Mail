@@ -75,6 +75,7 @@ namespace Email_System
             Utility.username = usernameTb.Text;
             Utility.password = passwordTb.Text;            
 
+
             // Get SMTP Client
             SmtpClient client = new SmtpClient();
 

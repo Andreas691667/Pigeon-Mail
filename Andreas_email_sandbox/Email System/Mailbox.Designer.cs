@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Mailbox));
             this.folderLb = new System.Windows.Forms.ListBox();
             this.messageLb = new System.Windows.Forms.ListBox();
@@ -41,14 +44,21 @@
             this.deleteBt = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.senderRBT = new System.Windows.Forms.RadioButton();
+            this.logLabel = new System.Windows.Forms.Label();
             this.contentRBT = new System.Windows.Forms.RadioButton();
             this.subjectRBT = new System.Windows.Forms.RadioButton();
             this.searchTb = new System.Windows.Forms.TextBox();
             this.searchBt = new System.Windows.Forms.Button();
             this.logoutBt = new System.Windows.Forms.Button();
             this.settingsBt = new System.Windows.Forms.Button();
-            this.logLabel = new System.Windows.Forms.Label();
+            this.messagesDGV = new System.Windows.Forms.DataGridView();
+            this.Folder = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.From = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Subject = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Body = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Date = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.messagesDGV)).BeginInit();
             this.SuspendLayout();
             // 
             // folderLb
@@ -60,7 +70,7 @@
             this.folderLb.ItemHeight = 28;
             this.folderLb.Location = new System.Drawing.Point(15, 89);
             this.folderLb.Name = "folderLb";
-            this.folderLb.Size = new System.Drawing.Size(365, 452);
+            this.folderLb.Size = new System.Drawing.Size(333, 452);
             this.folderLb.TabIndex = 0;
             this.folderLb.MouseClick += new System.Windows.Forms.MouseEventHandler(this.RetrieveMessages);
             this.folderLb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.RetrieveMessages);
@@ -76,8 +86,9 @@
             this.messageLb.ItemHeight = 25;
             this.messageLb.Location = new System.Drawing.Point(386, 89);
             this.messageLb.Name = "messageLb";
-            this.messageLb.Size = new System.Drawing.Size(700, 454);
+            this.messageLb.Size = new System.Drawing.Size(900, 454);
             this.messageLb.TabIndex = 1;
+            this.messageLb.Visible = false;
             this.messageLb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ReadMessage);
             // 
             // newEmailBt
@@ -108,7 +119,8 @@
             // 
             // refreshTimer
             // 
-            this.refreshTimer.Interval = 60000;
+            this.refreshTimer.Enabled = true;
+            this.refreshTimer.Interval = 10000;
             this.refreshTimer.Tick += new System.EventHandler(this.refreshTimer_Tick);
             // 
             // addFlagBt
@@ -116,7 +128,7 @@
             this.addFlagBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.addFlagBt.Image = global::Email_System.Properties.Resources.icons8_flag_32;
             this.addFlagBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.addFlagBt.Location = new System.Drawing.Point(635, 0);
+            this.addFlagBt.Location = new System.Drawing.Point(835, 0);
             this.addFlagBt.Name = "addFlagBt";
             this.addFlagBt.Size = new System.Drawing.Size(105, 64);
             this.addFlagBt.TabIndex = 4;
@@ -129,7 +141,7 @@
             // removeFlagBt
             // 
             this.removeFlagBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.removeFlagBt.Location = new System.Drawing.Point(635, 3);
+            this.removeFlagBt.Location = new System.Drawing.Point(835, 3);
             this.removeFlagBt.Name = "removeFlagBt";
             this.removeFlagBt.Size = new System.Drawing.Size(105, 55);
             this.removeFlagBt.TabIndex = 5;
@@ -143,7 +155,7 @@
             this.moveToTrashBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.moveToTrashBt.Image = global::Email_System.Properties.Resources.icons8_trash_32;
             this.moveToTrashBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.moveToTrashBt.Location = new System.Drawing.Point(828, 0);
+            this.moveToTrashBt.Location = new System.Drawing.Point(1028, 0);
             this.moveToTrashBt.Name = "moveToTrashBt";
             this.moveToTrashBt.Size = new System.Drawing.Size(56, 64);
             this.moveToTrashBt.TabIndex = 6;
@@ -158,7 +170,7 @@
             this.deleteBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.deleteBt.Image = global::Email_System.Properties.Resources.icons8_remove_32;
             this.deleteBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.deleteBt.Location = new System.Drawing.Point(746, 0);
+            this.deleteBt.Location = new System.Drawing.Point(946, 0);
             this.deleteBt.Name = "deleteBt";
             this.deleteBt.Size = new System.Drawing.Size(76, 64);
             this.deleteBt.TabIndex = 7;
@@ -173,6 +185,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Controls.Add(this.senderRBT);
+            this.panel1.Controls.Add(this.logLabel);
             this.panel1.Controls.Add(this.contentRBT);
             this.panel1.Controls.Add(this.subjectRBT);
             this.panel1.Controls.Add(this.searchTb);
@@ -187,23 +200,33 @@
             this.panel1.Controls.Add(this.removeFlagBt);
             this.panel1.Location = new System.Drawing.Point(12, 8);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1071, 81);
+            this.panel1.Size = new System.Drawing.Size(1271, 81);
             this.panel1.TabIndex = 8;
             // 
             // senderRBT
             // 
             this.senderRBT.AutoSize = true;
-            this.senderRBT.Location = new System.Drawing.Point(466, 1);
+            this.senderRBT.Location = new System.Drawing.Point(255, 4);
             this.senderRBT.Name = "senderRBT";
             this.senderRBT.Size = new System.Drawing.Size(76, 24);
             this.senderRBT.TabIndex = 14;
             this.senderRBT.Text = "Sender";
             this.senderRBT.UseVisualStyleBackColor = true;
             // 
+            // logLabel
+            // 
+            this.logLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.logLabel.AutoSize = true;
+            this.logLabel.Enabled = false;
+            this.logLabel.Location = new System.Drawing.Point(542, 34);
+            this.logLabel.Name = "logLabel";
+            this.logLabel.Size = new System.Drawing.Size(0, 20);
+            this.logLabel.TabIndex = 9;
+            // 
             // contentRBT
             // 
             this.contentRBT.AutoSize = true;
-            this.contentRBT.Location = new System.Drawing.Point(466, 23);
+            this.contentRBT.Location = new System.Drawing.Point(337, 4);
             this.contentRBT.Name = "contentRBT";
             this.contentRBT.Size = new System.Drawing.Size(82, 24);
             this.contentRBT.TabIndex = 13;
@@ -214,7 +237,7 @@
             // 
             this.subjectRBT.AutoSize = true;
             this.subjectRBT.Checked = true;
-            this.subjectRBT.Location = new System.Drawing.Point(466, 45);
+            this.subjectRBT.Location = new System.Drawing.Point(425, 4);
             this.subjectRBT.Name = "subjectRBT";
             this.subjectRBT.Size = new System.Drawing.Size(79, 24);
             this.subjectRBT.TabIndex = 12;
@@ -226,8 +249,8 @@
             // 
             this.searchTb.Location = new System.Drawing.Point(255, 34);
             this.searchTb.Name = "searchTb";
-            this.searchTb.PlaceholderText = "Search in current folder...";
-            this.searchTb.Size = new System.Drawing.Size(206, 27);
+            this.searchTb.PlaceholderText = "Search in all folders...";
+            this.searchTb.Size = new System.Drawing.Size(249, 27);
             this.searchTb.TabIndex = 11;
             this.searchTb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchTb_KeyDown);
             // 
@@ -249,7 +272,7 @@
             this.logoutBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.logoutBt.Image = global::Email_System.Properties.Resources.icons8_logout_32;
             this.logoutBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.logoutBt.Location = new System.Drawing.Point(987, 0);
+            this.logoutBt.Location = new System.Drawing.Point(1187, 0);
             this.logoutBt.Name = "logoutBt";
             this.logoutBt.Size = new System.Drawing.Size(81, 64);
             this.logoutBt.TabIndex = 9;
@@ -263,7 +286,7 @@
             this.settingsBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.settingsBt.Image = global::Email_System.Properties.Resources.icons8_settings_32;
             this.settingsBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.settingsBt.Location = new System.Drawing.Point(890, 0);
+            this.settingsBt.Location = new System.Drawing.Point(1090, 0);
             this.settingsBt.Name = "settingsBt";
             this.settingsBt.Size = new System.Drawing.Size(91, 64);
             this.settingsBt.TabIndex = 8;
@@ -271,27 +294,108 @@
             this.settingsBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.settingsBt.UseVisualStyleBackColor = true;
             // 
-            // logLabel
+            // messagesDGV
             // 
-            this.logLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.logLabel.AutoSize = true;
-            this.logLabel.Enabled = false;
-            this.logLabel.Location = new System.Drawing.Point(15, 559);
-            this.logLabel.Name = "logLabel";
-            this.logLabel.Size = new System.Drawing.Size(0, 20);
-            this.logLabel.TabIndex = 9;
+            this.messagesDGV.AllowUserToAddRows = false;
+            this.messagesDGV.AllowUserToDeleteRows = false;
+            this.messagesDGV.AllowUserToResizeColumns = false;
+            this.messagesDGV.AllowUserToResizeRows = false;
+            this.messagesDGV.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.messagesDGV.BackgroundColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 10.8F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.messagesDGV.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.messagesDGV.ColumnHeadersHeight = 40;
+            this.messagesDGV.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.messagesDGV.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Folder,
+            this.From,
+            this.Subject,
+            this.Body,
+            this.Date});
+            this.messagesDGV.Location = new System.Drawing.Point(354, 89);
+            this.messagesDGV.MultiSelect = false;
+            this.messagesDGV.Name = "messagesDGV";
+            this.messagesDGV.ReadOnly = true;
+            this.messagesDGV.RowHeadersVisible = false;
+            this.messagesDGV.RowHeadersWidth = 51;
+            this.messagesDGV.RowTemplate.Height = 29;
+            this.messagesDGV.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.messagesDGV.Size = new System.Drawing.Size(932, 452);
+            this.messagesDGV.TabIndex = 10;
+            this.messagesDGV.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.messagesDGV_CellDoubleClick);
+            // 
+            // Folder
+            // 
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Folder.DefaultCellStyle = dataGridViewCellStyle2;
+            this.Folder.HeaderText = "Folder";
+            this.Folder.MinimumWidth = 130;
+            this.Folder.Name = "Folder";
+            this.Folder.ReadOnly = true;
+            this.Folder.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Folder.Width = 130;
+            // 
+            // From
+            // 
+            this.From.HeaderText = "From";
+            this.From.MinimumWidth = 6;
+            this.From.Name = "From";
+            this.From.ReadOnly = true;
+            this.From.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.From.Width = 125;
+            // 
+            // Subject
+            // 
+            this.Subject.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Subject.HeaderText = "Subject";
+            this.Subject.MinimumWidth = 6;
+            this.Subject.Name = "Subject";
+            this.Subject.ReadOnly = true;
+            this.Subject.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Subject.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Body
+            // 
+            this.Body.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Body.HeaderText = "Message";
+            this.Body.MinimumWidth = 6;
+            this.Body.Name = "Body";
+            this.Body.ReadOnly = true;
+            this.Body.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Body.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Date
+            // 
+            dataGridViewCellStyle3.Format = "G";
+            dataGridViewCellStyle3.NullValue = null;
+            this.Date.DefaultCellStyle = dataGridViewCellStyle3;
+            this.Date.HeaderText = "Date";
+            this.Date.MinimumWidth = 6;
+            this.Date.Name = "Date";
+            this.Date.ReadOnly = true;
+            this.Date.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Date.Width = 125;
             // 
             // Mailbox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1106, 588);
-            this.Controls.Add(this.logLabel);
+            this.ClientSize = new System.Drawing.Size(1306, 588);
+            this.Controls.Add(this.messagesDGV);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.messageLb);
             this.Controls.Add(this.folderLb);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(1124, 635);
+            this.MinimumSize = new System.Drawing.Size(1324, 635);
             this.Name = "Mailbox";
             this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds;
             this.Text = "Mailbox";
@@ -299,8 +403,8 @@
             this.EnabledChanged += new System.EventHandler(this.Mailbox_EnabledChanged);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.messagesDGV)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -324,5 +428,11 @@
         private RadioButton contentRBT;
         private RadioButton subjectRBT;
         private Label logLabel;
+        private DataGridView messagesDGV;
+        private DataGridViewTextBoxColumn Folder;
+        private DataGridViewTextBoxColumn From;
+        private DataGridViewTextBoxColumn Subject;
+        private DataGridViewTextBoxColumn Body;
+        private DataGridViewTextBoxColumn Date;
     }
 }

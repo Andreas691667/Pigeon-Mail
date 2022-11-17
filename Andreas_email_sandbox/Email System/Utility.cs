@@ -19,6 +19,7 @@ namespace Email_System
         public static string username = null!;
         public static string password = null!;
 
+        //implement setter and getter functions here!
 
 
         //establish an imap connection and return the client

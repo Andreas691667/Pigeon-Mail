@@ -18,6 +18,7 @@ namespace Email_System
             public uint uid { get; set; }
             public string body { get; set; }
             public string from { get; set; }
+            public string sender { get; set; }
             public string to { get; set; }
             public string cc { get; set; }
             public string date { get; set; }
@@ -25,7 +26,6 @@ namespace Email_System
             public string attachments { get; set; }
             public string flags { get; set; }
             public string folder { get; set; }
-
         }
 
 
@@ -70,7 +70,7 @@ namespace Email_System
                         Debug.WriteLine("New count = " + newCount + " Old count: " + currentCount);
 
                         var Task = addNewMessage(inboxFolder.FullName, newCount - currentCount);
-                        Task.Wait();                        
+                        Task.Wait();
                     }
 
                     if(newCount < currentCount)
@@ -338,6 +338,16 @@ namespace Email_System
             else
             {
                 message.from = "";
+            }
+
+            if(messageSummary.Envelope.Sender != null)
+            {
+                message.sender = messageSummary.Envelope.Sender.ToString();
+            }
+
+            else
+            {
+                message.sender = "";
             }
 
 

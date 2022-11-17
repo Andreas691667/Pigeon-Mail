@@ -22,7 +22,7 @@ namespace Email_System
                 l.folderListenerBW.Dispose();
             }
 
-            Thread.Sleep(100);
+            Thread.Sleep(200);
         }
 
         public static void startListeners()

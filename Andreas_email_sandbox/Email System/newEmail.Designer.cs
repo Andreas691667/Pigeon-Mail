@@ -48,6 +48,7 @@
             // 
             // sendBt
             // 
+            this.sendBt.Enabled = false;
             this.sendBt.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.sendBt.Image = global::Email_System.Properties.Resources.icons8_email_send_32;
             this.sendBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
