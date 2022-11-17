@@ -81,8 +81,19 @@ namespace Email_System
                 item.subject = "<no subject>";
                 subject += item.subject;
             }
+/*
+            string date = item.date.Remove(item.date.LastIndexOf(' '));
+            string time = date.Substring(date.LastIndexOf(' '));
+            date = date.Remove(date.LastIndexOf(' '));
+            int year = int.Parse(date.Substring(date.LastIndexOf('-')+1));
+            date = date.Remove(date.LastIndexOf('-'));
+            int month = int.Parse(date.Substring(date.LastIndexOf('-')+1));
+            date = date.Remove(date.LastIndexOf('-'));
+            int day = int.Parse(date);
+            DateTime dt = new DateTime(year, month, day);*/
 
             string[] row = new string[] { item.folder, item.sender, subject, item.body, item.date.Remove(item.date.LastIndexOf(' '))};
+            //string[] row = new string[] { item.folder, item.sender, subject, item.body};
             messagesDGV.Rows.Add(row);
         }
 
@@ -221,6 +232,8 @@ namespace Email_System
                 addMessageToMailbox(item);
             }*/
 
+
+
         }
 
         // open instance of newEmail form when the button is clicked (typeKey 0 = blank email)
@@ -324,6 +337,7 @@ namespace Email_System
 
             try
             {
+
                 if (Data.existingMessages[folder].Count <= 0)
                 {
                     toggleButtons(false);
@@ -341,7 +355,7 @@ namespace Email_System
                         addMessageToMailbox(item);
                     }
 
-                    foreach(DataGridViewRow row in messagesDGV.Rows)
+                    foreach (DataGridViewRow row in messagesDGV.Rows)
                     {
                         string sub = row.Cells[2].Value.ToString();
 
@@ -464,6 +478,7 @@ namespace Email_System
             instance.folderLb.Focus();
 
             Thread.Sleep(50);
+
             instance.RetrieveMessages();
         }
 
