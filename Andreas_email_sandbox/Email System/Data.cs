@@ -29,7 +29,6 @@ namespace Email_System
         }
 
 
-
         public static string trashFolderName = "";
         public static string draftFolderName = "";
         public static string flaggedFolderName = "";
@@ -84,7 +83,7 @@ namespace Email_System
             client.Disconnect(true);
         }
 
-        public static async Task addNewMessage(string folder, int N)
+        private static async Task addNewMessage(string folder, int N)
         {
             var client = await Utility.establishConnectionImap();
             var f = await client.GetFolderAsync(folder);
@@ -277,7 +276,7 @@ namespace Email_System
 
                         List<msg> messages = new List<msg>();
 
-                        foreach (var messageSummary in messageSummaries)
+                        foreach (var messageSummary in messageSummaries.Reverse())
                         {
                             Debug.WriteLine(messageSummary.UniqueId.Id);
 
@@ -309,9 +308,6 @@ namespace Email_System
                                 t.Wait();
                                 messages.Clear();
                             }
-
-
-
                         }
 
                         msgs[i].AddRange(messages);

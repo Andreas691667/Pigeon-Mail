@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Mailbox));
@@ -70,7 +71,7 @@
             this.folderLb.ItemHeight = 28;
             this.folderLb.Location = new System.Drawing.Point(15, 89);
             this.folderLb.Name = "folderLb";
-            this.folderLb.Size = new System.Drawing.Size(333, 452);
+            this.folderLb.Size = new System.Drawing.Size(275, 452);
             this.folderLb.TabIndex = 0;
             this.folderLb.MouseClick += new System.Windows.Forms.MouseEventHandler(this.RetrieveMessages);
             this.folderLb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.RetrieveMessages);
@@ -320,7 +321,15 @@
             this.Subject,
             this.Body,
             this.Date});
-            this.messagesDGV.Location = new System.Drawing.Point(354, 89);
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.ActiveCaption;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.messagesDGV.DefaultCellStyle = dataGridViewCellStyle4;
+            this.messagesDGV.Location = new System.Drawing.Point(296, 89);
             this.messagesDGV.MultiSelect = false;
             this.messagesDGV.Name = "messagesDGV";
             this.messagesDGV.ReadOnly = true;
@@ -328,12 +337,13 @@
             this.messagesDGV.RowHeadersWidth = 51;
             this.messagesDGV.RowTemplate.Height = 29;
             this.messagesDGV.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.messagesDGV.Size = new System.Drawing.Size(932, 452);
+            this.messagesDGV.Size = new System.Drawing.Size(990, 452);
             this.messagesDGV.TabIndex = 10;
             this.messagesDGV.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.messagesDGV_CellDoubleClick);
             // 
             // Folder
             // 
+            this.Folder.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Folder.DefaultCellStyle = dataGridViewCellStyle2;
@@ -346,12 +356,13 @@
             // 
             // From
             // 
+            this.From.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.From.HeaderText = "From";
             this.From.MinimumWidth = 6;
             this.From.Name = "From";
             this.From.ReadOnly = true;
             this.From.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.From.Width = 125;
+            this.From.Width = 95;
             // 
             // Subject
             // 
@@ -375,6 +386,7 @@
             // 
             // Date
             // 
+            this.Date.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             dataGridViewCellStyle3.Format = "G";
             dataGridViewCellStyle3.NullValue = null;
             this.Date.DefaultCellStyle = dataGridViewCellStyle3;
@@ -383,7 +395,7 @@
             this.Date.Name = "Date";
             this.Date.ReadOnly = true;
             this.Date.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.Date.Width = 125;
+            this.Date.Width = 81;
             // 
             // Mailbox
             // 

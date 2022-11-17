@@ -28,6 +28,11 @@ namespace Email_System
 
             //
             RetrieveFolders();
+/*            Thread.Sleep(100);
+            folderLb.SelectedIndex = 0;
+            instance.folderLb.Update();
+            instance.folderLb.Focus(); */
+            //refreshCurrentFolder();
         }
 
         // Ensures singleton pattern is maintained (only one instance at all times)
@@ -43,18 +48,11 @@ namespace Email_System
             }
         }
 
-        private async Task<IMailFolder> getCurrentFolder(ImapClient client)
-        {
-            var folder = await client.GetFolderAsync(folderLb.SelectedValue.ToString());
-            return folder;
-        }
-
         private void addMessageToMailbox(Data.msg item)
         {
             string subject = "";
 
             string flagString = item.flags;
-
 
             if (flagString.Contains("Flagged") || flagString.Contains("(FLAGGED)"))
             {
@@ -68,7 +66,9 @@ namespace Email_System
 
             if (!(flagString.Contains("Seen")))
             {
-                subject += "(UNREAD) ";
+                string draftFolder = Data.draftFolderName;
+                if (item.folder != draftFolder)
+                    subject += "(UNREAD) ";
             }
 
             if (item.subject != "")
@@ -82,7 +82,7 @@ namespace Email_System
                 subject += item.subject;
             }
 
-            string[] row = new string[] { item.folder, item.sender + " " + item.from, subject, item.body, item.date };
+            string[] row = new string[] { item.folder, item.sender, subject, item.body, item.date.Remove(item.date.LastIndexOf(' '))};
             messagesDGV.Rows.Add(row);
         }
 
@@ -324,8 +324,6 @@ namespace Email_System
 
             try
             {
-
-
                 if (Data.existingMessages[folder].Count <= 0)
                 {
                     toggleButtons(false);
@@ -341,6 +339,16 @@ namespace Email_System
                     foreach (var item in Data.existingMessages[folder])
                     {
                         addMessageToMailbox(item);
+                    }
+
+                    foreach(DataGridViewRow row in messagesDGV.Rows)
+                    {
+                        string sub = row.Cells[2].Value.ToString();
+
+                        if (sub.Contains("UNREAD"))
+                        {
+                            row.DefaultCellStyle.BackColor = Color.DarkSalmon;
+                        }
                     }
                 }
             }
@@ -448,6 +456,7 @@ namespace Email_System
 
         public static void refreshCurrentFolder()
         {
+
             int folderIndex = instance.folderLb.SelectedIndex;
             instance.RetrieveFolders();
             instance.folderLb.SelectedIndex = folderIndex;
@@ -711,10 +720,16 @@ namespace Email_System
 
                 if (subject.Contains("(UNREAD)"))
                 {
-                    var index = Data.existingMessages[folderLb.SelectedIndex].IndexOf(m);
+                    server.killListeners();
+
+                    var folderIndex = Data.existingFolders.IndexOf(m.folder);
+
+                    var index = Data.existingMessages[folderIndex].IndexOf(m);
                     m.flags = m.flags.Replace("(UNREAD)", "");
                     m.flags += ", Seen";
-                    Data.existingMessages[folderLb.SelectedIndex][index] = m;
+                    Data.existingMessages[folderIndex][index] = m;
+
+                    server.markMsgAsReadServer(m.folder, index);
                 }
 
                 new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder, m.uid).Show();

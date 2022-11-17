@@ -148,7 +148,21 @@ namespace Email_System
 
         public static async void saveDraftServer()
         {
+            //presumably not necessary
+        }
 
+        public static async void markMsgAsReadServer(string folderIn, int index)
+        {
+            var client = await Utility.establishConnectionImap();
+            //add flag to message
+            var folder = await client.GetFolderAsync(folderIn);
+            await folder.OpenAsync(FolderAccess.ReadWrite);
+            await folder.AddFlagsAsync(index, MessageFlags.Seen, true);
+            await client.DisconnectAsync(true);
+
+            Utility.logMessage("Message read");
+
+            startListeners();
         }
     }
 }

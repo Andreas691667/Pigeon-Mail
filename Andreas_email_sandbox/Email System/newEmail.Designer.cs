@@ -55,7 +55,7 @@
             this.sendBt.Location = new System.Drawing.Point(12, 430);
             this.sendBt.Name = "sendBt";
             this.sendBt.Size = new System.Drawing.Size(74, 64);
-            this.sendBt.TabIndex = 0;
+            this.sendBt.TabIndex = 5;
             this.sendBt.Text = "Send";
             this.sendBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.sendBt.UseVisualStyleBackColor = true;
@@ -66,7 +66,7 @@
             this.messageBodyTb.Location = new System.Drawing.Point(262, 168);
             this.messageBodyTb.Name = "messageBodyTb";
             this.messageBodyTb.Size = new System.Drawing.Size(642, 326);
-            this.messageBodyTb.TabIndex = 1;
+            this.messageBodyTb.TabIndex = 3;
             this.messageBodyTb.Text = "";
             // 
             // recipientsTb
@@ -74,7 +74,7 @@
             this.recipientsTb.Location = new System.Drawing.Point(499, 29);
             this.recipientsTb.Name = "recipientsTb";
             this.recipientsTb.Size = new System.Drawing.Size(405, 27);
-            this.recipientsTb.TabIndex = 2;
+            this.recipientsTb.TabIndex = 0;
             this.recipientsTb.MouseHover += new System.EventHandler(this.recipientsTb_MouseHover);
             this.recipientsTb.Validating += new System.ComponentModel.CancelEventHandler(this.recipientsTb_Validating);
             // 
@@ -83,7 +83,7 @@
             this.ccRecipientsTb.Location = new System.Drawing.Point(499, 69);
             this.ccRecipientsTb.Name = "ccRecipientsTb";
             this.ccRecipientsTb.Size = new System.Drawing.Size(405, 27);
-            this.ccRecipientsTb.TabIndex = 3;
+            this.ccRecipientsTb.TabIndex = 1;
             this.ccRecipientsTb.Validating += new System.ComponentModel.CancelEventHandler(this.ccRecipientsTb_Validating);
             // 
             // subjectTb
@@ -91,7 +91,7 @@
             this.subjectTb.Location = new System.Drawing.Point(499, 123);
             this.subjectTb.Name = "subjectTb";
             this.subjectTb.Size = new System.Drawing.Size(405, 27);
-            this.subjectTb.TabIndex = 4;
+            this.subjectTb.TabIndex = 2;
             // 
             // recipientLabel
             // 
@@ -128,7 +128,7 @@
             this.exitBt.Location = new System.Drawing.Point(101, 430);
             this.exitBt.Name = "exitBt";
             this.exitBt.Size = new System.Drawing.Size(78, 64);
-            this.exitBt.TabIndex = 9;
+            this.exitBt.TabIndex = 6;
             this.exitBt.Text = "Cancel";
             this.exitBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.exitBt.UseVisualStyleBackColor = true;
@@ -142,7 +142,7 @@
             this.draftBt.Location = new System.Drawing.Point(12, 363);
             this.draftBt.Name = "draftBt";
             this.draftBt.Size = new System.Drawing.Size(74, 61);
-            this.draftBt.TabIndex = 10;
+            this.draftBt.TabIndex = 7;
             this.draftBt.Text = "Draft";
             this.draftBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.draftBt.UseVisualStyleBackColor = true;
@@ -155,7 +155,7 @@
             this.addAttachmentBt.Location = new System.Drawing.Point(12, 304);
             this.addAttachmentBt.Name = "addAttachmentBt";
             this.addAttachmentBt.Size = new System.Drawing.Size(74, 53);
-            this.addAttachmentBt.TabIndex = 11;
+            this.addAttachmentBt.TabIndex = 8;
             this.addAttachmentBt.Text = "Attach";
             this.addAttachmentBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.addAttachmentBt.UseVisualStyleBackColor = true;
@@ -179,7 +179,7 @@
             this.attachmentsLb.Location = new System.Drawing.Point(21, 32);
             this.attachmentsLb.Name = "attachmentsLb";
             this.attachmentsLb.Size = new System.Drawing.Size(188, 104);
-            this.attachmentsLb.TabIndex = 14;
+            this.attachmentsLb.TabIndex = 10;
             this.attachmentsLb.Visible = false;
             // 
             // removeAttachmentBt
@@ -189,7 +189,7 @@
             this.removeAttachmentBt.Location = new System.Drawing.Point(20, 147);
             this.removeAttachmentBt.Name = "removeAttachmentBt";
             this.removeAttachmentBt.Size = new System.Drawing.Size(111, 45);
-            this.removeAttachmentBt.TabIndex = 15;
+            this.removeAttachmentBt.TabIndex = 9;
             this.removeAttachmentBt.Text = "Remove";
             this.removeAttachmentBt.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.removeAttachmentBt.UseVisualStyleBackColor = true;
