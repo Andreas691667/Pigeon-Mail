@@ -26,7 +26,7 @@ namespace Email_System
         {
             InitializeComponent();
 
-            // 
+            //
             RetrieveFolders();
         }
 
@@ -54,8 +54,6 @@ namespace Email_System
             string subject = "";
 
             string flagString = item.flags;
-
-
 
 
             if (flagString.Contains("Flagged") || flagString.Contains("(FLAGGED)"))
@@ -90,11 +88,9 @@ namespace Email_System
 
         private void toggleButtons(bool value)
         {
-            //removeFlagBt.Visible = value;
             addFlagBt.Visible = value;
             moveToTrashBt.Visible = value;
             deleteBt.Visible = value;
-
             messagesDGV.Enabled = value;
         }
 
@@ -446,7 +442,8 @@ namespace Email_System
 
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
-            Utility.refreshCurrentFolder();
+           // Utility.refreshCurrentFolder();
+           // this.SendToBack();
         }
 
         public static void refreshCurrentFolder()
@@ -703,7 +700,7 @@ namespace Email_System
 
             if (m.flags.Contains("Draft"))
             {
-                new newEmail(4, null!, m.body, m.subject, m.to, m.from, m.cc, m.attachments, m.folder).Show();
+                new newEmail(4, null!, m.body, m.subject, m.to, m.from, m.cc, m.attachments, m.folder, m.uid).Show();
             }
 
             else

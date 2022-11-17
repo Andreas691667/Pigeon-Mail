@@ -2,6 +2,7 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using System.ComponentModel;
 using System.Diagnostics;
+using EmailValidation;
 
 /*
  The login window is the window that is first seen by the client
@@ -31,7 +32,10 @@ namespace Email_System
             {
                 usernameTb.Text = Properties.Settings.Default.Username;
             }
+
+
         }
+
 
         // ----- Get Instance -----
         //ensures singleton pattern is maintained (only one instance at all times)
@@ -69,6 +73,17 @@ namespace Email_System
             // Get username and password
             string username = usernameTb.Text;
             string password = passwordTb.Text;
+
+            bool valid = EmailValidator.Validate(username);
+            if(!valid)
+            {
+                loginBt.Enabled = false;
+            }
+
+            else
+            {
+                loginBt.Enabled = true;
+            }
 
             // SHOULD BE DONE USING SETTER FUNCTIONS!
             // Set username and password in Utility class
@@ -281,10 +296,27 @@ namespace Email_System
             }
 
 
-        }        
+        }
+
 
         #endregion
 
+        private void usernameTb_Validating(object sender, CancelEventArgs e)
+        {
+            // Get username and password
+            string username = usernameTb.Text;
 
+            bool valid = EmailValidator.Validate(username);
+
+            if (!valid)
+            {
+                loginBt.Enabled = false;
+            }
+
+            else
+            {
+                loginBt.Enabled = true;
+            }
+        }
     }
 }

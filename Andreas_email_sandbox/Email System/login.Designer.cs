@@ -49,14 +49,15 @@
             this.usernameTb.Location = new System.Drawing.Point(166, 199);
             this.usernameTb.Name = "usernameTb";
             this.usernameTb.Size = new System.Drawing.Size(329, 27);
-            this.usernameTb.TabIndex = 1;
+            this.usernameTb.TabIndex = 2;
+            this.usernameTb.Validating += new System.ComponentModel.CancelEventHandler(this.usernameTb_Validating);
             // 
             // passwordTb
             // 
             this.passwordTb.Location = new System.Drawing.Point(166, 248);
             this.passwordTb.Name = "passwordTb";
             this.passwordTb.Size = new System.Drawing.Size(329, 27);
-            this.passwordTb.TabIndex = 2;
+            this.passwordTb.TabIndex = 3;
             this.passwordTb.UseSystemPasswordChar = true;
             // 
             // loginBt
@@ -74,7 +75,7 @@
             this.exitBt.Location = new System.Drawing.Point(166, 363);
             this.exitBt.Name = "exitBt";
             this.exitBt.Size = new System.Drawing.Size(94, 29);
-            this.exitBt.TabIndex = 3;
+            this.exitBt.TabIndex = 1;
             this.exitBt.Text = "Exit";
             this.exitBt.UseVisualStyleBackColor = true;
             this.exitBt.Click += new System.EventHandler(this.exitBt_Click);

@@ -40,7 +40,7 @@ namespace Email_System
         // 2: reply all
         // 3: forward
         // 4: drafts
-        public newEmail(int flag, IMessageSummary m = null!, string body = null!, string subject = null!, string rec = null!, string from = null!, string ccRec = null!, string attachments = null!, string folder = null!)
+        public newEmail(int flag, IMessageSummary m = null!, string body = null!, string subject = null!, string rec = null!, string from = null!, string ccRec = null!, string attachments = null!, string folder = null!, uint uid = 0)
         {
             InitializeComponent();
 
@@ -51,6 +51,7 @@ namespace Email_System
             msg.attachments = attachments;
             msg.folder = folder;
             msg.cc = ccRec;
+            msg.uid = uid;
 
             switch (flag)
             {
@@ -174,7 +175,7 @@ namespace Email_System
                         //add filename to listbox
                         attachmentsLb.Items.Add(attachment.FileName);
 
-                        MimeEntity entity = f.GetBodyPart(messageSender.UniqueId, attachment);
+                        MimeEntity entity = f.GetBodyPart(item.UniqueId, attachment);
 
                         var tempFolder = Path.GetTempPath();
 
@@ -214,10 +215,6 @@ namespace Email_System
             }
         }
 
-        private void downloadAttachments()
-        {
-
-        }
 
         #endregion
 
@@ -340,10 +337,7 @@ namespace Email_System
 
         private void sendBt_Click(object sender, EventArgs e)
         {
-
-            var l = login.GetInstance;
-            l.folderListenerBW.CancelAsync();
-
+            server.killListeners();
 
             this.Enabled = false;
             this.Cursor = Cursors.WaitCursor;
@@ -364,14 +358,16 @@ namespace Email_System
 
             try
             {
-                if (isDraft)
-                {
-                    Utility.deleteMessage(messageSender, true);
-                }
 
                 client.Send(message);
 
                 Utility.logMessage("Message sent successfully!");
+
+                //if the message was a draft, we should delete it from the draft folder!
+                if (isDraft)
+                {
+                    Utility.deleteMsg(msg.uid, msg.subject, msg.folder);
+                }               
 
                 messageSent = true;
 
@@ -390,9 +386,8 @@ namespace Email_System
                 client.Disconnect(true);
                 client.Dispose();
 
-
-                l = login.GetInstance;
-                l.folderListenerBW.RunWorkerAsync();
+                if(!isDraft)
+                    server.startListeners();
             }
         }
 
@@ -400,31 +395,6 @@ namespace Email_System
         {
             exitFromBt = true;
             this.Close();
-        }
-
-        private IMailFolder getDraftFolder(ImapClient client, CancellationToken cancellationToken)
-        {
-            if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0)
-            {
-                var trashFolder = client.GetFolder(SpecialFolder.Drafts);
-                return trashFolder;
-            }
-
-            else
-            {
-                var personal = client.GetFolder(client.PersonalNamespaces[0]);
-
-                foreach (var folder in personal.GetSubfolders(false, cancellationToken))
-                {
-                    foreach (var name in DraftFolderNames)
-                    {
-                        if (folder.Name == name)
-                            return folder;
-                    }
-                }
-            }
-
-            return null;
         }
 
         private void buildDraftMessage(MimeMessage mg)
@@ -475,25 +445,19 @@ namespace Email_System
             mg.Body = b.ToMessageBody();
         }
 
+        private void updateLocalDraftMessage(Data.msg msg)
+        {
+                        
+        }
+
         private async void saveAsDraft()
         {
             try
             {
-                this.Enabled = false;
-                this.Cursor = Cursors.WaitCursor;
-
-                if (isDraft)
-                {
-                    Utility.deleteMessage(messageSender, true);
-                }
-
                 MimeMessage mg = new MimeMessage();
-
                 buildDraftMessage(mg);
 
-                ImapClient client = await Utility.establishConnectionImap();
-                IMailFolder draftsFolder = getDraftFolder(client, CancellationToken.None);
-
+                var draftsFolder = await Data.GetDraftFolder();
                 await draftsFolder.OpenAsync(FolderAccess.ReadWrite);
                 await draftsFolder.AppendAsync(mg, MessageFlags.Draft);
 
@@ -507,24 +471,22 @@ namespace Email_System
             finally
             {
                 this.Close();
-                this.Enabled = true;
-                this.Cursor = Cursors.Default;
             }
         }
 
         private void newEmail_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (messageSent)
+            if (messageSent || exitFromBt) 
             {
                 return;
             }
 
             else if(isDraft)
             {
-                saveAsDraft();
+                updateLocalDraftMessage(msg);
             }
 
-            else if (!allEmpty() || !exitFromBt)
+            else if (!allEmpty())
             {
                 DialogResult result = MessageBox.Show("Do you wish to save the mail in 'Drafts'?", "Save as draft?", MessageBoxButtons.YesNo);
 
@@ -549,6 +511,7 @@ namespace Email_System
         private void draftBt_Click(object sender, EventArgs e)
         {
             exitFromBt = true;
+            this.Close();
             saveAsDraft();
         }
 
