@@ -95,42 +95,47 @@ namespace Email_System
 
                 int folderIndex = existingFolders.IndexOf(folder);
 
-                foreach (var m in existingMessages[folderIndex])
+/*                foreach (var m in existingMessages[folderIndex])
                 {
                     if (ids.Contains(m.uid))
                     {
                         uids.RemoveAt(ids.IndexOf(m.uid));
                     }
-                }
+                }*/
 
                 var messages = f.Fetch(uids, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
 
 
                 foreach (var item in messages)
                 {
-                    msg message = new msg();
-                    message = buildMessage(message, item, folder);
-
-                    var bodyPart = item.TextBody;
-
-                    if (bodyPart != null)
+                    foreach(var m in existingMessages[folderIndex])
                     {
-                        var body = (TextPart)f.GetBodyPart(item.UniqueId, bodyPart);
-                        var bodyText = body.Text;
-                        message.body = bodyText;
+                        if(m.uid != item.UniqueId.Id)
+                        {
+                            msg message = new msg();
+                            message = buildMessage(message, item, folder);
+
+                            var bodyPart = item.TextBody;
+
+                            if (bodyPart != null)
+                            {
+                                var body = (TextPart)f.GetBodyPart(item.UniqueId, bodyPart);
+                                var bodyText = body.Text;
+                                message.body = bodyText;
+                            }
+
+                            else
+                            {
+                                message.body = "";
+                            }
+
+                            int i = existingFolders.IndexOf(folder);
+
+                            existingMessages[i].Add(message);
+
+                            Debug.WriteLine("new message added to: " + folder);
+                        }
                     }
-
-                    else
-                    {
-                        message.body = "";
-                    }
-
-                    int i = existingFolders.IndexOf(folder);
-
-                    existingMessages[i].Add(message);
-
-                    Debug.WriteLine("new message added to: " + folder);
-
 
                     //we shouldn't refresh here, since it causes a non thread-safe call to messageLb
                     //Utility.refreshCurrentFolder();
