@@ -387,7 +387,7 @@
             // Date
             // 
             this.Date.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            dataGridViewCellStyle3.Format = "d";
+            dataGridViewCellStyle3.Format = "F";
             dataGridViewCellStyle3.NullValue = null;
             this.Date.DefaultCellStyle = dataGridViewCellStyle3;
             this.Date.HeaderText = "Date";

@@ -81,20 +81,14 @@ namespace Email_System
                 item.subject = "<no subject>";
                 subject += item.subject;
             }
-/*
-            string date = item.date.Remove(item.date.LastIndexOf(' '));
-            string time = date.Substring(date.LastIndexOf(' '));
-            date = date.Remove(date.LastIndexOf(' '));
-            int year = int.Parse(date.Substring(date.LastIndexOf('-')+1));
-            date = date.Remove(date.LastIndexOf('-'));
-            int month = int.Parse(date.Substring(date.LastIndexOf('-')+1));
-            date = date.Remove(date.LastIndexOf('-'));
-            int day = int.Parse(date);
-            DateTime dt = new DateTime(year, month, day);*/
 
-            string[] row = new string[] { item.folder, item.sender, subject, item.body, item.date.Remove(item.date.LastIndexOf(' '))};
-            //string[] row = new string[] { item.folder, item.sender, subject, item.body};
-            messagesDGV.Rows.Add(row);
+            string date = item.date.Remove(item.date.LastIndexOf(' '));
+
+            var dt2 = DateTime.ParseExact(date, "dd-MM-yyyy HH:mm:ss", null);
+
+            messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body, dt2);
+
+            messagesDGV.Sort(messagesDGV.Columns["Date"], System.ComponentModel.ListSortDirection.Descending);
         }
 
         private void toggleButtons(bool value)
