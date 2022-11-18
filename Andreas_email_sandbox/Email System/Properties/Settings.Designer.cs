@@ -94,5 +94,17 @@ namespace Email_System.Properties {
                 this["SmtpPort"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool offlineModeEnabled {
+            get {
+                return ((bool)(this["offlineModeEnabled"]));
+            }
+            set {
+                this["offlineModeEnabled"] = value;
+            }
+        }
     }
 }

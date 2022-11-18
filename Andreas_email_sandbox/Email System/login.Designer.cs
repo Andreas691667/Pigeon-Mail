@@ -122,11 +122,13 @@
             // 
             // messagesBackgroundWorker
             // 
+            this.messagesBackgroundWorker.WorkerSupportsCancellation = true;
             this.messagesBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.messagesBackgroundWorker_DoWork);
             this.messagesBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.messagesBackgroundWorker_RunWorkerCompleted);
             // 
             // foldersBackgroundWorker
             // 
+            this.foldersBackgroundWorker.WorkerSupportsCancellation = true;
             this.foldersBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.foldersBackgroundWorker_DoWork);
             this.foldersBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.foldersBackgroundWorker_RunWorkerCompleted);
             // 

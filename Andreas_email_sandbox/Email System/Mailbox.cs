@@ -16,7 +16,7 @@ namespace Email_System
         IList<IMessageSummary> messageSummaries = null!;
 
         // Data structure for ???
-        List<Data.msg> currentFolderMessages = null!;
+        List<Data.msg> currentFolderMessages = new List<Data.msg>();
 
         // maintains singleton pattern
         private static Mailbox instance = null!;
@@ -88,7 +88,7 @@ namespace Email_System
 
             messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body, dt2);
 
-            messagesDGV.Sort(messagesDGV.Columns["Date"], System.ComponentModel.ListSortDirection.Descending);
+            currentFolderMessages.Add(item);
         }
 
         private void toggleButtons(bool value)
@@ -326,12 +326,12 @@ namespace Email_System
                         this.Enabled = true;*/
 
             messagesDGV.Rows.Clear();
+            currentFolderMessages.Clear();  
 
             int folder = folderLb.SelectedIndex;
 
             try
             {
-
                 if (Data.existingMessages[folder].Count <= 0)
                 {
                     toggleButtons(false);
@@ -342,7 +342,7 @@ namespace Email_System
                 {
                     toggleButtons(true);
 
-                    currentFolderMessages = Data.existingMessages[folder];
+                    //currentFolderMessages = Data.existingMessages[folder];
 
                     foreach (var item in Data.existingMessages[folder])
                     {
@@ -358,6 +358,9 @@ namespace Email_System
                             row.DefaultCellStyle.BackColor = Color.DarkSalmon;
                         }
                     }
+
+                    refreshCurrentFolder(0);
+
                 }
             }
 
@@ -462,7 +465,7 @@ namespace Email_System
            // this.SendToBack();
         }
 
-        public static void refreshCurrentFolder()
+        public static void refreshCurrentFolder(int flag = -1)
         {
 
             int folderIndex = instance.folderLb.SelectedIndex;
@@ -473,14 +476,16 @@ namespace Email_System
 
             Thread.Sleep(50);
 
-            instance.RetrieveMessages();
+            if(flag == -1)
+                instance.RetrieveMessages();
         }
 
-        private async void addFlagBt_Click(object sender, EventArgs e)
+        private void addFlagBt_Click(object sender, EventArgs e)
         {
             try
             {
                 int messageIndex = messagesDGV.CurrentCell.RowIndex;
+
                 Data.msg m = currentFolderMessages[messageIndex];
 
                 string subject = messagesDGV[2, messageIndex].Value.ToString();
@@ -500,13 +505,15 @@ namespace Email_System
 
                     refreshCurrentFolder();
 
-                    server.addFlagServer(m.folder, index);
+                    server.addFlagServer(m.folder, index, m.uid);
                 }
 
                 //we have a bug right here when removing flags from messages
                 else if (subject.Contains("(FLAGGED)"))
                 {
                     server.killListeners();
+
+                    Thread.Sleep(100);
 
                     int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
                     Data.existingMessages[folderIndex].Remove(m);
@@ -524,29 +531,6 @@ namespace Email_System
                     }
 
                     refreshCurrentFolder();
-
-                    /*else
-                    {
-                        foreach (var folder in Data.existingMessages)
-                        {
-                            foreach (var msg in folder)
-                            {
-                                if (msg.uid == m.uid)
-                                {
-                                    //message found
-                                    m.flags = m.flags.Replace("(FLAGGED)", "");
-                                    folderIndex = Data.existingMessages.IndexOf(folder);
-                                    var msgIndex = Data.existingMessages[folderIndex].IndexOf(msg);
-                                    Data.existingMessages[folderIndex][msgIndex] = m;
-
-                                    server.removeFlagServer(m.folder, msgIndex);
-
-                                }
-                            }
-                        }
-                    }*/
-
-
                 }
             }
 
@@ -601,10 +585,26 @@ namespace Email_System
         private void logoutBt_Click(object sender, EventArgs e)
         {
             login l = login.GetInstance;
-            l.Show();
+            Settings s = Settings.GetInstance;
+
+            if(!s.IsDisposed)
+                s.Dispose();
 
             l.folderListenerBW.CancelAsync();
-            Data.saveMessages(Data.existingMessages);
+
+            if(!l.messagesBackgroundWorker.CancellationPending)
+                l.messagesBackgroundWorker.CancelAsync();
+
+            l.Show();
+
+            if (Properties.Settings.Default.offlineModeEnabled)
+                Data.saveMessages(Data.existingMessages);
+
+            if (!Properties.Settings.Default.offlineModeEnabled)
+            {
+                Data.deleteFiles();
+                Environment.Exit(0);
+            }
 
             instance.Dispose();
         }
@@ -743,6 +743,12 @@ namespace Email_System
 
                 new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder, m.uid).Show();
             }
+        }
+
+        private void settingsBt_Click(object sender, EventArgs e)
+        {
+            var s = Settings.GetInstance;
+            s.Show();
         }
     }
 }

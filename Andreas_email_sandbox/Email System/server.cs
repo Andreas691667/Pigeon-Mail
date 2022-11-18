@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +23,7 @@ namespace Email_System
                 l.folderListenerBW.Dispose();
             }
 
-            Thread.Sleep(200);
+            Thread.Sleep(400);
         }
 
         public static void startListeners()
@@ -132,13 +133,16 @@ namespace Email_System
             startListeners();
         }
 
-        public static async void addFlagServer(string folderIn, int index)
+        public static async void addFlagServer(string folderIn, int index, uint uid)
         {
             var client = await Utility.establishConnectionImap();
             //add flag to message
             var folder = await client.GetFolderAsync(folderIn);
             await folder.OpenAsync(FolderAccess.ReadWrite);
-            await folder.AddFlagsAsync(index, MessageFlags.Flagged, true);
+
+            UniqueId id = new UniqueId(1, uid);
+
+            await folder.AddFlagsAsync(id, MessageFlags.Flagged, true);
             await client.DisconnectAsync(true);
 
             Utility.logMessage("Message flagged");

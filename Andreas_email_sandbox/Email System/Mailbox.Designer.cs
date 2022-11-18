@@ -294,6 +294,7 @@
             this.settingsBt.Text = "Settings";
             this.settingsBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.settingsBt.UseVisualStyleBackColor = true;
+            this.settingsBt.Click += new System.EventHandler(this.settingsBt_Click);
             // 
             // messagesDGV
             // 
@@ -352,6 +353,7 @@
             this.Folder.Name = "Folder";
             this.Folder.ReadOnly = true;
             this.Folder.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Folder.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Folder.Width = 130;
             // 
             // From
@@ -395,7 +397,8 @@
             this.Date.Name = "Date";
             this.Date.ReadOnly = true;
             this.Date.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.Date.Width = 81;
+            this.Date.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Date.Width = 58;
             // 
             // Mailbox
             // 

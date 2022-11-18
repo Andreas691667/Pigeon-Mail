@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -83,48 +84,68 @@ namespace Email_System
             client.Disconnect(true);
         }
 
-        private static async Task addNewMessage(string folder, int N)
+        private static async Task addNewMessage(string folder, IList<UniqueId> uids, List<uint> ids)
         {
             var client = await Utility.establishConnectionImap();
-            var f = await client.GetFolderAsync(folder);
-            f.Open(FolderAccess.ReadOnly);
 
-            //var message = f.GetMessage(f.Count - 1);
-
-            var messages = f.Fetch(f.Count - N, f.Count, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
-
-
-            foreach(var item in messages)
+            try
             {
-                msg message = new msg();
-                message = buildMessage(message, item, folder);
+                var f = await client.GetFolderAsync(folder);
+                f.Open(FolderAccess.ReadOnly);
 
-                var bodyPart = item.TextBody;
+                int folderIndex = existingFolders.IndexOf(folder);
 
-                if (bodyPart != null)
+                foreach (var m in existingMessages[folderIndex])
                 {
-                    var body = (TextPart)f.GetBodyPart(item.UniqueId, bodyPart);
-                    var bodyText = body.Text;
-                    message.body = bodyText;
+                    if (ids.Contains(m.uid))
+                    {
+                        uids.RemoveAt(ids.IndexOf(m.uid));
+                    }
                 }
 
-                else
+                var messages = f.Fetch(uids, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
+
+
+                foreach (var item in messages)
                 {
-                    message.body = "";
+                    msg message = new msg();
+                    message = buildMessage(message, item, folder);
+
+                    var bodyPart = item.TextBody;
+
+                    if (bodyPart != null)
+                    {
+                        var body = (TextPart)f.GetBodyPart(item.UniqueId, bodyPart);
+                        var bodyText = body.Text;
+                        message.body = bodyText;
+                    }
+
+                    else
+                    {
+                        message.body = "";
+                    }
+
+                    int i = existingFolders.IndexOf(folder);
+
+                    existingMessages[i].Add(message);
+
+                    Debug.WriteLine("new message added to: " + folder);
+
+
+                    //we shouldn't refresh here, since it causes a non thread-safe call to messageLb
+                    //Utility.refreshCurrentFolder();
                 }
-
-                int i = existingFolders.IndexOf(folder);
-
-                existingMessages[i].Add(message);
-
-                Debug.WriteLine("new message added to: " + folder);
-
-
-                //we shouldn't refresh here, since it causes a non thread-safe call to messageLb
-                //Utility.refreshCurrentFolder();
             }
 
-            client.Disconnect(true);
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+            }
+
+            finally
+            {
+                client.Disconnect(true);
+            }
 
 
             //Debug.WriteLine(message.Subject);
@@ -156,13 +177,43 @@ namespace Email_System
                             if (newCount > currentCount)
                             {
                                Debug.WriteLine("New count = " + newCount + " Old count: " + currentCount);
-                               var Task = addNewMessage(folder, newCount - currentCount);
+
+                                var uids = f.Search(MailKit.Search.SearchQuery.All);
+                                List<uint> uidsId = new List<uint>();
+
+                                foreach (var u in uids)
+                                {
+                                    uidsId.Add(u.Id);
+                                }
+
+                                var Task = addNewMessage(folder, uids, uidsId);
                                Task.Wait();
                             }
 
                             if (newCount < currentCount)
                             {
-                               //not implemented
+                                Debug.WriteLine("New count = " + newCount + " Old count: " + currentCount);
+
+                                var uids = f.Search(MailKit.Search.SearchQuery.All);
+
+                                var summaries = f.Fetch(uids, MessageSummaryItems.Envelope);
+                                
+                                List<uint> uidsId = new List<uint>();
+                                List<string> subjects = new List<string>();
+
+                                foreach(var u in uids)
+                                {
+                                    uidsId.Add(u.Id);
+                                }
+
+                                foreach(var s in summaries)
+                                {
+                                    subjects.Add(s.Envelope.Subject);
+                                }
+
+                                var task = deleteMessage(uidsId, subjects, f.FullName);
+                                Thread.Sleep(1000);
+                                task.Wait();
                             }
                         }
                     }
@@ -170,6 +221,25 @@ namespace Email_System
             }
 
             client.Disconnect(true);
+        }
+
+        private static async Task deleteMessage(List<uint> ids, List<string> subjects, string folder)
+        {
+            int folderIndex = existingFolders.IndexOf(folder);
+            foreach (var m in existingMessages[folderIndex])
+            {
+                if (!ids.Contains(m.uid))
+                {
+                    existingMessages[folderIndex].Remove(m);
+                    Debug.WriteLine("Message removed from folder: " + folder);
+
+                    saveMessages(existingMessages);
+                    Task task = loadExistingMessages();
+                    task.Wait();
+                    return;
+                }
+            }
+
         }
 
         public static async Task loadExistingMessages()
@@ -413,7 +483,6 @@ namespace Email_System
             }
 
             message.flags = messageSummary.Flags.ToString();
-            Debug.WriteLine(message.flags);
 
             return message;
         }
@@ -543,6 +612,10 @@ namespace Email_System
         }
 
 
-
+        public static void deleteFiles()
+        {
+            File.Delete(Utility.username + "messages.json");
+            File.Delete(Utility.username + "folders.json");
+        }
     }
 }
