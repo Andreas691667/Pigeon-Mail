@@ -33,6 +33,7 @@ namespace Email_System
         public static string trashFolderName = "";
         public static string draftFolderName = "";
         public static string flaggedFolderName = "";
+        public static string allFolderName = "";
 
         //list to load folders on login
         private static List<string> folderList = new List<string>();
@@ -585,6 +586,42 @@ namespace Email_System
                         if (folder.Name == name)
                         {
                             flaggedFolderName = folder.FullName;
+                            return folder;
+                        }
+                    }
+                }
+            }
+
+            return null!;
+        }
+
+
+        static string[] AllFolderNames = { "All", "Alle mails", "Important" };
+        public static async Task<IMailFolder> GetAllFolder(ImapClient client = null!)
+        {
+            if (client == null)
+            {
+                client = await Utility.establishConnectionImap();
+            }
+
+            if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0)
+            {
+                var allFolder = client.GetFolder(SpecialFolder.All);
+                allFolderName = allFolder.FullName;
+                return allFolder;
+            }
+
+            else
+            {
+                var personal = client.GetFolder(client.PersonalNamespaces[0]);
+
+                foreach (var folder in personal.GetSubfolders(false, CancellationToken.None))
+                {
+                    foreach (var name in AllFolderNames)
+                    {
+                        if (folder.Name == name)
+                        {
+                            allFolderName = folder.FullName;
                             return folder;
                         }
                     }

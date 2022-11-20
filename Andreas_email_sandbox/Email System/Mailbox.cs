@@ -28,11 +28,7 @@ namespace Email_System
 
             //
             RetrieveFolders();
-/*            Thread.Sleep(100);
-            folderLb.SelectedIndex = 0;
-            instance.folderLb.Update();
-            instance.folderLb.Focus(); */
-            //refreshCurrentFolder();
+
         }
 
         // Ensures singleton pattern is maintained (only one instance at all times)
@@ -101,55 +97,12 @@ namespace Email_System
 
         // method that retrieve folders and add the names to the listbox
         private void RetrieveFolders()
-        {
-            /*            RetrieveInboxMessages();
+        {           
+            //folderLb.Items.Clear();
+            folderDGV.Rows.Clear();
 
-                        bool foldersLoaded = false;
-
-                        while (!foldersLoaded)
-                        {
-                            //this.Cursor = Cursors.WaitCursor;
-                            this.Enabled = false;
-
-                            var client = await Utility.establishConnectionImap();
-
-                            // get the folders from the server (to a List)
-                            var folders = await client.GetFoldersAsync(new FolderNamespace('.', ""));
-
-                            //dictionary for storing all folders
-                            Dictionary<string, string> foldersMap = new Dictionary<string, string>();
-
-                            // get the messages from the folder and add them to the dictionary
-                            foreach (var item in folders)
-                            {                
-
-                                if (item.Exists)
-                                {
-                                    var folderName = item.FullName.Substring(item.FullName.LastIndexOf('/') + 1);
-                                    foldersMap.Add(key: item.FullName, value: folderName);
-                                }
-                            }
-
-                            // specify the data source for the listbox
-                            folderLb.DataSource = new BindingSource(foldersMap, null);
-
-                            // specify the display member and value member
-                            folderLb.DisplayMember = "Value";
-                            folderLb.ValueMember = "Key";
-
-                            foldersLoaded = true;
-
-                            //disconnect from the client
-                            await client.DisconnectAsync(true);
-                           // this.Cursor = Cursors.Default;
-                            this.Enabled = true;
-                        }  */
-
-
-
-
-            
-            folderLb.Items.Clear();
+            folderDGV.Columns[0].HeaderText = Utility.username;
+            //folderDGV.Columns[0].HeaderCell.Visible = (true);
 
             // What is happening here?
             foreach (var f in Data.existingFolders)
@@ -175,7 +128,7 @@ namespace Email_System
 
                 finally
                 {
-                    folderLb.Items.Add(folderString);
+                    folderDGV.Rows.Add(folderString);
                 }
             }
 
@@ -273,62 +226,15 @@ namespace Email_System
         }
 
         // method to retrieve the messages from the folder when this folder is double clicked
-        private void RetrieveMessages(object sender = null!, MouseEventArgs e = null!)
+        // NOT USED ANYMORE!!!
+/*        private void RetrieveMessages(object sender = null!, MouseEventArgs e = null!)
         {
-            /*            bool messagesLoaded = false;            
-
-                        while (!messagesLoaded)
-                        {
-                           // this.Cursor = Cursors.WaitCursor;
-                            this.Enabled = false;
-
-                            var client = await Utility.establishConnectionImap();
-
-                            var folder = await getCurrentFolder(client);
-
-                            await folder.OpenAsync(FolderAccess.ReadWrite);
-
-                            var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
-
-                            messageLb.Items.Clear();
-
-                            if (folder.Count <= 0)
-                            {
-                                toggleButtons(false);
-                                messageLb.Items.Add("No messages in this folder!");
-                            }
-
-                            else if(folder.Attributes.HasFlag(FolderAttributes.Drafts))
-                            {
-                                openFolderAsDraft(messages, folder);
-                                //await folder.ExpungeAsync();
-                            }
-
-                            else
-                            {
-                                toggleButtons(true);
-
-                                messageSummaries = messages;                    
-
-                                foreach (var item in messages.Reverse())
-                                {
-                                    addMessageToMailbox(item);
-                                }
-                            }
-
-                            // disconnect from the client
-                            await client.DisconnectAsync(true);
-
-                            messagesLoaded = true;
-                        }
-
-                    //    this.Cursor = Cursors.Default;
-                        this.Enabled = true;*/
-
-            messagesDGV.Rows.Clear();
             currentFolderMessages.Clear();  
 
-            int folder = folderLb.SelectedIndex;
+            int folder = folderDGV.CurrentCell.RowIndex;
+
+            //folderDGV.SelectedCells
+            string folderName = folderDGV.CurrentCell.Value.ToString();            
 
             try
             {
@@ -340,7 +246,12 @@ namespace Email_System
 
                 else
                 {
-                    toggleButtons(true);
+                    if (folderName == Data.allFolderName)
+                        toggleButtons(false);
+
+                    else
+                        toggleButtons(true);
+
 
                     //currentFolderMessages = Data.existingMessages[folder];
 
@@ -369,74 +280,8 @@ namespace Email_System
                 toggleButtons(false);
                 Utility.logMessage("Messages are being fetched from the server! Please be patient:)");
             }
-        }
-
-        // method to read the message when it is double clicked
-        //NOT USED ANYMORE
-        private void ReadMessage(object sender, MouseEventArgs e)
-        {
-            /*            if (!messageLoaded) 
-                        {
-                        //    this.Cursor = Cursors.WaitCursor;
-                            this.Enabled = false;
-
-                            var client = await Utility.establishConnectionImap();
-
-                            // get the value of the selected item
-                            var messageItem = (((ListBox)sender).SelectedIndex);
-
-                            var currentMessage = messageSummaries[messageSummaries.Count - messageItem - 1];
-
-                            //add 'seen' flag to message
-                            var folder = await client.GetFolderAsync(currentMessage.Folder.ToString());
-                            await folder.OpenAsync(FolderAccess.ReadWrite);
-
-                            //if the message is draft, open as draft!
-                            if (folder.Attributes.HasFlag(FolderAttributes.Drafts))
-                            {
-                                var body = (TextPart)folder.GetBodyPart(currentMessage.UniqueId, currentMessage.TextBody);
-                                new newEmail(4, currentMessage, body.Text).Show();
-                            }
-
-                            else
-                            {
-                                await folder.AddFlagsAsync(currentMessage.UniqueId, MessageFlags.Seen, true);
-                                // create a new instance of the readMessage form with the retrieved message as input
-                                new readMessage(currentMessage).Show();
-                            }
-
-                            await client.DisconnectAsync(true);
-
-                         //   this.Cursor = Cursors.Default;
-                            this.Enabled = true;
-                        }*/
-
-
-
-
-/*            int messageIndex = messageLb.SelectedIndex;
-            Data.msg m = currentFolderMessages[messageIndex];
-
-            if (m.flags.Contains("Draft"))
-            {
-                new newEmail(4, null!, m.body, m.subject,m.to, m.from, m.cc, m.attachments, m.folder).Show();
-            }
-
-            else
-            {
-                string subject = messageLb.SelectedItem.ToString();
-                if (subject.Contains("(UNREAD)"))
-                {
-                    var index = Data.existingMessages[folderLb.SelectedIndex].IndexOf(m);
-                    m.flags = m.flags.Replace("(UNREAD)", "");
-                    m.flags += ", Seen";
-                    Data.existingMessages[folderLb.SelectedIndex][index] = m;
-                }
-
-                new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder, m.uid).Show();               
-            }*/
-        }
-
+        }*/
+        
         private void refreshBt_Click(object sender, EventArgs e)
         {
             try
@@ -468,16 +313,20 @@ namespace Email_System
         public static void refreshCurrentFolder(int flag = -1)
         {
 
-            int folderIndex = instance.folderLb.SelectedIndex;
+            int folderRow = instance.folderDGV.CurrentCell.RowIndex;
+            int folderColumn = instance.folderDGV.CurrentCell.ColumnIndex;
+
             instance.RetrieveFolders();
-            instance.folderLb.SelectedIndex = folderIndex;
-            instance.folderLb.Update();
-            instance.folderLb.Focus();
+
+            instance.folderDGV.ClearSelection();
+            instance.folderDGV.Rows[folderRow].Selected = true;
+
+            instance.folderDGV.CurrentCell = instance.folderDGV.Rows[folderRow].Cells[folderColumn];
 
             Thread.Sleep(50);
 
-            if(flag == -1)
-                instance.RetrieveMessages();
+            if (flag == -1)
+                instance.folderDGV_CellClick();
         }
 
         private void addFlagBt_Click(object sender, EventArgs e)
@@ -490,19 +339,18 @@ namespace Email_System
 
                 string subject = messagesDGV[2, messageIndex].Value.ToString();
 
+
                 if (!subject.Contains("(FLAGGED)"))
                 {
+                    int fromFolderIndex = folderDGV.CurrentCell.RowIndex;
+
                     server.killListeners();
 
-                    var index = Data.existingMessages[folderLb.SelectedIndex].IndexOf(m);
+                    var index = Data.existingMessages[fromFolderIndex].IndexOf(m);
                     m.flags = "(FLAGGED) " + m.flags;
-
-                    Data.existingMessages[folderLb.SelectedIndex][index] = m;
-
-                    int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
-
-                    Data.existingMessages[folderIndex].Add(m);
-
+                    Data.existingMessages[fromFolderIndex][index] = m;
+                    int destFolderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
+                    Data.existingMessages[destFolderIndex].Add(m);
                     refreshCurrentFolder();
 
                     server.addFlagServer(m.folder, index, m.uid);
@@ -518,15 +366,16 @@ namespace Email_System
                     int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
                     Data.existingMessages[folderIndex].Remove(m);
 
-                    var index = Data.existingMessages[folderLb.SelectedIndex].IndexOf(m);
+                    var index = Data.existingMessages[folderDGV.CurrentCell.RowIndex].IndexOf(m);
 
                     if (index != -1)
                     {
                         m.flags = m.flags.Replace("(FLAGGED)", "");
                         m.flags = m.flags.Replace("Flagged", "");
-                        Data.existingMessages[folderLb.SelectedIndex][index] = m;
+                        Data.existingMessages[folderDGV.CurrentCell.RowIndex][index] = m;
                         refreshCurrentFolder();
                         server.removeFlagServer(m.folder, index);
+
                         return;
                     }
 
@@ -653,9 +502,9 @@ namespace Email_System
 
         private void showSearchResults(List<Data.msg> msgs)
         {
-            currentFolderMessages = msgs;
+            currentFolderMessages.Clear();
 
-            if (currentFolderMessages.Count <= 0)
+            if (msgs.Count <= 0)
             {
                 toggleButtons(false);
                 Utility.logMessage("No results!");
@@ -666,7 +515,7 @@ namespace Email_System
             {
                 messagesDGV.Rows.Clear();
 
-                foreach (var item in currentFolderMessages)
+                foreach (var item in msgs)
                 {
                     toggleButtons(true);
                     addMessageToMailbox(item);
@@ -749,6 +598,74 @@ namespace Email_System
         {
             var s = Settings.GetInstance;
             s.Show();
+        }
+
+        //retrieve messages in selected folder on click
+        private void folderDGV_CellClick(object sender = null!, DataGridViewCellEventArgs e = null!)
+        {
+
+            messagesDGV.Rows.Clear();
+            currentFolderMessages.Clear();
+
+            int folder = folderDGV.CurrentCell.RowIndex;
+
+            //folderDGV.SelectedCells
+            string folderName = folderDGV.CurrentCell.Value.ToString();
+            folderName = folderName.Remove(folderName.LastIndexOf(' '));
+
+
+            try
+            {
+                if (Data.existingMessages[folder].Count <= 0)
+                {
+                    toggleButtons(false);
+                    Utility.logMessage("No messages in this folder!");
+                }
+
+                else
+                {
+                    if (folderName == Data.allFolderName)
+                    {
+                        toggleButtons(false);
+                        messagesDGV.Enabled = true;
+                    }
+
+                    else
+                        toggleButtons(true);
+
+
+                    //currentFolderMessages = Data.existingMessages[folder];
+
+                    foreach (var item in Data.existingMessages[folder])
+                    {
+                        addMessageToMailbox(item);
+                    }
+
+                    foreach (DataGridViewRow row in messagesDGV.Rows)
+                    {
+                        string sub = row.Cells[2].Value.ToString();
+
+                        if (sub.Contains("UNREAD"))
+                        {
+                            row.DefaultCellStyle.BackColor = Color.DarkSalmon;
+                        }
+                    }
+
+                    refreshCurrentFolder(0);
+                }
+            }
+
+            catch
+            {
+                toggleButtons(false);
+                Utility.logMessage("Messages are being fetched from the server! Please be patient:)");
+            }
+        }
+
+        
+        private void folderDGV_CellEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            //folderDGV_CellClick();
         }
     }
 }
