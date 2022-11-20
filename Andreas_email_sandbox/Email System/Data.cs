@@ -535,7 +535,7 @@ namespace Email_System
             if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0)
             {
                 var draftFolder = client.GetFolder(SpecialFolder.Drafts);
-                trashFolderName = draftFolder.FullName;
+                draftFolderName = draftFolder.FullName;
                 return draftFolder;
             }
 

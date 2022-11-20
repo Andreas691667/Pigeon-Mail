@@ -80,9 +80,17 @@ namespace Email_System
 
             string date = item.date.Remove(item.date.LastIndexOf(' '));
 
-            var dt2 = DateTime.ParseExact(date, "dd-MM-yyyy HH:mm:ss", null);
+            try
+            {
+                var dt2 = DateTime.ParseExact(date, "dd-MM-yyyy HH:mm:ss", null);
+                messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body, dt2);
+            }
 
-            messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body, dt2);
+            catch
+            {
+                messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body);
+            }
+
 
             currentFolderMessages.Add(item);
         }
@@ -567,7 +575,7 @@ namespace Email_System
 
             if (m.flags.Contains("Draft"))
             {
-                new newEmail(4, null!, m.body, m.subject, m.to, m.from, m.cc, m.attachments, m.folder, m.uid).Show();
+                new newEmail(4, null!, m.body, m.subject, m.to, m.from, m.cc, m.attachments, m.folder, m.uid, m.flags, m.sender).Show();
             }
 
             else
