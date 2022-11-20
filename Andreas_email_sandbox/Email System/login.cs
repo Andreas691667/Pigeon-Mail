@@ -267,7 +267,7 @@ namespace Email_System
             Thread.Sleep(10000);
 
             Data.listenAllFolders();
-            Data.listenInboxFolder();           
+            //Data.listenInboxFolder();           
         }
 
         private void login_FormClosed(object sender, FormClosedEventArgs e)
