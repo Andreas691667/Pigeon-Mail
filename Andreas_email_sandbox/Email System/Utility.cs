@@ -14,15 +14,34 @@ namespace Email_System
 {
     internal class Utility
     {
-        //variables to save the credentials of current client
-        //these are NOT saved over different sessions
+        // variables to save the credentials of current client
+        // these are NOT saved over different sessions
         public static string username = null!;
         public static string password = null!;
 
-        //implement setter and getter functions here!
+        // ----- Getter and setter functions to access username and password -----
+        public string getUsername ()
+        {
+            return username;
+        }
 
+        public static string getPassword ()
+        {
+            return password;
+        }
 
-        //establish an imap connection and return the client
+        public static void setUsername (string username_in)
+        {
+            username = username_in;
+        }
+
+        public static void setPassword (string password_in)
+        {
+            password = password_in;
+        }
+
+        // ------ Other stuff -----
+        // establish an imap connection and return the client
         public static async Task<ImapClient>  establishConnectionImap()
         {
             try

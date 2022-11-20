@@ -85,10 +85,11 @@ namespace Email_System
                 loginBt.Enabled = true;
             }
 
-            // SHOULD BE DONE USING SETTER FUNCTIONS!
+            
             // Set username and password in Utility class
-            Utility.username = usernameTb.Text;
-            Utility.password = passwordTb.Text;            
+            Utility.setUsername(usernameTb.Text);
+            Utility.setPassword(passwordTb.Text);
+                       
 
 
             // Get SMTP Client
