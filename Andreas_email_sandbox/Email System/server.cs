@@ -82,6 +82,7 @@ namespace Email_System
                     var f = item.Item1;
 
                     var id = new UniqueId[] { new UniqueId(item.Item2) };
+
                     var trashFolder = await Data.GetTrashFolder(client);
 
                     var folder = await client.GetFolderAsync(f);

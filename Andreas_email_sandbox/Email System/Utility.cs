@@ -108,6 +108,12 @@ namespace Email_System
             var trashFolderIndex = Data.existingFolders.IndexOf(Data.trashFolderName);
             var folderIndex = Data.existingFolders.IndexOf(folder);
 
+            if(trashFolderIndex == folderIndex)
+            {
+                Utility.logMessage("Message is already in trash!");
+                    return;
+            }
+
             Queue<Tuple<string, uint>> trashQueue = new Queue<Tuple<string, uint>>();
 
             for(int f = 0; f < Data.existingMessages.Count; f++)
@@ -136,8 +142,8 @@ namespace Email_System
                 }
             }
 
-            Debug.WriteLine("Found " + trashQueue.Count + " messages to move to trash");
 
+            Debug.WriteLine("Found " + trashQueue.Count + " messages to move to trash");
             server.moveMsgTrashServer(trashQueue);
 
 
