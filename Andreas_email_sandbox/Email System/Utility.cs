@@ -110,11 +110,40 @@ namespace Email_System
 
             Queue<Tuple<string, uint>> trashQueue = new Queue<Tuple<string, uint>>();
 
-            foreach (var f in Data.existingMessages.ToList())
+            for(int f = 0; f < Data.existingMessages.Count; f++)
             {
-                foreach (var m in f.ToList())
+                for(int i = 0; i<Data.existingMessages[f].Count;i++)
                 {
-                    if (m.uid == uid && m.subject == sub)
+                    Data.msg m = Data.existingMessages[f][i];
+
+                    if (f != trashFolderIndex)
+                    {
+                        if (m.uid == uid)
+                        {
+                            Data.existingMessages[f].Remove(m);
+
+                            //should only be moved to trash once
+                            if (trashQueue.Count <= 0)
+                                Data.existingMessages[trashFolderIndex].Add(m);
+
+                            //move to trash on server here
+                            Tuple<string, uint> t = new Tuple<string, uint>(m.folder, m.uid);
+                            trashQueue.Enqueue(t);
+
+                            refreshCurrentFolder();
+                        }
+                    }
+                }
+            }
+        //moveOnServer:
+            server.moveMsgTrashServer(trashQueue);
+
+
+/*            foreach (var f in Data.existingMessages)
+            {
+                foreach (var m in f)
+                {
+                    if (m.uid == uid)
                     {
                         Debug.WriteLine(m.uid);
 
@@ -136,7 +165,7 @@ namespace Email_System
                 }
             }
             moveOnServer:
-                server.moveMsgTrashServer(trashQueue);
+                server.moveMsgTrashServer(trashQueue);*/
         }
 
 
