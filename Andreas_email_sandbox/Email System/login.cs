@@ -211,7 +211,6 @@ namespace Email_System
             else
             {
                 folderListenerBW.RunWorkerAsync();
-                //allFoldersbackgroundWorker.RunWorkerAsync();
             }
         }
 

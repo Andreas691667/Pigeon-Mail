@@ -382,7 +382,7 @@ namespace Email_System
                         m.flags = m.flags.Replace("Flagged", "");
                         Data.existingMessages[folderDGV.CurrentCell.RowIndex][index] = m;
                         refreshCurrentFolder();
-                        server.removeFlagServer(m.folder, index);
+                        server.removeFlagServer(m.folder, m.uid);
 
                         return;
                     }
@@ -595,7 +595,7 @@ namespace Email_System
                     m.flags += ", Seen";
                     Data.existingMessages[folderIndex][index] = m;
 
-                    server.markMsgAsReadServer(m.folder, index);
+                    server.markMsgAsReadServer(m.folder, m.uid);
                 }
 
                 new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder, m.uid).Show();

@@ -108,7 +108,7 @@ namespace Email_System
             var trashFolderIndex = Data.existingFolders.IndexOf(Data.trashFolderName);
             var folderIndex = Data.existingFolders.IndexOf(folder);
 
-            Queue<Tuple<string, int>> trashQueue = new Queue<Tuple<string, int>>();
+            Queue<Tuple<string, uint>> trashQueue = new Queue<Tuple<string, uint>>();
 
             foreach (var f in Data.existingMessages.ToList())
             {
@@ -126,7 +126,7 @@ namespace Email_System
                         Data.existingMessages[trashFolderIndex].Add(m);
 
                         //move to trash on server here
-                        Tuple<string, int> t = new Tuple<string, int>(m.folder, i);
+                        Tuple<string, uint> t = new Tuple<string, uint>(m.folder, m.uid);
                         trashQueue.Enqueue(t);
 
                         refreshCurrentFolder();

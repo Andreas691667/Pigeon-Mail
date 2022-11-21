@@ -242,7 +242,7 @@ namespace Email_System
             Debug.WriteLine("existing messaes loaded");
 
             existingMessages = data!;
-
+                
             Debug.WriteLine(existingMessages.Count);
         }
 
