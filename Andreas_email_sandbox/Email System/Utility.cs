@@ -135,7 +135,9 @@ namespace Email_System
                     }
                 }
             }
-        //moveOnServer:
+
+            Debug.WriteLine("Found " + trashQueue.Count + " messages to move to trash");
+
             server.moveMsgTrashServer(trashQueue);
 
 

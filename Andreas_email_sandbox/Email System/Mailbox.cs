@@ -383,8 +383,12 @@ namespace Email_System
                         Data.existingMessages[folderDGV.CurrentCell.RowIndex][index] = m;
                         refreshCurrentFolder();
                         server.removeFlagServer(m.folder, m.uid);
+                    }
 
-                        return;
+                    else
+                    {
+                        refreshCurrentFolder();
+                        server.removeFlagServer(m.folder, m.uid);
                     }
 
                     refreshCurrentFolder();

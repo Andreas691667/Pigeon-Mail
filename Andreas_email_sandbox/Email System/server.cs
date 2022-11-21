@@ -73,16 +73,15 @@ namespace Email_System
 
         public static async void moveMsgTrashServer(Queue<Tuple<string, uint>> q)
         {
+            var client = await Utility.establishConnectionImap();
+
             try
             {
                 foreach (var item in q)
                 {
                     var f = item.Item1;
-                    //var index = item.Item2;
+
                     var id = new UniqueId[] { new UniqueId(item.Item2) };
-
-                    var client = await Utility.establishConnectionImap();
-
                     var trashFolder = await Data.GetTrashFolder(client);
 
                     var folder = await client.GetFolderAsync(f);
@@ -92,11 +91,7 @@ namespace Email_System
                     await folder.MoveToAsync(id, trashFolder);
 
                     Utility.logMessage("Message moved to trash");
-
-                    var task = client.DisconnectAsync(true);
-                    task.Wait();
                 }
-
 
                 startListeners();
 
@@ -105,6 +100,11 @@ namespace Email_System
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+            }
+
+            finally
+            {
+                var task = client.DisconnectAsync(true);
             }
         }
 
