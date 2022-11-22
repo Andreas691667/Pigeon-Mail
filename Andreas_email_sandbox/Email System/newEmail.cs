@@ -103,9 +103,11 @@ namespace Email_System
             recipient = recipient.Replace('>', ' ');
             recipient.Trim();
 
+            recipientsTb.Text = recipient;
+
             try
             {
-                if (msg.cc != "" || msg.cc != null)
+                if (!string.IsNullOrEmpty(msg.cc))
                 {
                     string[] ccRecipients = msg.cc.Split(",");
 
@@ -160,11 +162,10 @@ namespace Email_System
                 var client = await Utility.establishConnectionImap();
                 var f = client.GetFolder(msg.folder);
                 f.Open(FolderAccess.ReadWrite);
-                var query = SearchQuery.SubjectContains(msg.subject);
-                var uids = f.Search(query);
-                var items = f.Fetch(uids, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure);
 
+                var id = new UniqueId[] { new UniqueId(msg.uid) };
 
+                var items = f.Fetch(id, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure);
 
                 //traverse over the attachments
                 foreach (var item in items)

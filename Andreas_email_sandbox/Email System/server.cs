@@ -33,6 +33,7 @@ namespace Email_System
 
             if(!l.folderListenerBW.IsBusy)
                 l.folderListenerBW.RunWorkerAsync();
+
         }
 
         //deletes message from server and starts listening on folders again
@@ -146,6 +147,7 @@ namespace Email_System
             await client.DisconnectAsync(true);
 
             Utility.logMessage("Message flagged on server");
+            Utility.refreshCurrentFolder();
 
             startListeners();
         }

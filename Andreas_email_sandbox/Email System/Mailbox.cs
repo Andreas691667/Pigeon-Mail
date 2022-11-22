@@ -352,28 +352,29 @@ namespace Email_System
                 {
                     int fromFolderIndex = folderDGV.CurrentCell.RowIndex;
 
-                    server.killListeners();
+                    //server.killListeners();
 
                     var index = Data.existingMessages[fromFolderIndex].IndexOf(m);
                     m.flags = "(FLAGGED) " + m.flags;
                     Data.existingMessages[fromFolderIndex][index] = m;
                     int destFolderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
-                    Data.existingMessages[destFolderIndex].Add(m);
-                    refreshCurrentFolder();
+                    //Data.existingMessages[destFolderIndex].Add(m);
+
 
                     server.addFlagServer(m.folder, index, m.uid);
+
+                    refreshCurrentFolder();
                 }
 
                 //we have a bug right here when removing flags from messages
                 else if (subject.Contains("(FLAGGED)"))
                 {
-                    server.killListeners();
+                    //server.killListeners();
 
                     Thread.Sleep(100);
 
                     int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
                     Data.existingMessages[folderIndex].Remove(m);
-
                     var index = Data.existingMessages[folderDGV.CurrentCell.RowIndex].IndexOf(m);
 
                     if (index != -1)

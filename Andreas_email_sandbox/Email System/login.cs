@@ -281,18 +281,17 @@ namespace Email_System
 
             if (e.Cancelled)
             {
-                // The user canceled the operation.
-                MessageBox.Show("Operation was canceled");
+                Debug.WriteLine("Operation was canceled");
             }
-            else if (e.Error != null)
+            else if (!e.Cancelled && e.Error != null)
             {
                 // There was an error during the operation.
-                string msg = String.Format("An error occurred: {0}", e.Error.Message);
-                MessageBox.Show(msg);
+                //string msg = String.Format("An error occurred: {0}", e.Error.Message);
+                //Debug.WriteLine(msg);
+                folderListenerBW.RunWorkerAsync();
             }
             else
             {
-
                 Debug.WriteLine("runworker inbox listen finished (no problem)");
             }
 
