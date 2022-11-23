@@ -13,6 +13,7 @@ namespace Email_System
 {
     internal class server
     {
+        // DOCUMENTATION NEEDED
         public static void killListeners()
         {
             var l = login.GetInstance;
@@ -26,6 +27,7 @@ namespace Email_System
             Thread.Sleep(400);
         }
 
+        // DOCUMENTATION NEEDED
         public static void startListeners()
         {
             var l = login.GetInstance;
@@ -136,6 +138,7 @@ namespace Email_System
         public static async void addFlagServer(string folderIn, int index, uint uid)
         {
             var client = await Utility.establishConnectionImap();
+
             //add flag to message
             var folder = await client.GetFolderAsync(folderIn);
             await folder.OpenAsync(FolderAccess.ReadWrite);
@@ -145,7 +148,7 @@ namespace Email_System
             await folder.AddFlagsAsync(id, MessageFlags.Flagged, true);
             await client.DisconnectAsync(true);
 
-            Utility.logMessage("Message flagged");
+            Utility.logMessage("Message flagged on server");
 
             startListeners();
         }

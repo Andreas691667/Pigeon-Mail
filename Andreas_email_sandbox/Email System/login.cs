@@ -254,6 +254,7 @@ namespace Email_System
             Data.GetTrashFolder();
             Data.GetFlaggedFolder();
             Data.GetDraftFolder();
+            Data.GetAllFolder();
 
             Task task = Data.loadMessages(bw);
             task.Wait();

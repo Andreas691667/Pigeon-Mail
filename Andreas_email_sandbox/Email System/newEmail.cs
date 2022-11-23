@@ -29,7 +29,7 @@ namespace Email_System
 
         static string[] DraftFolderNames = { "Drafts", "Kladder", "Draft" };
 
-
+        bool stopSend = false;
         bool isDraft = false;
         bool exitFromBt = false;
         bool messageSent = false;
@@ -225,6 +225,7 @@ namespace Email_System
             if (string.IsNullOrEmpty(recipientsTb.Text))
             {
                 MessageBox.Show("No recipient!");
+                stopSend = true;
                 return;
             }
 
@@ -259,6 +260,7 @@ namespace Email_System
                 DialogResult result = MessageBox.Show("No subject. Do you wish to send the e-mail anyway?", "Fault", MessageBoxButtons.YesNo);
                 if (result == DialogResult.No)
                 {
+                    stopSend = true;
                     return;
                 }
 
@@ -281,6 +283,7 @@ namespace Email_System
                 DialogResult result = MessageBox.Show("No message. Do you wish to send the e-mail anyway?", "Fault", MessageBoxButtons.YesNo);
                 if (result == DialogResult.No)
                 {
+                    stopSend = true;
                     return;
                 }
 
@@ -337,58 +340,60 @@ namespace Email_System
 
         private void sendBt_Click(object sender, EventArgs e)
         {
-            server.killListeners();
-
-            this.Enabled = false;
-            this.Cursor = Cursors.WaitCursor;
-
             message.From.Add(new MailboxAddress(Utility.username, Utility.username));
 
             addRecipient(message);
-
             addCcRecipients(message);
-
             addSubject(message);
-
             addBody(message);
 
             message.Body = builder.ToMessageBody();
 
-            var client = Utility.establishConnectionSmtp();
-
-            try
+            if (!stopSend)
             {
 
-                client.Send(message);
+                var client = Utility.establishConnectionSmtp();
 
-                Utility.logMessage("Message sent successfully!");
+                server.killListeners();
+                this.Enabled = false;
+                this.Cursor = Cursors.WaitCursor;
 
-                //if the message was a draft, we should delete it from the draft folder!
-                if (isDraft)
+                try
                 {
-                    Utility.deleteMsg(msg.uid, msg.subject, msg.folder);
-                }               
+                    client.Send(message);
 
-                messageSent = true;
+                    Utility.logMessage("Message sent successfully!");
 
-                this.Close();
+                    //if the message was a draft, we should delete it from the draft folder!
+                    if (isDraft)
+                    {
+                        Utility.deleteMsg(msg.uid, msg.subject, msg.folder);
+                    }
+
+                    messageSent = true;
+
+                    this.Close();
+                }
+
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
+                finally
+                {
+                    this.Enabled = true;
+                    this.Cursor = Cursors.Default;
+                    client.Disconnect(true);
+                    client.Dispose();
+
+                    if (!isDraft)
+                        server.startListeners();
+                }
             }
 
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-            finally
-            {
-                this.Enabled = true;
-                this.Cursor = Cursors.Default;
-                client.Disconnect(true);
-                client.Dispose();
-
-                if(!isDraft)
-                    server.startListeners();
-            }
+            else
+                return;
         }
 
         private void exitBt_Click(object sender, EventArgs e)
