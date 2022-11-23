@@ -25,10 +25,7 @@ namespace Email_System
         private Mailbox()
         {
             InitializeComponent();
-
-            //
             RetrieveFolders();
-
         }
 
         // Ensures singleton pattern is maintained (only one instance at all times)
@@ -105,7 +102,14 @@ namespace Email_System
 
         // method that retrieve folders and add the names to the listbox
         private void RetrieveFolders()
-        {           
+        {         
+            
+            if(Data.updatePending)
+            {
+                Data.existingMessages = Data.pendingMessages;
+                Data.updatePending = false;
+            }
+
             //folderLb.Items.Clear();
             folderDGV.Rows.Clear();
 
@@ -352,13 +356,12 @@ namespace Email_System
                 {
                     int fromFolderIndex = folderDGV.CurrentCell.RowIndex;
 
-                    //server.killListeners();
-
+                   // server.killListeners();
                     var index = Data.existingMessages[fromFolderIndex].IndexOf(m);
                     m.flags = "(FLAGGED) " + m.flags;
                     Data.existingMessages[fromFolderIndex][index] = m;
                     int destFolderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
-                    //Data.existingMessages[destFolderIndex].Add(m);
+                    Data.existingMessages[destFolderIndex].Add(m);
 
 
                     server.addFlagServer(m.folder, index, m.uid);
@@ -616,6 +619,17 @@ namespace Email_System
         //retrieve messages in selected folder on click
         private void folderDGV_CellClick(object sender = null!, DataGridViewCellEventArgs e = null!)
         {
+
+            //check for stages chnages in data?
+            //Data.existingMessages != Data.staged
+            //then existing should be overwritten with stages 
+
+            if (Data.updatePending)
+            {
+                Data.existingMessages = Data.pendingMessages;
+                Data.updatePending = false;
+            }
+
 
             messagesDGV.Rows.Clear();
             currentFolderMessages.Clear();
