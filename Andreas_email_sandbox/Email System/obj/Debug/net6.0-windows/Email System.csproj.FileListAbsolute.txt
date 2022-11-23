@@ -78,3 +78,32 @@ C:\Users\buste\Source\Repos\Software_engineering_project\Andreas_email_sandbox\E
 C:\Users\buste\Source\Repos\Software_engineering_project\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\ref\Email System.dll
 C:\Users\buste\Source\Repos\Software_engineering_project\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.pdb
 C:\Users\buste\Source\Repos\Software_engineering_project\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.genruntimeconfig.cache
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\Email System.exe
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\Email System.dll.config
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\Email System.deps.json
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\Email System.runtimeconfig.json
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\Email System.dll
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\Email System.pdb
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\EmailValidation.dll
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\MailKit.dll
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\MimeKit.dll
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\BouncyCastle.Crypto.dll
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.csproj.AssemblyReference.cache
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email_System.login.resources
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email_System.Mailbox.resources
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email_System.newEmail.resources
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email_System.Properties.Resources.resources
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email_System.readMessage.resources
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email_System.Settings.resources
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email_System.waitForm.resources
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.csproj.GenerateResource.cache
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.AssemblyInfoInputs.cache
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.AssemblyInfo.cs
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.csproj.CoreCompileInputs.cache
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.csproj.CopyComplete
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.dll
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\refint\Email System.dll
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.pdb
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.genruntimeconfig.cache
+C:\Users\Andreas\Source\Repos\Software_engineering_project_new\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\ref\Email System.dll
