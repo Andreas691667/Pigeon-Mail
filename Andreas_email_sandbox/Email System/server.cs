@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -34,6 +35,7 @@ namespace Email_System
 
             if(!l.folderListenerBW.IsBusy)
                 l.folderListenerBW.RunWorkerAsync();
+
         }
 
         //deletes message from server and starts listening on folders again
@@ -72,16 +74,17 @@ namespace Email_System
             }
         }
 
-        public static async void moveMsgTrashServer(Queue<Tuple<string, int>> q)
+        public static async void moveMsgTrashServer(Queue<Tuple<string, uint>> q)
         {
+            var client = await Utility.establishConnectionImap();
+
             try
             {
                 foreach (var item in q)
                 {
                     var f = item.Item1;
-                    var index = item.Item2;
 
-                    var client = await Utility.establishConnectionImap();
+                    var id = new UniqueId[] { new UniqueId(item.Item2) };
 
                     var trashFolder = await Data.GetTrashFolder(client);
 
@@ -89,14 +92,10 @@ namespace Email_System
 
                     await folder.OpenAsync(FolderAccess.ReadWrite);
 
-                    await folder.MoveToAsync(index, trashFolder);
+                    await folder.MoveToAsync(id, trashFolder);
 
                     Utility.logMessage("Message moved to trash");
-
-                    var task = client.DisconnectAsync(true);
-                    task.Wait();
                 }
-
 
                 startListeners();
 
@@ -106,25 +105,24 @@ namespace Email_System
             {
                 Debug.WriteLine(ex.Message);
             }
+
+            finally
+            {
+                var task = client.DisconnectAsync(true);
+            }
         }
 
-        public static async void removeFlagServer(string folderIn, int index)
+        public static async void removeFlagServer(string folderIn, uint uid)
         {
 
             var client = await Utility.establishConnectionImap();         
 
             var folder = await client.GetFolderAsync(folderIn);
 
-/*            if (folderIn == folder.FullName)
-            {
-                await folder.AddFlagsAsync(index, MessageFlags.Deleted, true);
-                await folder.ExpungeAsync();
-            }*/
+            var id = new UniqueId[] { new UniqueId(uid) };
 
             await folder.OpenAsync(FolderAccess.ReadWrite);
-            await folder.RemoveFlagsAsync(index, MessageFlags.Flagged, true);
-
-            folder.Expunge();
+            await folder.RemoveFlagsAsync(id, MessageFlags.Flagged, true);
 
             await client.DisconnectAsync(true);
 
@@ -139,16 +137,26 @@ namespace Email_System
         {
             var client = await Utility.establishConnectionImap();
 
+<<<<<<< HEAD
             //add flag to message
+=======
+            //get source folder
+>>>>>>> eef3a8c429bc2be0923a9a94b4d1ab246ba9ebad
             var folder = await client.GetFolderAsync(folderIn);
             await folder.OpenAsync(FolderAccess.ReadWrite);
 
-            UniqueId id = new UniqueId(1, uid);
+            var id = new UniqueId[] { new UniqueId(uid) };
 
+            //add flag and copy message
             await folder.AddFlagsAsync(id, MessageFlags.Flagged, true);
+
             await client.DisconnectAsync(true);
 
             Utility.logMessage("Message flagged on server");
+<<<<<<< HEAD
+=======
+            Utility.refreshCurrentFolder();
+>>>>>>> eef3a8c429bc2be0923a9a94b4d1ab246ba9ebad
 
             startListeners();
         }
@@ -158,13 +166,14 @@ namespace Email_System
             //presumably not necessary
         }
 
-        public static async void markMsgAsReadServer(string folderIn, int index)
+        public static async void markMsgAsReadServer(string folderIn, uint uid)
         {
             var client = await Utility.establishConnectionImap();
             //add flag to message
             var folder = await client.GetFolderAsync(folderIn);
             await folder.OpenAsync(FolderAccess.ReadWrite);
-            await folder.AddFlagsAsync(index, MessageFlags.Seen, true);
+            var id = new UniqueId[] { new UniqueId(uid) };
+            await folder.AddFlagsAsync(id, MessageFlags.Seen, true);
             await client.DisconnectAsync(true);
 
             Utility.logMessage("Message read");

@@ -40,7 +40,7 @@ namespace Email_System
         // 2: reply all
         // 3: forward
         // 4: drafts
-        public newEmail(int flag, IMessageSummary m = null!, string body = null!, string subject = null!, string rec = null!, string from = null!, string ccRec = null!, string attachments = null!, string folder = null!, uint uid = 0)
+        public newEmail(int flag, IMessageSummary m = null!, string body = null!, string subject = null!, string rec = null!, string from = null!, string ccRec = null!, string attachments = null!, string folder = null!, uint uid = 0, string flags = null!, string sender = null!)
         {
             InitializeComponent();
 
@@ -52,6 +52,8 @@ namespace Email_System
             msg.folder = folder;
             msg.cc = ccRec;
             msg.uid = uid;
+            msg.sender = sender;
+            msg.flags = flags;
 
             switch (flag)
             {
@@ -101,9 +103,11 @@ namespace Email_System
             recipient = recipient.Replace('>', ' ');
             recipient.Trim();
 
+            recipientsTb.Text = recipient;
+
             try
             {
-                if (msg.cc != "" || msg.cc != null)
+                if (!string.IsNullOrEmpty(msg.cc))
                 {
                     string[] ccRecipients = msg.cc.Split(",");
 
@@ -143,6 +147,7 @@ namespace Email_System
         private async void flagDraft()
         {
             isDraft = true;
+            draftBt.Enabled = false;
 
             subjectTb.Text = msg.subject;
             recipientsTb.Text = msg.to;
@@ -157,11 +162,10 @@ namespace Email_System
                 var client = await Utility.establishConnectionImap();
                 var f = client.GetFolder(msg.folder);
                 f.Open(FolderAccess.ReadWrite);
-                var query = SearchQuery.SubjectContains(msg.subject);
-                var uids = f.Search(query);
-                var items = f.Fetch(uids, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure);
 
+                var id = new UniqueId[] { new UniqueId(msg.uid) };
 
+                var items = f.Fetch(id, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure);
 
                 //traverse over the attachments
                 foreach (var item in items)
@@ -450,9 +454,25 @@ namespace Email_System
             mg.Body = b.ToMessageBody();
         }
 
-        private void updateLocalDraftMessage(Data.msg msg)
+        private void updateLocalDraftMessage()
         {
-                        
+            msg.cc = ccRecipientsTb.Text;
+            msg.from = Utility.username;
+            msg.to = recipientsTb.Text;
+            msg.subject = subjectTb.Text;
+            //msg.attachments
+            msg.body = messageBodyTb.Text;
+            msg.date = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+            msg.date += " temp";
+               
+            for(int i = 0; i < Data.existingMessages.Count; i++)
+            {
+                for(int j = 0; j< Data.existingMessages[i].Count; j++)
+                {
+                    if(msg.uid == Data.existingMessages[i][j].uid)
+                        Data.existingMessages[i][j] = msg;
+                }
+            }
         }
 
         private async void saveAsDraft()
@@ -488,7 +508,7 @@ namespace Email_System
 
             else if(isDraft)
             {
-                updateLocalDraftMessage(msg);
+                updateLocalDraftMessage();
             }
 
             else if (!allEmpty())

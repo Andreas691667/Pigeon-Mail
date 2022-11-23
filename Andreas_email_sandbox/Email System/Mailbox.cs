@@ -80,9 +80,17 @@ namespace Email_System
 
             string date = item.date.Remove(item.date.LastIndexOf(' '));
 
-            var dt2 = DateTime.ParseExact(date, "dd-MM-yyyy HH:mm:ss", null);
+            try
+            {
+                var dt2 = DateTime.ParseExact(date, "dd-MM-yyyy HH:mm:ss", null);
+                messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body, dt2);
+            }
 
-            messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body, dt2);
+            catch
+            {
+                messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body);
+            }
+
 
             currentFolderMessages.Add(item);
         }
@@ -345,6 +353,7 @@ namespace Email_System
                 string subject = messagesDGV[2, messageIndex].Value.ToString();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                 // Flag if not already
                 if (!subject.Contains("(FLAGGED)"))
                 {
@@ -363,6 +372,23 @@ namespace Email_System
 
                     // Add flagged message to local flagged folder
                     Data.existingMessages[folderIndex].Add(m);
+=======
+
+                if (!subject.Contains("(FLAGGED)"))
+                {
+                    int fromFolderIndex = folderDGV.CurrentCell.RowIndex;
+
+                    //server.killListeners();
+
+                    var index = Data.existingMessages[fromFolderIndex].IndexOf(m);
+                    m.flags = "(FLAGGED) " + m.flags;
+                    Data.existingMessages[fromFolderIndex][index] = m;
+                    int destFolderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
+                    //Data.existingMessages[destFolderIndex].Add(m);
+
+
+                    server.addFlagServer(m.folder, index, m.uid);
+>>>>>>> eef3a8c429bc2be0923a9a94b4d1ab246ba9ebad
 
                     // Why is this neccesary?
 =======
@@ -380,21 +406,27 @@ namespace Email_System
                     Data.existingMessages[destFolderIndex].Add(m);
 >>>>>>> 174adcb2ba206edea8016b69dcc787cbbcbbf1a0
                     refreshCurrentFolder();
+<<<<<<< HEAD
 
                     // Add flag on server
                     server.addFlagServer(m.folder, index, m.uid);
+=======
+>>>>>>> eef3a8c429bc2be0923a9a94b4d1ab246ba9ebad
                 }
 
                 //we have a bug right here when removing flags from messages
                 else if (subject.Contains("(FLAGGED)"))
                 {
-                    server.killListeners();
+                    //server.killListeners();
 
                     Thread.Sleep(100);
 
                     int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
                     Data.existingMessages[folderIndex].Remove(m);
+<<<<<<< HEAD
 
+=======
+>>>>>>> eef3a8c429bc2be0923a9a94b4d1ab246ba9ebad
                     var index = Data.existingMessages[folderDGV.CurrentCell.RowIndex].IndexOf(m);
 
                     if (index != -1)
@@ -403,9 +435,19 @@ namespace Email_System
                         m.flags = m.flags.Replace("Flagged", "");
                         Data.existingMessages[folderDGV.CurrentCell.RowIndex][index] = m;
                         refreshCurrentFolder();
+<<<<<<< HEAD
                         server.removeFlagServer(m.folder, index);
 
                         return;
+=======
+                        server.removeFlagServer(m.folder, m.uid);
+                    }
+
+                    else
+                    {
+                        refreshCurrentFolder();
+                        server.removeFlagServer(m.folder, m.uid);
+>>>>>>> eef3a8c429bc2be0923a9a94b4d1ab246ba9ebad
                     }
 
                     refreshCurrentFolder();
@@ -596,7 +638,7 @@ namespace Email_System
 
             if (m.flags.Contains("Draft"))
             {
-                new newEmail(4, null!, m.body, m.subject, m.to, m.from, m.cc, m.attachments, m.folder, m.uid).Show();
+                new newEmail(4, null!, m.body, m.subject, m.to, m.from, m.cc, m.attachments, m.folder, m.uid, m.flags, m.sender).Show();
             }
 
             else
@@ -616,7 +658,7 @@ namespace Email_System
                     m.flags += ", Seen";
                     Data.existingMessages[folderIndex][index] = m;
 
-                    server.markMsgAsReadServer(m.folder, index);
+                    server.markMsgAsReadServer(m.folder, m.uid);
                 }
 
                 new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder, m.uid).Show();

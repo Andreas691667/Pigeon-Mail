@@ -57,4 +57,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="richTextBox2.Text" xml:space="preserve">
+    <value>Pigeon Post stores your e-mails locally by default. This is to enhance your experience and make the program faster.
+If you don't wish to have this feature, you can disable it here. Note that this will decrease the performance of the program significantly.</value>
+  </data>
 </root>

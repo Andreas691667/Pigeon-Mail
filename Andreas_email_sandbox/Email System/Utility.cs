@@ -108,13 +108,50 @@ namespace Email_System
             var trashFolderIndex = Data.existingFolders.IndexOf(Data.trashFolderName);
             var folderIndex = Data.existingFolders.IndexOf(folder);
 
-            Queue<Tuple<string, int>> trashQueue = new Queue<Tuple<string, int>>();
-
-            foreach (var f in Data.existingMessages.ToList())
+            if(trashFolderIndex == folderIndex)
             {
-                foreach (var m in f.ToList())
+                Utility.logMessage("Message is already in trash!");
+                    return;
+            }
+
+            Queue<Tuple<string, uint>> trashQueue = new Queue<Tuple<string, uint>>();
+
+            for(int f = 0; f < Data.existingMessages.Count; f++)
+            {
+                for(int i = 0; i<Data.existingMessages[f].Count;i++)
                 {
-                    if (m.uid == uid && m.subject == sub)
+                    Data.msg m = Data.existingMessages[f][i];
+
+                    if (f != trashFolderIndex)
+                    {
+                        if (m.uid == uid)
+                        {
+                            Data.existingMessages[f].Remove(m);
+
+                            //should only be moved to trash once
+                            if (trashQueue.Count <= 0)
+                                Data.existingMessages[trashFolderIndex].Add(m);
+
+                            //move to trash on server here
+                            Tuple<string, uint> t = new Tuple<string, uint>(m.folder, m.uid);
+                            trashQueue.Enqueue(t);
+
+                            refreshCurrentFolder();
+                        }
+                    }
+                }
+            }
+
+
+            Debug.WriteLine("Found " + trashQueue.Count + " messages to move to trash");
+            server.moveMsgTrashServer(trashQueue);
+
+
+/*            foreach (var f in Data.existingMessages)
+            {
+                foreach (var m in f)
+                {
+                    if (m.uid == uid)
                     {
                         Debug.WriteLine(m.uid);
 
@@ -126,7 +163,7 @@ namespace Email_System
                         Data.existingMessages[trashFolderIndex].Add(m);
 
                         //move to trash on server here
-                        Tuple<string, int> t = new Tuple<string, int>(m.folder, i);
+                        Tuple<string, uint> t = new Tuple<string, uint>(m.folder, m.uid);
                         trashQueue.Enqueue(t);
 
                         refreshCurrentFolder();
@@ -136,7 +173,7 @@ namespace Email_System
                 }
             }
             moveOnServer:
-                server.moveMsgTrashServer(trashQueue);
+                server.moveMsgTrashServer(trashQueue);*/
         }
 
 
