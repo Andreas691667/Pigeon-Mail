@@ -116,21 +116,21 @@ namespace Email_System
 
             Queue<Tuple<string, uint>> trashQueue = new Queue<Tuple<string, uint>>();
 
-            for(int f = 0; f < Data.existingMessages.Count; f++)
+            for(int f = 0; f < Data.UIMessages.Count; f++)
             {
-                for(int i = 0; i<Data.existingMessages[f].Count;i++)
+                for(int i = 0; i<Data.UIMessages[f].Count;i++)
                 {
-                    Data.msg m = Data.existingMessages[f][i];
+                    Data.msg m = Data.UIMessages[f][i];
 
                     if (f != trashFolderIndex)
                     {
                         if (m.uid == uid)
                         {
-                            Data.existingMessages[f].Remove(m);
+                            Data.UIMessages[f].Remove(m);
 
                             //should only be moved to trash once
                             if (trashQueue.Count <= 0)
-                                Data.existingMessages[trashFolderIndex].Add(m);
+                                Data.UIMessages[trashFolderIndex].Add(m);
 
                             //move to trash on server here
                             Tuple<string, uint> t = new Tuple<string, uint>(m.folder, m.uid);
@@ -187,7 +187,7 @@ namespace Email_System
 
             Queue<Tuple<string, int>> deleteQueue = new Queue<Tuple<string, int>>();
 
-            foreach (var f in Data.existingMessages.ToList())
+            foreach (var f in Data.UIMessages.ToList())
             {
                 foreach (var m in f.ToList())
                 {
@@ -197,9 +197,9 @@ namespace Email_System
 
                         Debug.WriteLine(m.subject + m.folder);
 
-                        int i = Data.existingMessages[folderIndex].IndexOf(m);
+                        int i = Data.UIMessages[folderIndex].IndexOf(m);
 
-                        Data.existingMessages[folderIndex].Remove(m);
+                        Data.UIMessages[folderIndex].Remove(m);
 
                         Tuple<string, int> t = new Tuple<string, int>(m.folder, i);
 

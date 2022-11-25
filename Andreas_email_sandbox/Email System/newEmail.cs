@@ -465,12 +465,12 @@ namespace Email_System
             msg.date = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
             msg.date += " temp";
                
-            for(int i = 0; i < Data.existingMessages.Count; i++)
+            for(int i = 0; i < Data.UIMessages.Count; i++)
             {
-                for(int j = 0; j< Data.existingMessages[i].Count; j++)
+                for(int j = 0; j< Data.UIMessages[i].Count; j++)
                 {
-                    if(msg.uid == Data.existingMessages[i][j].uid)
-                        Data.existingMessages[i][j] = msg;
+                    if(msg.uid == Data.UIMessages[i][j].uid)
+                        Data.UIMessages[i][j] = msg;
                 }
             }
         }

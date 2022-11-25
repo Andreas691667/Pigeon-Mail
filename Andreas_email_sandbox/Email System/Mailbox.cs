@@ -1,6 +1,8 @@
 ﻿using MailKit;
 using MailKit.Net.Imap;
+using Org.BouncyCastle.Asn1.Cmp;
 using System.Diagnostics;
+using static Email_System.Data;
 
 /*
  Mailbox is the window where mails previews are shown, and partioned into folders
@@ -106,7 +108,9 @@ namespace Email_System
             
             if(Data.updatePending)
             {
-                Data.existingMessages = Data.pendingMessages;
+                var task = Data.loadExistingMessages();
+                task.Wait();
+
                 Data.updatePending = false;
             }
 
@@ -128,7 +132,7 @@ namespace Email_System
 
                 try
                 {
-                    int count = Data.existingMessages[folderIndex].Count;
+                    int count = Data.UIMessages[folderIndex].Count;
                     folderString += " (" + count + ")";
 
                 }
@@ -357,15 +361,18 @@ namespace Email_System
                     int fromFolderIndex = folderDGV.CurrentCell.RowIndex;
 
                    // server.killListeners();
-                    var index = Data.existingMessages[fromFolderIndex].IndexOf(m);
+                    var index = Data.UIMessages[fromFolderIndex].IndexOf(m);
                     m.flags = "(FLAGGED) " + m.flags;
-                    Data.existingMessages[fromFolderIndex][index] = m;
+
+                    Data.UIMessages[fromFolderIndex][index] = m;
+                    Data.pendingMessages[fromFolderIndex][index] = m;
+
                     int destFolderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
-                    Data.existingMessages[destFolderIndex].Add(m);
+                    Data.UIMessages[destFolderIndex].Add(m);
+
 
 
                     server.addFlagServer(m.folder, index, m.uid);
-
                     refreshCurrentFolder();
                 }
 
@@ -377,14 +384,15 @@ namespace Email_System
                     Thread.Sleep(100);
 
                     int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
-                    Data.existingMessages[folderIndex].Remove(m);
-                    var index = Data.existingMessages[folderDGV.CurrentCell.RowIndex].IndexOf(m);
+                    Data.UIMessages[folderIndex].Remove(m);
+                    var index = Data.UIMessages[folderDGV.CurrentCell.RowIndex].IndexOf(m);
 
                     if (index != -1)
                     {
                         m.flags = m.flags.Replace("(FLAGGED)", "");
                         m.flags = m.flags.Replace("Flagged", "");
-                        Data.existingMessages[folderDGV.CurrentCell.RowIndex][index] = m;
+                        Data.UIMessages[folderDGV.CurrentCell.RowIndex][index] = m;
+                        Data.pendingMessages[folderDGV.CurrentCell.RowIndex][index] = m;
                         refreshCurrentFolder();
                         server.removeFlagServer(m.folder, m.uid);
                     }
@@ -395,6 +403,7 @@ namespace Email_System
                         server.removeFlagServer(m.folder, m.uid);
                     }
 
+
                     refreshCurrentFolder();
                 }
             }
@@ -403,6 +412,8 @@ namespace Email_System
             {
                 MessageBox.Show("No message selected!");
             }
+
+           
         }
 
         private void removeFlagBt_Click(object sender = null!, EventArgs e = null!)
@@ -463,7 +474,7 @@ namespace Email_System
             l.Show();
 
             if (Properties.Settings.Default.offlineModeEnabled)
-                Data.saveMessages(Data.existingMessages);
+                Data.saveMessages(Data.UIMessages);
 
             if (!Properties.Settings.Default.offlineModeEnabled)
             {
@@ -479,7 +490,7 @@ namespace Email_System
 
             List<Data.msg> searchResults = new List<Data.msg>();
 
-            foreach(var folder in Data.existingMessages)
+            foreach(var folder in Data.UIMessages)
             {
                 foreach(var msg in folder)
                 {
@@ -598,10 +609,10 @@ namespace Email_System
 
                     var folderIndex = Data.existingFolders.IndexOf(m.folder);
 
-                    var index = Data.existingMessages[folderIndex].IndexOf(m);
+                    var index = Data.UIMessages[folderIndex].IndexOf(m);
                     m.flags = m.flags.Replace("(UNREAD)", "");
                     m.flags += ", Seen";
-                    Data.existingMessages[folderIndex][index] = m;
+                    Data.UIMessages[folderIndex][index] = m;
 
                     server.markMsgAsReadServer(m.folder, m.uid);
                 }
@@ -626,7 +637,8 @@ namespace Email_System
 
             if (Data.updatePending)
             {
-                Data.existingMessages = Data.pendingMessages;
+                var task = Data.loadExistingMessages();
+                task.Wait();
                 Data.updatePending = false;
             }
 
@@ -643,7 +655,7 @@ namespace Email_System
 
             try
             {
-                if (Data.existingMessages[folder].Count <= 0)
+                if (Data.UIMessages[folder].Count <= 0)
                 {
                     toggleButtons(false);
                     Utility.logMessage("No messages in this folder!");
@@ -663,7 +675,7 @@ namespace Email_System
 
                     //currentFolderMessages = Data.existingMessages[folder];
 
-                    foreach (var item in Data.existingMessages[folder])
+                    foreach (var item in Data.UIMessages[folder])
                     {
                         addMessageToMailbox(item);
                     }

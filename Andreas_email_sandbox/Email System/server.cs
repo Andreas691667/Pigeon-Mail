@@ -126,9 +126,9 @@ namespace Email_System
 
             Utility.logMessage("Message unflagged");
 
-            Thread.Sleep(100);
+            //Thread.Sleep(1000);
 
-            startListeners();
+            //startListeners();
         }
 
         public static async void addFlagServer(string folderIn, int index, uint uid)
@@ -139,17 +139,27 @@ namespace Email_System
             var folder = await client.GetFolderAsync(folderIn);
             await folder.OpenAsync(FolderAccess.ReadWrite);
 
+
+            var uids = folder.Search(MailKit.Search.SearchQuery.All);
+
+            int uidIndex = 0;
+
+            for (int i = 0; i < uids.Count; i++)
+            {
+                if (uids[i].Id == uid)
+                {
+                    uidIndex = i;
+                }
+            }            
+
             var id = new UniqueId[] { new UniqueId(uid) };
-
             //add flag and copy message
-            await folder.AddFlagsAsync(id, MessageFlags.Flagged, true);
-
+            await folder.AddFlagsAsync(uids[uidIndex], MessageFlags.Flagged, true);
             await client.DisconnectAsync(true);
-
             Utility.logMessage("Message flagged on server");
             Utility.refreshCurrentFolder();
 
-            startListeners();
+            //startListeners();
         }
 
         public static async void saveDraftServer()

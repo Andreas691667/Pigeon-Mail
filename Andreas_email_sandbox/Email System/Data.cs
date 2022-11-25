@@ -43,7 +43,7 @@ namespace Email_System
         public static List<string> existingFolders = new List<string>();
 
         //list to store messages (used by UI)
-        public static List<List<msg>> existingMessages = new List<List<msg>>();
+        public static List<List<msg>> UIMessages = new List<List<msg>>();
 
         public static List<List<msg>> pendingMessages = new List<List<msg>>();
 
@@ -64,7 +64,7 @@ namespace Email_System
             
             while (!bw.CancellationPending)
             {
-                int currentCount = existingMessages[0].Count; //local count
+                int currentCount = UIMessages[0].Count; //local count
                 inboxFolder.Open(FolderAccess.ReadOnly);
                 int newCount = inboxFolder.Count; //server cocunt
 
@@ -127,9 +127,11 @@ namespace Email_System
                         message.body = "";
                     }
 
+                    //detect spam here
+
                     //existingMessages[folderIndex].Add(message);
-                    pendingMessages[folderIndex].Add(message);
-                    //updatePending = true;
+                        pendingMessages[folderIndex].Add(message);
+                        updatePending = true; // nok ikke nødvendigt
 
                     Debug.WriteLine("new message added to: " + folder + folderIndex);
 
@@ -146,50 +148,65 @@ namespace Email_System
                 client.Disconnect(true);
             }
         }
+
+        // Listen All folders
+        // Checks for changes on the server, and updates local instance of server messages - pendingMessages
         public static async void listenAllFolders()
         {
+            // Establish connection
             var client = await Utility.establishConnectionImap();
 
+            // Get login form instance in order to get access to the current BW
             var i = login.GetInstance;
             var bw = i.folderListenerBW;
 
+            //while we haven't cancelled the BW
             while (!bw.CancellationPending)
             {
+                //loop through all folders
                 foreach (string folder in existingFolders)
                 {
+                    //get folder from server and open it
                     IMailFolder f = client.GetFolder(folder);
                     f.Open(FolderAccess.ReadOnly);                    
 
                     int index = existingFolders.IndexOf(folder);
 
+                    //if the folder exists
                     if (index != -1)
                     {
+                        // retrieve all UIDS in the folder
                         IList<UniqueId> AllUids = f.Search(MailKit.Search.SearchQuery.All);
                         List<uint> serverAllIds = new List<uint>();
 
+                        // get the ID attributes of the UIDS
                         foreach (var uid in AllUids)
                         {
                             serverAllIds.Add(uid.Id);
                         }
-
+                           
+                        // Get folder index in all folders
                         int folderIndex = existingFolders.IndexOf(folder);
+                        
+                        // Instantiate list of UIDS
                         List<uint> uidsExisting = new List<uint>();
 
+                        // Add all uid's of the existing messages to uidsExisting
                         foreach (var m in pendingMessages[folderIndex])
                         {
                             uidsExisting.Add(m.uid);
                         }
 
+                        // 
                         List<uint> missing_id = new List<uint>();
                         List<UniqueId> missing_uids = new List<UniqueId>();
 
-                        //loop through the uids recieved from server
+                        // Loop through the uids recieved from server
                         foreach (var u in AllUids)
                         {
                             if (!uidsExisting.Contains(u.Id))
                             {
                                 //we have recieved a new message on the server
-                                //missing_id.Add(u);
                                 missing_uids.Add(u);
                             }
                         }
@@ -207,7 +224,7 @@ namespace Email_System
 
                         if (removed_uid.Count > 0)
                         {
-                            //add it locally
+                            //remove it locally
                             var Task = deleteMessage(removed_uid, f.FullName);
                             Task.Wait();
                         }
@@ -222,9 +239,12 @@ namespace Email_System
                         if((missing_uids.Count > 0  ||  removed_uid.Count > 0))
                         {
                             updatePending = true;
+                            saveMessages(pendingMessages);
+                            Thread.Sleep(1000);
                         }
 
                     }
+
                 }
             }
 
@@ -236,22 +256,21 @@ namespace Email_System
 
             foreach (uint id in ids)
             {
-                int messageIndex = existingMessages[folderIndex].FindIndex(x => x.uid == id);
+                int messageIndex = pendingMessages[folderIndex].FindIndex(x => x.uid == id);
                 //existingMessages[folderIndex].RemoveAt(messageIndex);
                 pendingMessages[folderIndex].RemoveAt(messageIndex);
 
                 Debug.WriteLine("Message removed from folder: " + folder);
-                saveMessages(existingMessages);
-                Task task = loadExistingMessages();
-                task.Wait();
-                return;
+                //saveMessages(existingMessages);
+                //Task task = loadExistingMessages();
+                //task.Wait();
+                // return;
             }
         }
 
         public static async Task loadExistingMessages()
         {
             string filename = Utility.username + "messages.json";
-
 
             while (!File.Exists(filename))
             {
@@ -260,14 +279,12 @@ namespace Email_System
             string jsonString = File.ReadAllText(filename);
 
             var data = JsonSerializer.Deserialize<List<List<msg>>>(jsonString);
+            var data2 = JsonSerializer.Deserialize<List<List<msg>>>(jsonString);
 
-            Debug.WriteLine("existing messaes loaded");
+            Debug.WriteLine("existing messages loaded ");
 
-            existingMessages = data!;
-
-            pendingMessages = existingMessages;
-                
-            Debug.WriteLine(existingMessages.Count);
+            UIMessages = data!;
+            pendingMessages = data2!;
         }
 
         public static void loadExistingFolders()
