@@ -3,6 +3,7 @@ using MailKit.Security;
 using System.ComponentModel;
 using System.Diagnostics;
 using EmailValidation;
+using System.Net.NetworkInformation;
 
 /*
  The login window is the window that is first seen by the client
@@ -55,8 +56,8 @@ namespace Email_System
         // ----- Login button clicked -----
         private void loginBt_Click(object sender, EventArgs e)
         {
-            // Store login details locally if chosen by the client
-            if(rememberMeCB.Checked)
+
+            if (rememberMeCB.Checked)
             {
                 Properties.Settings.Default.Username = usernameTb.Text;
                 Properties.Settings.Default.Password = passwordTb.Text;

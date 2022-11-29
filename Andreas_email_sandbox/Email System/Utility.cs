@@ -7,6 +7,7 @@ using Org.BouncyCastle.Asn1.X509;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 using System.Windows.Forms;
 using static Email_System.Data;
 
@@ -42,6 +43,33 @@ namespace Email_System
 
         // ------ Other stuff -----
         // establish an imap connection and return the client
+
+        public static void connectedToInternet()
+        {
+            // Get login form instance in order to get access to the current BW
+            var i = login.GetInstance;
+            var bw = i.folderListenerBW;
+
+            while (!bw.CancellationPending)
+            {
+                try
+                {
+                    Ping myPing = new Ping();
+                    String host = "google.com";
+                    byte[] buffer = new byte[32];
+                    int timeout = 1000;
+                    PingOptions pingOptions = new PingOptions();
+                    PingReply reply = myPing.Send(host, timeout, buffer, pingOptions);
+                    if (reply.Status == IPStatus.Success) 
+                        ;
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("You have disconnected!");
+                }
+            }
+        }
+
         public static async Task<ImapClient>  establishConnectionImap()
         {
             try

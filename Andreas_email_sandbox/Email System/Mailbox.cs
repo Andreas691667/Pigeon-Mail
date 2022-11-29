@@ -322,7 +322,8 @@ namespace Email_System
 
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
-           // Utility.refreshCurrentFolder();
+           Utility.refreshCurrentFolder();
+            Debug.WriteLine("refreshed the folder automatially");
            // this.SendToBack();
         }
 

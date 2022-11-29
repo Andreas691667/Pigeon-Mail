@@ -13,7 +13,7 @@ using Org.BouncyCastle.Asn1.X509;
 
 namespace Email_System
 {
-    internal class Data
+    internal class Data 
     {
         public struct msg
         {
