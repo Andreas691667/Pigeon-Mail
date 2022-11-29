@@ -43,6 +43,7 @@ namespace Email_System
             }
         }
 
+        //adds message to mailbox and checks for flags
         private void addMessageToMailbox(Data.msg item)
         {
             string subject = "";
@@ -94,6 +95,7 @@ namespace Email_System
             currentFolderMessages.Add(item);
         }
 
+        //toggle all functionality associated with e-mails
         private void toggleButtons(bool value)
         {
             addFlagBt.Visible = value;
@@ -149,55 +151,6 @@ namespace Email_System
             }
 
         }
-        private void RetrieveInboxMessages()
-        {
-            /*            bool messagesLoaded = false;
-                        messageLb.Items.Clear();
-
-                        if (!messagesLoaded)
-                        {
-                         //   this.Cursor = Cursors.WaitCursor;
-                            this.Enabled = false;
-
-                            var client = await Utility.establishConnectionImap();
-                            var folder = client.Inbox;
-                            await folder.OpenAsync(FolderAccess.ReadOnly);
-
-                            var messages = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
-
-                            if (folder.Count <= 0)
-                            {
-                                toggleButtons(false);
-                                messageLb.Items.Add("No messages in this folder!");                    
-                            }
-
-                            else
-                            {
-                                toggleButtons(true);
-
-                                messageSummaries = messages;                   
-
-                                foreach (var item in messages.Reverse())
-                                {
-                                    //addMessageToMailbox(item);
-                                }
-
-                            }
-
-                            await client.DisconnectAsync(true);
-                        }
-                        //this.Cursor = Cursors.Default;
-                        this.Enabled = true;
-                        messagesLoaded = true;*/
-
-/*            foreach (var item in Data.existingMessages[0])
-            {
-                addMessageToMailbox(item);
-            }*/
-
-
-
-        }
 
         // open instance of newEmail form when the button is clicked (typeKey 0 = blank email)
         private void newEmailBt_Click(object sender, EventArgs e)
@@ -241,63 +194,7 @@ namespace Email_System
             }
         }
 
-        // method to retrieve the messages from the folder when this folder is double clicked
-        // NOT USED ANYMORE!!!
-/*        private void RetrieveMessages(object sender = null!, MouseEventArgs e = null!)
-        {
-            currentFolderMessages.Clear();  
-
-            int folder = folderDGV.CurrentCell.RowIndex;
-
-            //folderDGV.SelectedCells
-            string folderName = folderDGV.CurrentCell.Value.ToString();            
-
-            try
-            {
-                if (Data.existingMessages[folder].Count <= 0)
-                {
-                    toggleButtons(false);
-                    Utility.logMessage("No messages in this folder!");
-                }
-
-                else
-                {
-                    if (folderName == Data.allFolderName)
-                        toggleButtons(false);
-
-                    else
-                        toggleButtons(true);
-
-
-                    //currentFolderMessages = Data.existingMessages[folder];
-
-                    foreach (var item in Data.existingMessages[folder])
-                    {
-                        addMessageToMailbox(item);
-                    }
-
-                    foreach (DataGridViewRow row in messagesDGV.Rows)
-                    {
-                        string sub = row.Cells[2].Value.ToString();
-
-                        if (sub.Contains("UNREAD"))
-                        {
-                            row.DefaultCellStyle.BackColor = Color.DarkSalmon;
-                        }
-                    }
-
-                    refreshCurrentFolder(0);
-
-                }
-            }
-
-            catch
-            {
-                toggleButtons(false);
-                Utility.logMessage("Messages are being fetched from the server! Please be patient:)");
-            }
-        }*/
-        
+        //method to refresh the current folder when button is clicked
         private void refreshBt_Click(object sender, EventArgs e)
         {
             try
@@ -323,8 +220,7 @@ namespace Email_System
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
            Utility.refreshCurrentFolder();
-            Debug.WriteLine("refreshed the folder automatially");
-           // this.SendToBack();
+           Debug.WriteLine("refreshed the folder automatially");
         }
 
         public static void refreshCurrentFolder(int flag = -1)
@@ -459,6 +355,7 @@ namespace Email_System
             logoutBt.PerformClick();
         }
 
+        //closes mailbox form and cancels all backgroundworkers
         private void logoutBt_Click(object sender, EventArgs e)
         {
             login l = login.GetInstance;
@@ -467,10 +364,17 @@ namespace Email_System
             if(!s.IsDisposed)
                 s.Dispose();
 
-            l.folderListenerBW.CancelAsync();
+            if (!l.folderListenerBW.CancellationPending)
+            {
+                l.folderListenerBW.CancelAsync();
+                l.folderListenerBW.Dispose();
+            }
 
-            if(!l.messagesBackgroundWorker.CancellationPending)
+            if (!l.messagesBackgroundWorker.CancellationPending)
+            {
                 l.messagesBackgroundWorker.CancelAsync();
+                l.messagesBackgroundWorker.Dispose();
+            }
 
             l.Show();
 
@@ -631,7 +535,6 @@ namespace Email_System
         //retrieve messages in selected folder on click
         private void folderDGV_CellClick(object sender = null!, DataGridViewCellEventArgs e = null!)
         {
-
             //check for stages chnages in data?
             //Data.existingMessages != Data.staged
             //then existing should be overwritten with stages 
@@ -671,7 +574,17 @@ namespace Email_System
                     }
 
                     else
-                        toggleButtons(true);
+                    {
+                        var l = login.GetInstance;
+                        if (l.folderListenerBW.IsBusy || l.messagesBackgroundWorker.IsBusy)
+                        {
+                            toggleButtons(false);
+                            messagesDGV.Enabled = true;
+                        }
+
+                        else
+                            toggleButtons(true);
+                    }                     
 
 
                     //currentFolderMessages = Data.existingMessages[folder];

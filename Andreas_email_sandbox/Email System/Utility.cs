@@ -44,30 +44,24 @@ namespace Email_System
         // ------ Other stuff -----
         // establish an imap connection and return the client
 
-        public static void connectedToInternet()
+        public static bool connectedToInternet()
         {
-            // Get login form instance in order to get access to the current BW
-            var i = login.GetInstance;
-            var bw = i.folderListenerBW;
-
-            while (!bw.CancellationPending)
+            try
             {
-                try
-                {
-                    Ping myPing = new Ping();
-                    String host = "google.com";
-                    byte[] buffer = new byte[32];
-                    int timeout = 1000;
-                    PingOptions pingOptions = new PingOptions();
-                    PingReply reply = myPing.Send(host, timeout, buffer, pingOptions);
-                    if (reply.Status == IPStatus.Success) 
-                        ;
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("You have disconnected!");
-                }
+                Ping myPing = new Ping();
+                String host = "google.com";
+                byte[] buffer = new byte[32];
+                int timeout = 1000;
+                PingOptions pingOptions = new PingOptions();
+                PingReply reply = myPing.Send(host, timeout, buffer, pingOptions);
+                return (reply.Status == IPStatus.Success);
             }
+            catch (Exception)
+            {
+                MessageBox.Show("You have disconnected!");
+                return false;
+            }
+            
         }
 
         public static async Task<ImapClient>  establishConnectionImap()
