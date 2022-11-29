@@ -9,7 +9,6 @@ using static Email_System.Data;
  
 */
 
-
 namespace Email_System
 {
     public partial class Mailbox : Form
@@ -28,6 +27,9 @@ namespace Email_System
         {
             InitializeComponent();
             RetrieveFolders();
+
+            if (!Utility.connectedToInternet())
+                newEmailBt.Enabled = false;
         }
 
         // Ensures singleton pattern is maintained (only one instance at all times)
@@ -158,48 +160,11 @@ namespace Email_System
             new newEmail(0).Show();
         }
 
-        private void openFolderAsDraft(IList<IMessageSummary> messages, IMailFolder folder)
-        {
-            addFlagBt.Visible = false;
-            removeFlagBt.Visible = false;
-
-            moveToTrashBt.Visible = true;
-            deleteBt.Visible = true;
-            messageLb.Enabled = true;
-
-            messageSummaries = messages;            
-
-            foreach(var item in messages.Reverse())
-            {
-                if (!item.Flags.Value.HasFlag(MessageFlags.Draft))
-                {
-                    folder.AddFlags(item.UniqueId, MessageFlags.Draft, true);
-                    folder.Expunge();
-                }
-
-                string subject = "(DRAFT) ";
-
-                if (item.Envelope.Subject != null)
-                {
-                    subject += item.Envelope.Subject;
-                    messageLb.Items.Add(subject);
-                }
-
-                else
-                {
-                    item.Envelope.Subject += "<no subject>";
-                    subject += item.Envelope.Subject;
-                    messageLb.Items.Add(subject);
-                }
-            }
-        }
-
         //method to refresh the current folder when button is clicked
         private void refreshBt_Click(object sender, EventArgs e)
         {
             try
             {
-        //        this.Cursor = Cursors.WaitCursor;
                 this.Enabled = false;
                 Utility.refreshCurrentFolder();
             }
@@ -211,18 +176,18 @@ namespace Email_System
 
             finally
             {
-       //         this.Cursor = Cursors.Default;
                 this.Enabled = true;
             }
-
         }
 
+        //refreshes and timer tick (10 s)
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
            Utility.refreshCurrentFolder();
            Debug.WriteLine("refreshed the folder automatially");
         }
 
+        //refreshed the current folder
         public static void refreshCurrentFolder(int flag = -1)
         {
 
@@ -242,44 +207,39 @@ namespace Email_System
                 instance.folderDGV_CellClick();
         }
 
-        private void addFlagBt_Click(object sender, EventArgs e)
+        //adds or remove flag to message
+        private void toggleFlag(object sender, EventArgs e)
         {
             try
             {
-                int messageIndex = messagesDGV.CurrentCell.RowIndex;
+                int messageIndex = messagesDGV.CurrentCell.RowIndex;            //get messageindex
+                Data.msg m = currentFolderMessages[messageIndex];               //retrieve the messae object
+                string subject = messagesDGV[2, messageIndex].Value.ToString(); //get subject of message
 
-                Data.msg m = currentFolderMessages[messageIndex];
-
-                string subject = messagesDGV[2, messageIndex].Value.ToString();
-
-
+                //if the message is not already flagged
                 if (!subject.Contains("(FLAGGED)"))
                 {
-                    int fromFolderIndex = folderDGV.CurrentCell.RowIndex;
+                    int fromFolderIndex = folderDGV.CurrentCell.RowIndex;       //get folderindex
 
-                   // server.killListeners();
-                    var index = Data.UIMessages[fromFolderIndex].IndexOf(m);
-                    m.flags = "(FLAGGED) " + m.flags;
+                    var index = Data.UIMessages[fromFolderIndex].IndexOf(m);    //get index in the UImessages
+                    m.flags = "(FLAGGED) " + m.flags;                           //add the flag locally
 
+                    //update the message in both UI and pending
                     Data.UIMessages[fromFolderIndex][index] = m;
                     Data.pendingMessages[fromFolderIndex][index] = m;
 
+                    //add message to flagged folder locally
                     int destFolderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
                     Data.UIMessages[destFolderIndex].Add(m);
 
-
-
+                    //make the changes on server and refresh
                     server.addFlagServer(m.folder, index, m.uid);
                     refreshCurrentFolder();
                 }
 
-                //we have a bug right here when removing flags from messages
+                //remove flag instead if the mail was already flagged
                 else if (subject.Contains("(FLAGGED)"))
                 {
-                    //server.killListeners();
-
-                    Thread.Sleep(100);
-
                     int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
                     Data.UIMessages[folderIndex].Remove(m);
                     var index = Data.UIMessages[folderDGV.CurrentCell.RowIndex].IndexOf(m);
@@ -313,10 +273,7 @@ namespace Email_System
            
         }
 
-        private void removeFlagBt_Click(object sender = null!, EventArgs e = null!)
-        {
-        }
-
+        //deletes the selected message completely
         private void deleteBt_Click(object sender, EventArgs e)
         {
             try
@@ -334,6 +291,8 @@ namespace Email_System
 
         }
 
+        //moves selected message to trash.
+        //calls utility function
         private void moveToTrashBt_Click(object sender, EventArgs e)
         {
             try
@@ -350,6 +309,7 @@ namespace Email_System
             }
         }
 
+        //if user presses 'close' igen instead of pressing logut button
         private void Mailbox_FormClosed(object sender, FormClosedEventArgs e)
         {
             logoutBt.PerformClick();
@@ -378,10 +338,10 @@ namespace Email_System
 
             l.Show();
 
-            if (Properties.Settings.Default.offlineModeEnabled)
+            if (Properties.Settings.Default.downloadMessagesEnabled)
                 Data.saveMessages(Data.UIMessages);
 
-            if (!Properties.Settings.Default.offlineModeEnabled)
+            if (!Properties.Settings.Default.downloadMessagesEnabled)
             {
                 Data.deleteFiles();
                 Environment.Exit(0);
@@ -389,7 +349,7 @@ namespace Email_System
 
             instance.Dispose();
         }
-
+        //performing search in all emails
         private void search(string searchQuery)
         {
 
@@ -432,6 +392,7 @@ namespace Email_System
 
         }
 
+        //adding seach results to the messagesDGV
         private void showSearchResults(List<Data.msg> msgs)
         {
             currentFolderMessages.Clear();
@@ -455,6 +416,7 @@ namespace Email_System
             }
         }
 
+        //method called when searching in emails
         private void searchBt_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(searchTb.Text))
@@ -469,6 +431,7 @@ namespace Email_System
             }
         }
 
+        //event handler for pressing enter in the search field
         private void searchTb_KeyDown(object sender, KeyEventArgs e)
         {
             if(e.KeyCode == Keys.Enter)
@@ -478,20 +441,13 @@ namespace Email_System
             }
         }
 
-        private void Mailbox_EnabledChanged(object sender, EventArgs e)
-        {
-            if (this.Enabled == false)
-                this.Cursor = Cursors.WaitCursor;
-
-            else
-                this.Cursor = Cursors.Default;
-        }
-
+        //sets the text of the logging label
         public static void setText(string message)
         {
             instance.logLabel.Text = message;
         }
 
+        //method to read some message when it is double clicked
         private void messagesDGV_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             int messageIndex = messagesDGV.CurrentCell.RowIndex;
@@ -526,6 +482,7 @@ namespace Email_System
             }
         }
 
+        //open the settings form
         private void settingsBt_Click(object sender, EventArgs e)
         {
             var s = Settings.GetInstance;
@@ -546,7 +503,6 @@ namespace Email_System
                 Data.updatePending = false;
             }
 
-
             messagesDGV.Rows.Clear();
             currentFolderMessages.Clear();
 
@@ -555,7 +511,6 @@ namespace Email_System
             //folderDGV.SelectedCells
             string folderName = folderDGV.CurrentCell.Value.ToString();
             folderName = folderName.Remove(folderName.LastIndexOf(' '));
-
 
             try
             {
@@ -576,7 +531,7 @@ namespace Email_System
                     else
                     {
                         var l = login.GetInstance;
-                        if (l.folderListenerBW.IsBusy || l.messagesBackgroundWorker.IsBusy)
+                        if (l.folderListenerBW.IsBusy || l.messagesBackgroundWorker.IsBusy || !Utility.connectedToInternet())         //if we are downloading the e-mails or are disconnected
                         {
                             toggleButtons(false);
                             messagesDGV.Enabled = true;
@@ -585,9 +540,6 @@ namespace Email_System
                         else
                             toggleButtons(true);
                     }                     
-
-
-                    //currentFolderMessages = Data.existingMessages[folder];
 
                     foreach (var item in Data.UIMessages[folder])
                     {
@@ -615,10 +567,5 @@ namespace Email_System
             }
         }
 
-        
-        private void folderDGV_CellEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            //folderDGV_CellClick();
-        }
     }
 }

@@ -16,7 +16,8 @@ namespace Email_System
         private Settings()
         {
             InitializeComponent();
-            localStorageCB.Checked = Properties.Settings.Default.offlineModeEnabled;
+            localStorageCB.Checked = Properties.Settings.Default.downloadMessagesEnabled;
+            offlineModeCB.Checked = Properties.Settings.Default.offlineModeEnabled;
         }
 
         public static Settings GetInstance
@@ -43,9 +44,9 @@ namespace Email_System
             //???
         }
 
-        private void toggleOfflineMode(bool value)
+        private void toggleLocalStorage(bool value)
         {
-            Properties.Settings.Default.offlineModeEnabled = value;
+            Properties.Settings.Default.downloadMessagesEnabled = value;
             Properties.Settings.Default.Save();
         }
 
@@ -69,7 +70,19 @@ namespace Email_System
 
         private void localStorageCB_Click(object sender, EventArgs e)
         {
-            toggleOfflineMode(localStorageCB.Checked);
+            toggleLocalStorage(localStorageCB.Checked);
+        }
+
+        private void offlineModeCB_CheckStateChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.offlineModeEnabled = offlineModeCB.Checked;
+            Properties.Settings.Default.Save();
+
+            if (offlineModeCB.Checked)
+            {
+                localStorageCB.Checked = offlineModeCB.Checked;
+                toggleLocalStorage(offlineModeCB.Checked);
+            }
         }
     }
 }

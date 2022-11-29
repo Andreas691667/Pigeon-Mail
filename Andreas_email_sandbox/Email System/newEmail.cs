@@ -73,6 +73,9 @@ namespace Email_System
                     break;
             }
 
+            if (!Utility.connectedToInternet())
+                sendBt.Enabled = false;
+
         }
 
         #region switch methods
@@ -155,7 +158,7 @@ namespace Email_System
             messageBodyTb.AppendText(msg.body);
 
             //get attachments from message
-            if (msg.attachments != null)
+            if (msg.attachments != null && Utility.connectedToInternet())
             {
                 string[] attachments = msg.attachments.Split(';');
 

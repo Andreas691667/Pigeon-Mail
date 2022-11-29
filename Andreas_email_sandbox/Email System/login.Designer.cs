@@ -41,6 +41,7 @@
             this.foldersBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.folderListenerBW = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.internetBW = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.companyImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -142,6 +143,11 @@
             // 
             this.backgroundWorker1.WorkerSupportsCancellation = true;
             // 
+            // internetBW
+            // 
+            this.internetBW.WorkerSupportsCancellation = true;
+            this.internetBW.DoWork += new System.ComponentModel.DoWorkEventHandler(this.internetBW_DoWork);
+            // 
             // login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -183,5 +189,6 @@
         public System.ComponentModel.BackgroundWorker folderListenerBW;
         public System.ComponentModel.BackgroundWorker backgroundWorker1;
         public System.ComponentModel.BackgroundWorker messagesBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker internetBW;
     }
 }

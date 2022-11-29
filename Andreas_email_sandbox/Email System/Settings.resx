@@ -61,4 +61,8 @@
     <value>Pigeon Post stores your e-mails locally by default. This is to enhance your experience and make the program faster.
 If you don't wish to have this feature, you can disable it here. Note that this will decrease the performance of the program significantly.</value>
   </data>
+  <data name="richTextBox3.Text" xml:space="preserve">
+    <value>At Pigeon Post we know how important it can be to read your e-mails even when you are offline. Enabling this feature will let you access your e-mails even when you are without internet connection. Note that almost all other featues will be disabled when you are offline. 
+</value>
+  </data>
 </root>

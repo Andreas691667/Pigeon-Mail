@@ -33,11 +33,13 @@
             this.localStorageCB = new System.Windows.Forms.CheckBox();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
+            this.offlineModeCB = new System.Windows.Forms.CheckBox();
+            this.richTextBox3 = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // clearCacheBt
             // 
-            this.clearCacheBt.Location = new System.Drawing.Point(366, 119);
+            this.clearCacheBt.Location = new System.Drawing.Point(472, 96);
             this.clearCacheBt.Name = "clearCacheBt";
             this.clearCacheBt.Size = new System.Drawing.Size(206, 29);
             this.clearCacheBt.TabIndex = 0;
@@ -48,7 +50,7 @@
             // localStorageCB
             // 
             this.localStorageCB.AutoSize = true;
-            this.localStorageCB.Location = new System.Drawing.Point(366, 277);
+            this.localStorageCB.Location = new System.Drawing.Point(472, 245);
             this.localStorageCB.Name = "localStorageCB";
             this.localStorageCB.Size = new System.Drawing.Size(120, 24);
             this.localStorageCB.TabIndex = 1;
@@ -58,9 +60,9 @@
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(29, 35);
+            this.richTextBox1.Location = new System.Drawing.Point(29, 12);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(319, 113);
+            this.richTextBox1.Size = new System.Drawing.Size(426, 113);
             this.richTextBox1.TabIndex = 2;
             this.richTextBox1.Text = "If you are experiencing that your account is out of sync with the server, you can" +
     " manually clear the cache here. \nAt next login, it will take a while to fetch yo" +
@@ -68,17 +70,38 @@
             // 
             // richTextBox2
             // 
-            this.richTextBox2.Location = new System.Drawing.Point(29, 163);
+            this.richTextBox2.Location = new System.Drawing.Point(29, 131);
             this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(319, 138);
+            this.richTextBox2.Size = new System.Drawing.Size(426, 138);
             this.richTextBox2.TabIndex = 3;
             this.richTextBox2.Text = resources.GetString("richTextBox2.Text");
+            // 
+            // offlineModeCB
+            // 
+            this.offlineModeCB.AutoSize = true;
+            this.offlineModeCB.Location = new System.Drawing.Point(472, 402);
+            this.offlineModeCB.Name = "offlineModeCB";
+            this.offlineModeCB.Size = new System.Drawing.Size(177, 24);
+            this.offlineModeCB.TabIndex = 4;
+            this.offlineModeCB.Text = "Offline mode enabled";
+            this.offlineModeCB.UseVisualStyleBackColor = true;
+            this.offlineModeCB.CheckStateChanged += new System.EventHandler(this.offlineModeCB_CheckStateChanged);
+            // 
+            // richTextBox3
+            // 
+            this.richTextBox3.Location = new System.Drawing.Point(29, 277);
+            this.richTextBox3.Name = "richTextBox3";
+            this.richTextBox3.Size = new System.Drawing.Size(426, 149);
+            this.richTextBox3.TabIndex = 5;
+            this.richTextBox3.Text = resources.GetString("richTextBox3.Text");
             // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.richTextBox3);
+            this.Controls.Add(this.offlineModeCB);
             this.Controls.Add(this.richTextBox2);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.localStorageCB);
@@ -96,5 +119,7 @@
         private CheckBox localStorageCB;
         private RichTextBox richTextBox1;
         private RichTextBox richTextBox2;
+        private CheckBox offlineModeCB;
+        private RichTextBox richTextBox3;
     }
 }

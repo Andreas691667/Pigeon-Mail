@@ -30,6 +30,16 @@ namespace Email_System
             msg.folder = folder;
 
             initializeMessage();
+
+            if(!Utility.connectedToInternet())
+            {
+                replyAllBt.Enabled = false;
+                replyBt.Enabled = false;
+                forwardBt.Enabled = false;
+                downloadAttachmentBt.Enabled = false;
+                moveToTrashBT.Enabled = false;
+                deleteMessageBt.Enabled = false;
+            }
         }
 
         //adds attachments from message to listbox

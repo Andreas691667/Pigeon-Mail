@@ -98,6 +98,18 @@ namespace Email_System.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool downloadMessagesEnabled {
+            get {
+                return ((bool)(this["downloadMessagesEnabled"]));
+            }
+            set {
+                this["downloadMessagesEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool offlineModeEnabled {
             get {
                 return ((bool)(this["offlineModeEnabled"]));

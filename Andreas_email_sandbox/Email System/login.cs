@@ -21,22 +21,18 @@ namespace Email_System
         private login()
         {
             InitializeComponent();
-
-            // SHOULD BE MOVED TO A DISTINCT PRIVATE METHOD
-            // Auto fill username (email) and password field if details are stored locally
-            if (Properties.Settings.Default.Password != null)
-            {
-                passwordTb.Text = Properties.Settings.Default.Password;
-            }
-
-            if (Properties.Settings.Default.Username != null)
-            {
-                usernameTb.Text = Properties.Settings.Default.Username;
-            }
-
-
+            autoFill();
         }
 
+        private void autoFill()
+        {
+            // Auto fill username (email) and password field if details are stored locally
+            if (Properties.Settings.Default.Password != null && Properties.Settings.Default.Username != null)
+            {
+                passwordTb.Text = Properties.Settings.Default.Password;
+                usernameTb.Text = Properties.Settings.Default.Username;
+            }
+        }
 
         // ----- Get Instance -----
         //ensures singleton pattern is maintained (only one instance at all times)
@@ -56,6 +52,28 @@ namespace Email_System
         // ----- Login button clicked -----
         private void loginBt_Click(object sender, EventArgs e)
         {
+            //if we are not connected to internet and the user has chosen to enable offlineMode
+            if (!Utility.connectedToInternet() && Properties.Settings.Default.offlineModeEnabled)
+            {
+                //implement stuff to enable offline mode
+                //check if the messages are downloaded
+                //should also check for internet connection
+                if (File.Exists(Properties.Settings.Default.Username + "messages.json") && File.Exists(Properties.Settings.Default.Username + "folders.json"))
+                {
+                    Utility.setUsername(usernameTb.Text);
+                    Utility.setPassword(passwordTb.Text);
+
+                    Data.loadExistingFolders();
+                    Data.loadExistingMessages();
+                    Mailbox m = Mailbox.GetInstance;
+                    m.Show();
+                    this.Hide();
+
+                    internetBW.RunWorkerAsync();
+
+                    return;
+                }
+            }
 
             if (rememberMeCB.Checked)
             {
@@ -89,8 +107,7 @@ namespace Email_System
             
             // Set username and password in Utility class
             Utility.setUsername(usernameTb.Text);
-            Utility.setPassword(passwordTb.Text);
-                       
+            Utility.setPassword(passwordTb.Text);                      
 
 
             // Get SMTP Client
@@ -137,7 +154,13 @@ namespace Email_System
 
             catch (Exception ex)
             {
-                MessageBox.Show("Username and password combination not known");
+                if(!Utility.connectedToInternet())
+                {
+                    MessageBox.Show("You are offline and have not enabled offline mode. You can do so in Settings.");
+                }
+
+                else
+                    MessageBox.Show("Username and password combination not known");
 
             }
 
@@ -266,10 +289,9 @@ namespace Email_System
 
             Debug.WriteLine("listener bw started");
 
-            Thread.Sleep(10000);
+            Thread.Sleep(5000);
 
             Data.listenAllFolders();
-            //Data.listenInboxFolder();           
         }
 
         private void login_FormClosed(object sender, FormClosedEventArgs e)
@@ -316,6 +338,41 @@ namespace Email_System
             else
             {
                 loginBt.Enabled = true;
+            }
+
+        }
+
+        private void internetBW_DoWork(object sender, DoWorkEventArgs e)
+        {
+            while(!internetBW.CancellationPending)
+            {
+                try
+                {
+                    Ping myPing = new Ping();
+                    String host = "google.com";
+                    byte[] buffer = new byte[32];
+                    int timeout = 1000;
+                    PingOptions pingOptions = new PingOptions();
+                    PingReply reply = myPing.Send(host, timeout, buffer, pingOptions);
+
+                    if(reply.Status == IPStatus.Success)
+                    {
+                        DialogResult d = MessageBox.Show("You have reconnected! Press OK to restart the app.","Connection restored",  MessageBoxButtons.OK);
+
+                        //apparently this only works the second time??
+                        if(d == DialogResult.OK)
+                        {
+                            Utility.restartApplication();
+                            Environment.Exit(0);
+                        }
+
+                        internetBW.CancelAsync();
+                    }
+                }
+                catch (Exception)
+                {
+                    Thread.Sleep(10000);
+                }
             }
         }
     }

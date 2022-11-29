@@ -138,7 +138,7 @@
             this.addFlagBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.addFlagBt.UseVisualStyleBackColor = true;
             this.addFlagBt.Visible = false;
-            this.addFlagBt.Click += new System.EventHandler(this.addFlagBt_Click);
+            this.addFlagBt.Click += new System.EventHandler(this.toggleFlag);
             // 
             // removeFlagBt
             // 
@@ -150,7 +150,7 @@
             this.removeFlagBt.Text = "Remove flag";
             this.removeFlagBt.UseVisualStyleBackColor = true;
             this.removeFlagBt.Visible = false;
-            this.removeFlagBt.Click += new System.EventHandler(this.removeFlagBt_Click);
+            //this.removeFlagBt.Click += new System.EventHandler(this.removeFlagBt_Click);
             // 
             // moveToTrashBt
             // 
@@ -424,7 +424,7 @@
             this.folderDGV.Size = new System.Drawing.Size(275, 452);
             this.folderDGV.TabIndex = 11;
             this.folderDGV.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.folderDGV_CellClick);
-            this.folderDGV.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.folderDGV_CellEnter);
+            //this.folderDGV.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.folderDGV_CellEnter);
             // 
             // FolderView
             // 
@@ -452,7 +452,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds;
             this.Text = "Mailbox";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Mailbox_FormClosed);
-            this.EnabledChanged += new System.EventHandler(this.Mailbox_EnabledChanged);
+            //this.EnabledChanged += new System.EventHandler(this.Mailbox_EnabledChanged);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.messagesDGV)).EndInit();

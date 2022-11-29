@@ -4,10 +4,12 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit.Encodings;
 using Org.BouncyCastle.Asn1.X509;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Windows.Forms;
 using static Email_System.Data;
 
@@ -58,7 +60,6 @@ namespace Email_System
             }
             catch (Exception)
             {
-                MessageBox.Show("You have disconnected!");
                 return false;
             }
             
@@ -123,17 +124,20 @@ namespace Email_System
             Mailbox.refreshCurrentFolder();
         }
 
+        //finds all messages matching the uid and deletes them locally
+        //adds the uid to a queue and deletes the messages on server afterwards.
         public static void moveMsgTrash(uint uid, string sub, string folder)
         {
-            server.killListeners();
+            //server.killListeners();
 
             var trashFolderIndex = Data.existingFolders.IndexOf(Data.trashFolderName);
             var folderIndex = Data.existingFolders.IndexOf(folder);
 
-            if(trashFolderIndex == folderIndex)
+            //check we are not already in the trash folder
+            if (trashFolderIndex == folderIndex)
             {
                 Utility.logMessage("Message is already in trash!");
-                    return;
+                return;
             }
 
             Queue<Tuple<string, uint>> trashQueue = new Queue<Tuple<string, uint>>();
@@ -149,10 +153,14 @@ namespace Email_System
                         if (m.uid == uid)
                         {
                             Data.UIMessages[f].Remove(m);
+                            Data.pendingMessages[f].Remove(m);
 
                             //should only be moved to trash once
                             if (trashQueue.Count <= 0)
+                            {
                                 Data.UIMessages[trashFolderIndex].Add(m);
+                                Data.pendingMessages[trashFolderIndex].Add(m);
+                            }
 
                             //move to trash on server here
                             Tuple<string, uint> t = new Tuple<string, uint>(m.folder, m.uid);
@@ -167,35 +175,6 @@ namespace Email_System
 
             Debug.WriteLine("Found " + trashQueue.Count + " messages to move to trash");
             server.moveMsgTrashServer(trashQueue);
-
-
-/*            foreach (var f in Data.existingMessages)
-            {
-                foreach (var m in f)
-                {
-                    if (m.uid == uid)
-                    {
-                        Debug.WriteLine(m.uid);
-
-                        Debug.WriteLine(m.subject + m.folder);
-
-                        int i = Data.existingMessages[folderIndex].IndexOf(m);
-
-                        Data.existingMessages[folderIndex].Remove(m);
-                        Data.existingMessages[trashFolderIndex].Add(m);
-
-                        //move to trash on server here
-                        Tuple<string, uint> t = new Tuple<string, uint>(m.folder, m.uid);
-                        trashQueue.Enqueue(t);
-
-                        refreshCurrentFolder();
-
-                        goto moveOnServer;
-                    }
-                }
-            }
-            moveOnServer:
-                server.moveMsgTrashServer(trashQueue);*/
         }
 
 
@@ -250,6 +229,11 @@ namespace Email_System
             };
 
             t.Start();             
+        }
+
+        public static void restartApplication()
+        {
+            Application.Restart();
         }
 
 
