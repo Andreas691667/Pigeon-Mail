@@ -239,17 +239,16 @@ namespace Email_System
                 var m = Mailbox.GetInstance;
                 FormCollection fc = Application.OpenForms;
 
-                foreach(Form f in fc)
+                foreach (Form f in fc)
                 {
-                    if(m.Name == f.Name)
+                    if (m.Name == f.Name)
                     {
                         folderListenerBW.RunWorkerAsync();
                         return;
                     }
                 }
 
-                 Environment.Exit(0);
-                
+                Environment.Exit(0);
             }
         }
 
@@ -309,11 +308,6 @@ namespace Email_System
             Data.listenAllFolders();
         }
 
-        private void login_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            //Data.saveMessages(Data.existingMessages);
-        }
-
         private void folderListenerBW_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
 
@@ -333,27 +327,6 @@ namespace Email_System
                 Debug.WriteLine("runworker inbox listen finished (no problem)");
             }
 
-        }
-
-
-        #endregion
-
-        private void usernameTb_Validating(object sender, CancelEventArgs e)
-        {
-            // Get username and password
-            string username = usernameTb.Text;
-
-            bool valid = EmailValidator.Validate(username);
-
-            if (!valid)
-            {
-                loginBt.Enabled = false;
-            }
-
-            else
-            {
-                loginBt.Enabled = true;
-            }
         }
 
         private void internetBW_DoWork(object sender, DoWorkEventArgs e)
@@ -389,5 +362,24 @@ namespace Email_System
                 }
             }
         }
-    }
+
+        #endregion
+        private void usernameTb_Validating(object sender, CancelEventArgs e)
+        {
+            // Get username and password
+            string username = usernameTb.Text;
+
+            bool valid = EmailValidator.Validate(username);
+
+            if (!valid)
+            {
+                loginBt.Enabled = false;
+            }
+
+            else
+            {
+                loginBt.Enabled = true;
+            }
+        }
+    }        
 }

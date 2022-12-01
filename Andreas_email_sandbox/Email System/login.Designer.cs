@@ -168,7 +168,7 @@
             this.Name = "login";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Login";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.login_FormClosed);
+            //this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.login_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.companyImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
