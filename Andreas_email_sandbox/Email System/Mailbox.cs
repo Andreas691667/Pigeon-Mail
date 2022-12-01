@@ -321,6 +321,29 @@ namespace Email_System
             login l = login.GetInstance;
             Settings s = Settings.GetInstance;
 
+            //if we are currently downloading user's messages
+            if(l.messagesBackgroundWorker.IsBusy)
+            {
+                DialogResult d = MessageBox.Show("We are currently fetching your messages. Do you wish to  continue in background (YES) or cancel (NO)?", "error", MessageBoxButtons.YesNo);
+
+                //if continue in background
+                if(d == DialogResult.Yes)
+                {
+                    instance.Dispose();
+                    l.Hide();
+                    s.Close();
+                    return;
+                }
+
+                //else delete everything
+                else
+                {
+                    Data.deleteFiles();
+                    Environment.Exit(0);
+                }
+            }
+
+
             if(!s.IsDisposed)
                 s.Dispose();
 

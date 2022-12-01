@@ -221,6 +221,7 @@ namespace Email_System
 
         private void messagesBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+
             if (e.Cancelled)
             {
                 // The user canceled the operation.
@@ -234,7 +235,21 @@ namespace Email_System
             }
             else
             {
-                folderListenerBW.RunWorkerAsync();
+                //only start listening if the application should not close
+                var m = Mailbox.GetInstance;
+                FormCollection fc = Application.OpenForms;
+
+                foreach(Form f in fc)
+                {
+                    if(m.Name == f.Name)
+                    {
+                        folderListenerBW.RunWorkerAsync();
+                        return;
+                    }
+                }
+
+                 Environment.Exit(0);
+                
             }
         }
 
@@ -339,7 +354,6 @@ namespace Email_System
             {
                 loginBt.Enabled = true;
             }
-
         }
 
         private void internetBW_DoWork(object sender, DoWorkEventArgs e)
