@@ -233,6 +233,7 @@ namespace Email_System
 
         public static void restartApplication()
         {
+
             Application.Restart();
         }
 

@@ -15,7 +15,7 @@ namespace Email_System
 
         IMessageSummary message = null!;
 
-        public readMessage(string body, string from, string to, string date, string subject, string attachments, string folder, uint uid)
+        public readMessage(string body, string from, string to, string cc, string date, string subject, string attachments, string folder, uint uid)
         {
             Utility.refreshCurrentFolder();
             InitializeComponent();
@@ -28,6 +28,7 @@ namespace Email_System
             msg.body = body;
             msg.attachments = attachments;
             msg.folder = folder;
+            msg.cc = cc;
 
             initializeMessage();
 
@@ -172,9 +173,11 @@ namespace Email_System
 
             fromTb.Text += msg.from;
             toTb.Text += msg.to;
+            toTb.Text += ", " +msg.cc;
             dateTb.Text += msg.date;
             subjectTb.Text += msg.subject;
             bodyRtb.Text += msg.body;
+           
 
             getAttachments(); 
         }

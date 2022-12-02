@@ -30,7 +30,6 @@ namespace Email_System
             public string folder { get; set; }
         }
 
-
         public static string trashFolderName = "";
         public static string draftFolderName = "";
         public static string flaggedFolderName = "";

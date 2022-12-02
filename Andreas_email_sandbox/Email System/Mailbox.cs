@@ -312,6 +312,7 @@ namespace Email_System
         //if user presses 'close' igen instead of pressing logut button
         private void Mailbox_FormClosed(object sender, FormClosedEventArgs e)
         {
+
             logoutBt.PerformClick();
         }
 
@@ -322,7 +323,7 @@ namespace Email_System
             Settings s = Settings.GetInstance;
 
             //if we are currently downloading user's messages
-            if(l.messagesBackgroundWorker.IsBusy)
+            if(l.messagesBackgroundWorker.IsBusy && Properties.Settings.Default.downloadMessagesEnabled)
             {
                 DialogResult d = MessageBox.Show("We are currently fetching your messages. Do you wish to  continue in background (YES) or cancel (NO)?", "error", MessageBoxButtons.YesNo);
 
@@ -501,7 +502,7 @@ namespace Email_System
                     server.markMsgAsReadServer(m.folder, m.uid);
                 }
 
-                new readMessage(m.body, m.from, m.to, m.date, m.subject, m.attachments, m.folder, m.uid).Show();
+                new readMessage(m.body, m.from, m.to, m.cc, m.date, m.subject, m.attachments, m.folder, m.uid).Show();
             }
         }
 

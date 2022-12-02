@@ -349,11 +349,9 @@ namespace Email_System
                         //apparently this only works the second time??
                         if(d == DialogResult.OK)
                         {
+                            internetBW.CancelAsync();
                             Utility.restartApplication();
-                            Environment.Exit(0);
-                        }
-
-                        internetBW.CancelAsync();
+                        }                        
                     }
                 }
                 catch (Exception)
