@@ -61,13 +61,11 @@ namespace Email_System
 
         //code from: http://www.mimekit.net/docs/html/P_MailKit_IMessageSummary_Attachments.htm
         //method downloads selected attachments and saves it on user's desktop
-
         private void downloadAttachment(ImapClient client)
         {
             //get attachment from listbox
             int attachmentIndex = attachmentsLb.SelectedIndex;
 
-            //var attachment = message.Attachments.ElementAt(attachmentIndex);
 
             //retrieve attachment from folder 
             var f = client.GetFolder(msg.folder);            
@@ -82,8 +80,6 @@ namespace Email_System
 
             foreach (var item in items)
             {
-                //foreach (var attachment in item.Attachments)
-                //{
 
                 if (item.UniqueId.Id == msg.uid)
                 {
