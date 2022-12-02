@@ -28,6 +28,7 @@ namespace Email_System
             InitializeComponent();
             RetrieveFolders();
 
+
             if (!Utility.connectedToInternet())
                 newEmailBt.Enabled = false;
         }
@@ -120,7 +121,7 @@ namespace Email_System
 
             //folderLb.Items.Clear();
             folderDGV.Rows.Clear();
-
+            
             folderDGV.Columns[0].HeaderText = Utility.username;
             //folderDGV.Columns[0].HeaderCell.Visible = (true);
 
@@ -131,6 +132,7 @@ namespace Email_System
 
                 folderString += f;
 
+                string dropDownString = folderString;
 
                 int folderIndex = Data.existingFolders.IndexOf(f);
 
@@ -149,6 +151,9 @@ namespace Email_System
                 finally
                 {
                     folderDGV.Rows.Add(folderString);
+
+                    if (!folderDropDown.Items.Contains(dropDownString))
+                        folderDropDown.Items.Add(dropDownString);
                 }
             }
 
@@ -592,5 +597,44 @@ namespace Email_System
             }
         }
 
+        private void messagesDGV_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        // virker nok ikke men i try 
+        private async void Move_to_folder_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (folderDropDown.SelectedValue != null)
+            {
+                string destFolder = folderDropDown.SelectedValue.ToString()!;
+
+                var destFolderIndex = Data.existingFolders.IndexOf(destFolder);
+
+                int messageIndex = messagesDGV.CurrentCell.RowIndex;
+                Data.msg m = currentFolderMessages[messageIndex];
+
+                var id = new UniqueId[] { new UniqueId(m.uid) };
+
+                var client = await Utility.establishConnectionImap();
+
+                foreach (var f in Data.existingFolders)
+                {
+                    var folder = await client.GetFolderAsync(f);
+
+                    await folder.OpenAsync(FolderAccess.ReadWrite);
+
+                    await folder.MoveToAsync(id , destFolder);
+
+                    Utility.logMessage("Message moved to trash");
+                } 
+
+            }
+        }
     }
 }

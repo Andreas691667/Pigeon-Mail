@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Mailbox));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Mailbox));
             this.folderLb = new System.Windows.Forms.ListBox();
             this.messageLb = new System.Windows.Forms.ListBox();
             this.newEmailBt = new System.Windows.Forms.Button();
@@ -44,6 +44,8 @@
             this.moveToTrashBt = new System.Windows.Forms.Button();
             this.deleteBt = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.folderDropDown = new System.Windows.Forms.ComboBox();
+            this.Move_to_folder = new System.Windows.Forms.Button();
             this.senderRBT = new System.Windows.Forms.RadioButton();
             this.logLabel = new System.Windows.Forms.Label();
             this.contentRBT = new System.Windows.Forms.RadioButton();
@@ -150,7 +152,6 @@
             this.removeFlagBt.Text = "Remove flag";
             this.removeFlagBt.UseVisualStyleBackColor = true;
             this.removeFlagBt.Visible = false;
-            //this.removeFlagBt.Click += new System.EventHandler(this.removeFlagBt_Click);
             // 
             // moveToTrashBt
             // 
@@ -186,6 +187,8 @@
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.folderDropDown);
+            this.panel1.Controls.Add(this.Move_to_folder);
             this.panel1.Controls.Add(this.senderRBT);
             this.panel1.Controls.Add(this.logLabel);
             this.panel1.Controls.Add(this.contentRBT);
@@ -204,6 +207,33 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1271, 81);
             this.panel1.TabIndex = 8;
+            // 
+            // folderDropDown
+            // 
+            this.folderDropDown.AllowDrop = true;
+            this.folderDropDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.folderDropDown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.folderDropDown.FormattingEnabled = true;
+            this.folderDropDown.Location = new System.Drawing.Point(678, 33);
+            this.folderDropDown.Name = "folderDropDown";
+            this.folderDropDown.Size = new System.Drawing.Size(151, 28);
+            this.folderDropDown.TabIndex = 16;
+            this.folderDropDown.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // Move_to_folder
+            // 
+            this.Move_to_folder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.Move_to_folder.Image = ((System.Drawing.Image)(resources.GetObject("Move_to_folder.Image")));
+            this.Move_to_folder.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.Move_to_folder.Location = new System.Drawing.Point(578, 0);
+            this.Move_to_folder.Name = "Move_to_folder";
+            this.Move_to_folder.Size = new System.Drawing.Size(94, 64);
+            this.Move_to_folder.TabIndex = 15;
+            this.Move_to_folder.Text = "Move To:";
+            this.Move_to_folder.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.Move_to_folder.UseVisualStyleBackColor = true;
+            this.Move_to_folder.Click += new System.EventHandler(this.move_to_folder_Click);
+            this.Move_to_folder.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Move_to_folder_MouseClick);
             // 
             // senderRBT
             // 
@@ -341,6 +371,7 @@
             this.messagesDGV.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.messagesDGV.Size = new System.Drawing.Size(990, 452);
             this.messagesDGV.TabIndex = 10;
+            this.messagesDGV.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.messagesDGV_CellContentClick);
             this.messagesDGV.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.messagesDGV_CellDoubleClick);
             // 
             // Folder
@@ -353,7 +384,6 @@
             this.Folder.MinimumWidth = 130;
             this.Folder.Name = "Folder";
             this.Folder.ReadOnly = true;
-            this.Folder.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.Folder.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Folder.Width = 130;
             // 
@@ -364,7 +394,7 @@
             this.From.MinimumWidth = 6;
             this.From.Name = "From";
             this.From.ReadOnly = true;
-            this.From.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.From.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.From.Width = 95;
             // 
             // Subject
@@ -374,7 +404,7 @@
             this.Subject.MinimumWidth = 6;
             this.Subject.Name = "Subject";
             this.Subject.ReadOnly = true;
-            this.Subject.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Subject.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.Subject.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // Body
@@ -384,7 +414,7 @@
             this.Body.MinimumWidth = 6;
             this.Body.Name = "Body";
             this.Body.ReadOnly = true;
-            this.Body.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Body.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.Body.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // Date
@@ -397,7 +427,7 @@
             this.Date.MinimumWidth = 6;
             this.Date.Name = "Date";
             this.Date.ReadOnly = true;
-            this.Date.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Date.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.Date.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Date.Width = 58;
             // 
@@ -424,7 +454,6 @@
             this.folderDGV.Size = new System.Drawing.Size(275, 452);
             this.folderDGV.TabIndex = 11;
             this.folderDGV.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.folderDGV_CellClick);
-            //this.folderDGV.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.folderDGV_CellEnter);
             // 
             // FolderView
             // 
@@ -452,7 +481,6 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds;
             this.Text = "Mailbox";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Mailbox_FormClosed);
-            //this.EnabledChanged += new System.EventHandler(this.Mailbox_EnabledChanged);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.messagesDGV)).EndInit();
@@ -482,12 +510,14 @@
         private RadioButton subjectRBT;
         private Label logLabel;
         private DataGridView messagesDGV;
+        private DataGridView folderDGV;
+        private DataGridViewTextBoxColumn FolderView;
         private DataGridViewTextBoxColumn Folder;
         private DataGridViewTextBoxColumn From;
         private DataGridViewTextBoxColumn Subject;
         private DataGridViewTextBoxColumn Body;
         private DataGridViewTextBoxColumn Date;
-        private DataGridView folderDGV;
-        private DataGridViewTextBoxColumn FolderView;
+        private Button Move_to_folder;
+        private ComboBox folderDropDown;
     }
 }
