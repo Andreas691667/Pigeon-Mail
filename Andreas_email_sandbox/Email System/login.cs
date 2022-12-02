@@ -350,7 +350,7 @@ namespace Email_System
                         if(d == DialogResult.OK)
                         {
                             internetBW.CancelAsync();
-                            Utility.restartApplication();
+                            BeginInvoke(new Action(() => Utility.restartApplication()));
                         }                        
                     }
                 }

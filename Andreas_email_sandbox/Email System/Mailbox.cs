@@ -313,7 +313,8 @@ namespace Email_System
         private void Mailbox_FormClosed(object sender, FormClosedEventArgs e)
         {
 
-            logoutBt.PerformClick();
+            //logoutBt.PerformClick();
+            logoutBt_Click(null, null);
         }
 
         //closes mailbox form and cancels all backgroundworkers

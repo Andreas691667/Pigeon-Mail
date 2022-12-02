@@ -19,6 +19,7 @@ namespace Email_System
         {
             public uint uid { get; set; }
             public string body { get; set; }
+            public string htmlBody { get; set; }
             public string from { get; set; }
             public string sender { get; set; }
             public string to { get; set; }
@@ -424,6 +425,14 @@ namespace Email_System
 
         private static msg buildMessage(msg message, IMessageSummary messageSummary, string folderName)
         {
+
+            if (messageSummary.HtmlBody != null)
+            {
+                var h = messageSummary.HtmlBody.ToString();
+
+                message.htmlBody = h;
+            }
+
 
             message.folder = folderName;
 
