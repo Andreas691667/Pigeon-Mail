@@ -1,0 +1,10 @@
+C:\Users\Andreas\Desktop\Ny mappe\Email System.exe
+C:\Users\Andreas\Desktop\Ny mappe\Email System.dll
+C:\Users\Andreas\Desktop\Ny mappe\Email System.deps.json
+C:\Users\Andreas\Desktop\Ny mappe\Email System.runtimeconfig.json
+C:\Users\Andreas\Desktop\Ny mappe\Email System.dll.config
+C:\Users\Andreas\Desktop\Ny mappe\Email System.pdb
+C:\Users\Andreas\Desktop\Ny mappe\EmailValidation.dll
+C:\Users\Andreas\Desktop\Ny mappe\MailKit.dll
+C:\Users\Andreas\Desktop\Ny mappe\MimeKit.dll
+C:\Users\Andreas\Desktop\Ny mappe\BouncyCastle.Crypto.dll

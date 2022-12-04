@@ -556,7 +556,7 @@ namespace Email_System
                     else
                     {
                         var l = login.GetInstance;
-                        if (l.folderListenerBW.IsBusy || l.messagesBackgroundWorker.IsBusy || !Utility.connectedToInternet())         //if we are downloading the e-mails or are disconnected
+                        if (l.messagesBackgroundWorker.IsBusy || !Utility.connectedToInternet())         //if we are downloading the e-mails or are disconnected
                         {
                             toggleButtons(false);
                             messagesDGV.Enabled = true;
