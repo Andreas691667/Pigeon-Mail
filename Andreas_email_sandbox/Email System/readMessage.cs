@@ -9,11 +9,7 @@ namespace Email_System
 {
     public partial class readMessage : Form
     {
-        string bodyText = null!;
-
         Data.msg msg = new Data.msg();
-
-        IMessageSummary message = null!;
 
         public readMessage(string body, string from, string to, string cc, string date, string subject, string attachments, string folder, uint uid)
         {
@@ -198,7 +194,7 @@ namespace Email_System
 
         private void deleteMessageBt_Click(object sender, EventArgs e)
         {
-           Utility.deleteMsg(msg.uid, msg.subject, msg.folder);
+           Utility.deleteMsg(msg.uid, msg.folder);
             this.Close();
         }
 

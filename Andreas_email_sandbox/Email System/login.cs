@@ -50,7 +50,7 @@ namespace Email_System
 
         // ----- BUTTON CLICK METHODS ----
         // ----- Login button clicked -----
-        private void loginBt_Click(object sender, EventArgs e)
+        private async void loginBt_Click(object sender, EventArgs e)
         {
             //if we are not connected to internet and the user has chosen to enable offlineMode
             if (!Utility.connectedToInternet() && Properties.Settings.Default.offlineModeEnabled)
@@ -64,7 +64,7 @@ namespace Email_System
                     Utility.setPassword(passwordTb.Text);
 
                     Data.loadExistingFolders();
-                    Data.loadExistingMessages();
+                    await Data.loadExistingMessages();
                     Mailbox m = Mailbox.GetInstance;
                     m.Show();
                     this.Hide();

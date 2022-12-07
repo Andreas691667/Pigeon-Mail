@@ -53,13 +53,13 @@
             this.logoutBt = new System.Windows.Forms.Button();
             this.settingsBt = new System.Windows.Forms.Button();
             this.messagesDGV = new System.Windows.Forms.DataGridView();
+            this.folderDGV = new System.Windows.Forms.DataGridView();
+            this.FolderView = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Folder = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.From = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Subject = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Body = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Date = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.folderDGV = new System.Windows.Forms.DataGridView();
-            this.FolderView = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.messagesDGV)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.folderDGV)).BeginInit();
@@ -150,7 +150,6 @@
             this.removeFlagBt.Text = "Remove flag";
             this.removeFlagBt.UseVisualStyleBackColor = true;
             this.removeFlagBt.Visible = false;
-            //this.removeFlagBt.Click += new System.EventHandler(this.removeFlagBt_Click);
             // 
             // moveToTrashBt
             // 
@@ -343,6 +342,40 @@
             this.messagesDGV.TabIndex = 10;
             this.messagesDGV.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.messagesDGV_CellDoubleClick);
             // 
+            // folderDGV
+            // 
+            this.folderDGV.AllowUserToAddRows = false;
+            this.folderDGV.AllowUserToDeleteRows = false;
+            this.folderDGV.AllowUserToResizeColumns = false;
+            this.folderDGV.AllowUserToResizeRows = false;
+            this.folderDGV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.folderDGV.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.folderDGV.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.folderDGV.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.FolderView});
+            this.folderDGV.Location = new System.Drawing.Point(15, 89);
+            this.folderDGV.MultiSelect = false;
+            this.folderDGV.Name = "folderDGV";
+            this.folderDGV.ReadOnly = true;
+            this.folderDGV.RowHeadersVisible = false;
+            this.folderDGV.RowHeadersWidth = 51;
+            this.folderDGV.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            this.folderDGV.RowTemplate.Height = 29;
+            this.folderDGV.Size = new System.Drawing.Size(275, 452);
+            this.folderDGV.TabIndex = 11;
+            this.folderDGV.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.folderDGV_CellClick);
+            // 
+            // FolderView
+            // 
+            this.FolderView.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.FolderView.HeaderText = "Column1";
+            this.FolderView.MinimumWidth = 6;
+            this.FolderView.Name = "FolderView";
+            this.FolderView.ReadOnly = true;
+            this.FolderView.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.FolderView.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
             // Folder
             // 
             this.Folder.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
@@ -364,7 +397,7 @@
             this.From.MinimumWidth = 6;
             this.From.Name = "From";
             this.From.ReadOnly = true;
-            this.From.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.From.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.From.Width = 95;
             // 
             // Subject
@@ -401,41 +434,6 @@
             this.Date.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Date.Width = 58;
             // 
-            // folderDGV
-            // 
-            this.folderDGV.AllowUserToAddRows = false;
-            this.folderDGV.AllowUserToDeleteRows = false;
-            this.folderDGV.AllowUserToResizeColumns = false;
-            this.folderDGV.AllowUserToResizeRows = false;
-            this.folderDGV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.folderDGV.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.folderDGV.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.folderDGV.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.FolderView});
-            this.folderDGV.Location = new System.Drawing.Point(15, 89);
-            this.folderDGV.MultiSelect = false;
-            this.folderDGV.Name = "folderDGV";
-            this.folderDGV.ReadOnly = true;
-            this.folderDGV.RowHeadersVisible = false;
-            this.folderDGV.RowHeadersWidth = 51;
-            this.folderDGV.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.folderDGV.RowTemplate.Height = 29;
-            this.folderDGV.Size = new System.Drawing.Size(275, 452);
-            this.folderDGV.TabIndex = 11;
-            this.folderDGV.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.folderDGV_CellClick);
-            //this.folderDGV.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.folderDGV_CellEnter);
-            // 
-            // FolderView
-            // 
-            this.FolderView.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.FolderView.HeaderText = "Column1";
-            this.FolderView.MinimumWidth = 6;
-            this.FolderView.Name = "FolderView";
-            this.FolderView.ReadOnly = true;
-            this.FolderView.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.FolderView.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
             // Mailbox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -452,7 +450,6 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds;
             this.Text = "Mailbox";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Mailbox_FormClosed);
-            //this.EnabledChanged += new System.EventHandler(this.Mailbox_EnabledChanged);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.messagesDGV)).EndInit();
@@ -482,12 +479,12 @@
         private RadioButton subjectRBT;
         private Label logLabel;
         private DataGridView messagesDGV;
+        private DataGridView folderDGV;
+        private DataGridViewTextBoxColumn FolderView;
         private DataGridViewTextBoxColumn Folder;
         private DataGridViewTextBoxColumn From;
         private DataGridViewTextBoxColumn Subject;
         private DataGridViewTextBoxColumn Body;
         private DataGridViewTextBoxColumn Date;
-        private DataGridView folderDGV;
-        private DataGridViewTextBoxColumn FolderView;
     }
 }

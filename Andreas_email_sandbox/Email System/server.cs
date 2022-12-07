@@ -153,11 +153,6 @@ namespace Email_System
             startListeners();
         }
 
-        public static async void saveDraftServer()
-        {
-            //presumably not necessary
-        }
-
         public static async void markMsgAsReadServer(string folderIn, uint uid)
         {
             var client = await Utility.establishConnectionImap();

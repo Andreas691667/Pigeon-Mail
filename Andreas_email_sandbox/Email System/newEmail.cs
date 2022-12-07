@@ -20,7 +20,6 @@ namespace Email_System
 {
     public partial class newEmail : Form
     {
-        IMessageSummary messageSender = null!;
         MimeMessage message = new MimeMessage();
         BodyBuilder builder = new BodyBuilder();
 
@@ -90,15 +89,10 @@ namespace Email_System
             recipientsTb.Text = recipient;
 
             subjectTb.Text = "Re: " + msg.subject;
-
-
-            //addAttachment(msg.attachments);
         }
 
         private void flagReplyAll()
         {
-            //messageSender = m;
-
             subjectTb.Text = "Re: " + msg.subject;
 
             string recipient = (msg.from).Substring(msg.from.LastIndexOf("<"));
@@ -374,7 +368,7 @@ namespace Email_System
                     //if the message was a draft, we should delete it from the draft folder!
                     if (isDraft)
                     {
-                        Utility.deleteMsg(msg.uid, msg.subject, msg.folder);
+                        Utility.deleteMsg(msg.uid, msg.folder);
                     }
 
                     messageSent = true;

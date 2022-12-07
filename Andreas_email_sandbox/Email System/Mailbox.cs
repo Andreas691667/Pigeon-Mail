@@ -32,9 +32,6 @@ namespace Email_System
 
             RetrieveFolders();
 
-
-           // folderDGV_CellClick();
-
             if (!Utility.connectedToInternet())
                 newEmailBt.Enabled = false;
         }
@@ -50,6 +47,13 @@ namespace Email_System
                 }
                 return instance;
             }
+        }
+
+        private async void createFolder()
+        {
+            var c = await Utility.establishConnectionImap();
+            var toplevel = c.GetFolder(c.PersonalNamespaces[0]);
+            toplevel.Create("My new folder", true);
         }
 
         //adds message to mailbox and checks for flags
@@ -288,7 +292,7 @@ namespace Email_System
             {
                 int messageIndex = messagesDGV.CurrentCell.RowIndex;
                 Data.msg m = currentFolderMessages[messageIndex];
-                Utility.deleteMsg(m.uid, m.subject, m.folder);
+                Utility.deleteMsg(m.uid, m.folder);
             }
 
             catch(Exception ex)

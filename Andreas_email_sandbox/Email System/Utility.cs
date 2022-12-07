@@ -15,7 +15,7 @@ using static Email_System.Data;
 
 namespace Email_System
 {
-    internal class Utility
+    class Utility
     {
         // variables to save the credentials of current client
         // these are NOT saved over different sessions
@@ -23,22 +23,22 @@ namespace Email_System
         public static string password = null!;
 
         // ----- Getter and setter functions to access username and password -----
-        public string getUsername ()
+        public string getUsername()
         {
             return username;
         }
 
-        public static string getPassword ()
+        public static string getPassword()
         {
             return password;
         }
 
-        public static void setUsername (string username_in)
+        public static void setUsername(string username_in)
         {
             username = username_in;
         }
 
-        public static void setPassword (string password_in)
+        public static void setPassword(string password_in)
         {
             password = password_in;
         }
@@ -62,10 +62,10 @@ namespace Email_System
             {
                 return false;
             }
-            
+
         }
 
-        public static async Task<ImapClient>  establishConnectionImap()
+        public static async Task<ImapClient> establishConnectionImap()
         {
             try
             {
@@ -77,7 +77,7 @@ namespace Email_System
                 return client;
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 return null!;
@@ -104,7 +104,7 @@ namespace Email_System
                         break;
                 }
 
-                
+
                 client.Authenticate(username, password);
 
                 return client;
@@ -143,9 +143,9 @@ namespace Email_System
 
             Queue<Tuple<string, uint>> trashQueue = new Queue<Tuple<string, uint>>();
 
-            for(int f = 0; f < Data.UIMessages.Count; f++)
+            for (int f = 0; f < Data.UIMessages.Count; f++)
             {
-                for(int i = 0; i<Data.UIMessages[f].Count;i++)
+                for (int i = 0; i < Data.UIMessages[f].Count; i++)
                 {
                     Data.msg m = Data.UIMessages[f][i];
 
@@ -181,7 +181,7 @@ namespace Email_System
 
 
         //stops listening on folders and deletes message locally
-        public static void deleteMsg(uint uid, string sub, string folder)
+        public static void deleteMsg(uint uid, string folder)
         {
             server.killListeners();
 
@@ -189,7 +189,7 @@ namespace Email_System
 
             Queue<Tuple<string, uint>> deleteQueue = new Queue<Tuple<string, uint>>();
 
-            for(int f = 0; f < Data.UIMessages.Count; f++)
+            for (int f = 0; f < Data.UIMessages.Count; f++)
             {
                 for (int i = 0; i < Data.UIMessages[f].Count; i++)
                 {
@@ -231,105 +231,12 @@ namespace Email_System
                 t.Stop();
             };
 
-            t.Start();             
+            t.Start();
         }
 
         public static void restartApplication()
         {
             Application.Restart();
         }
-
-
-        #region old methods
-
-        //DON'T USE
-        public static async void moveMessageToTrash(IMessageSummary mg)
-        {
-            DialogResult result = MessageBox.Show("The message will be moved to trash. Do you wish to continue?", "Continue?", MessageBoxButtons.YesNo);
-
-            if (result == DialogResult.No)
-            {
-                return;
-            }
-
-
-            else if (result == DialogResult.Yes)
-            {
-                try
-                {
-/*                    var client = await Utility.establishConnectionImap();
-                    var folder = await client.GetFolderAsync(mg.Folder.ToString());
-
-                    IMailFolder trashFolder = GetTrashFolder(client, CancellationToken.None);
-
-                    await trashFolder.OpenAsync(FolderAccess.ReadWrite);
-                    await folder.OpenAsync(FolderAccess.ReadWrite);
-
-                    await folder.MoveToAsync(mg.UniqueId, trashFolder);
-
-                    Utility.refreshCurrentFolder();
-
-                    await client.DisconnectAsync(true);
-
-                    MessageBox.Show("The message has been moved to trash succesfully!");*/
-                }
-
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
-            }
-
-
-
-
-        }
-
-        //DON'T USE
-        public static async void deleteMessage(IMessageSummary mg, bool avoidChoice = false)
-        {
-            if (avoidChoice == false)
-            {
-                DialogResult result = MessageBox.Show("The message will be deleted permanently without being moved to trash. Do you wish to continue? The action cannot be undone.", "Continue?", MessageBoxButtons.YesNo);
-                if (result == DialogResult.No)
-                {
-                    return;
-                }
-
-                else if (result == DialogResult.Yes)
-                {
-                    var client = await Utility.establishConnectionImap();
-
-                    var folder = await client.GetFolderAsync(mg.Folder.ToString());
-
-                    await folder.OpenAsync(FolderAccess.ReadWrite);
-
-                    await folder.AddFlagsAsync(mg.UniqueId, MessageFlags.Deleted, true);
-                    await folder.ExpungeAsync();
-
-                    Utility.refreshCurrentFolder();
-
-                    await client.DisconnectAsync(true);
-
-                    MessageBox.Show("The message has been deleted successfully!");
-                }
-            }
-
-            else
-            {
-                var client = await Utility.establishConnectionImap();
-                var folder = await client.GetFolderAsync(mg.Folder.ToString());
-
-                await folder.OpenAsync(FolderAccess.ReadWrite);
-                await folder.AddFlagsAsync(mg.UniqueId, MessageFlags.Deleted, true);
-
-                await folder.ExpungeAsync();
-                Utility.refreshCurrentFolder();
-
-                await client.DisconnectAsync(true);
-            }
-        }
-
-        #endregion
     }
 }

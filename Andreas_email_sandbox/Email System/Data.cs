@@ -492,7 +492,7 @@ namespace Email_System
 
             if (messageSummary.Envelope.Date != null)
             {
-                message.date = messageSummary.Envelope.Date.ToString();
+                message.date = messageSummary.Envelope.Date.ToString()!;
             }
             else
             {
@@ -519,7 +519,7 @@ namespace Email_System
                 }
             }
 
-            message.flags = messageSummary.Flags.ToString();
+            message.flags = messageSummary.Flags.ToString()!;
 
             return message;
         }
