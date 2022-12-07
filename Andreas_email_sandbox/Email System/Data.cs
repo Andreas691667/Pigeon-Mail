@@ -162,92 +162,117 @@ namespace Email_System
             var i = login.GetInstance;
             var bw = i.folderListenerBW;
 
+            var folders = client.GetFolders(client.PersonalNamespaces[0]);
+
             //while we haven't cancelled the BW
             while (!bw.CancellationPending)
             {
                 //loop through all folders
-                foreach (string folder in existingFolders)
+                foreach (var folder in folders)
                 {
+                    //check if have the folder locally
+
                     //get folder from server and open it
-                    IMailFolder f = client.GetFolder(folder);
-                    f.Open(FolderAccess.ReadOnly);                    
-
-                    int index = existingFolders.IndexOf(folder);
-
-                    //if the folder exists
-                    if (index != -1)
+                    //IMailFolder f = client.GetFolder(folder);
+                    try
                     {
-                        // retrieve all UIDS in the folder
-                        IList<UniqueId> AllUids = f.Search(MailKit.Search.SearchQuery.All);
-                        List<uint> serverAllIds = new List<uint>();
+                        folder.Open(FolderAccess.ReadOnly);
 
-                        // get the ID attributes of the UIDS
-                        foreach (var uid in AllUids)
+                        if (!existingFolders.Contains(folder.FullName))
                         {
-                            serverAllIds.Add(uid.Id);
-                        }
-                           
-                        // Get folder index in all folders
-                        int folderIndex = existingFolders.IndexOf(folder);
-                        
-                        // Instantiate list of UIDS
-                        List<uint> uidsExisting = new List<uint>();
+                            existingFolders.Add(folder.FullName);
+                            saveFolders(existingFolders);
+                            Task task = loadFolders(bw);
+                            task.Wait();
 
-                        // Add all uid's of the existing messages to uidsExisting
-                        foreach (var m in pendingMessages[folderIndex])
-                        {
-                            uidsExisting.Add(m.uid);
-                        }
+                            Task task1 = Data.loadMessages(bw);
+                            task1.Wait();
 
-                        // 
-                        List<uint> missing_id = new List<uint>();
-                        List<UniqueId> missing_uids = new List<UniqueId>();
-
-                        // Loop through the uids recieved from server
-                        foreach (var u in AllUids)
-                        {
-                            if (!uidsExisting.Contains(u.Id))
-                            {
-                                //we have recieved a new message on the server
-                                missing_uids.Add(u);
-                            }
-                        }
-
-                        List<uint> removed_uid = new List<uint>();
-                        //loop through all the uids we have locally
-                        foreach (var u in uidsExisting)
-                        {
-                            //if serverIds doesn't contain some uid we have locally, it must be the case that it was deleted
-                            if (!serverAllIds.Contains(u))
-                            {
-                                removed_uid.Add(u);
-                            }
-                        }
-
-                        if (removed_uid.Count > 0)
-                        {
-                            //remove it locally
-                            var Task = deleteMessage(removed_uid, f.FullName);
-                            Task.Wait();
-                        }
-                        
-                        if (missing_uids.Count > 0)
-                        {
-                            //add it locally
-                            var Task = addNewMessage(f.FullName, missing_uids);
-                            Task.Wait();
-                        }
-
-                        if((missing_uids.Count > 0  ||  removed_uid.Count > 0))
-                        {
-                            updatePending = true;
-                            
-                            saveMessages(pendingMessages);
-
-                            Thread.Sleep(1000);
                             Utility.refreshCurrentFolder();
                         }
 
+                        //if the folder exists
+                        else
+                        {
+                            // retrieve all UIDS in the folder
+                            IList<UniqueId> AllUids = folder.Search(MailKit.Search.SearchQuery.All);
+                            List<uint> serverAllIds = new List<uint>();
+
+                            // get the ID attributes of the UIDS
+                            foreach (var uid in AllUids)
+                            {
+                                serverAllIds.Add(uid.Id);
+                            }
+
+                            // Get folder index in all folders
+                            int folderIndex = existingFolders.IndexOf(folder.FullName);
+
+                            // Instantiate list of UIDS
+                            List<uint> uidsExisting = new List<uint>();
+
+                            // Add all uid's of the existing messages to uidsExisting
+                            foreach (var m in pendingMessages[folderIndex])
+                            {
+                                uidsExisting.Add(m.uid);
+                            }
+
+                            // 
+                            List<uint> missing_id = new List<uint>();
+                            List<UniqueId> missing_uids = new List<UniqueId>();
+
+                            // Loop through the uids recieved from server
+                            foreach (var u in AllUids)
+                            {
+                                if (!uidsExisting.Contains(u.Id))
+                                {
+                                    //we have recieved a new message on the server
+                                    missing_uids.Add(u);
+                                }
+                            }
+
+                            List<uint> removed_uid = new List<uint>();
+                            //loop through all the uids we have locally
+                            foreach (var u in uidsExisting)
+                            {
+                                //if serverIds doesn't contain some uid we have locally, it must be the case that it was deleted
+                                if (!serverAllIds.Contains(u))
+                                {
+                                    removed_uid.Add(u);
+                                }
+                            }
+
+                            if (removed_uid.Count > 0)
+                            {
+                                //remove it locally
+                                var Task = deleteMessage(removed_uid, folder.FullName);
+                                Task.Wait();
+                            }
+
+                            if (missing_uids.Count > 0)
+                            {
+                                //add it locally
+                                var Task = addNewMessage(folder.FullName, missing_uids);
+                                Task.Wait();
+                            }
+
+                            if ((missing_uids.Count > 0 || removed_uid.Count > 0))
+                            {
+                                updatePending = true;
+
+                                saveMessages(pendingMessages);
+
+                                Thread.Sleep(1000);
+                                Utility.refreshCurrentFolder();
+                            }
+
+
+
+                        }
+                    }
+
+                    catch (Exception ex)
+                    {
+                        //Debug.WriteLine(ex.Message);
                     }
 
                 }
@@ -331,7 +356,7 @@ namespace Email_System
                         }
                     }
 
-                    saveFolders();
+                    saveFolders(folderList);
 
                     //disconnect from the client
                     client.Disconnect(true);
@@ -524,9 +549,9 @@ namespace Email_System
             return message;
         }
 
-        private static void saveFolders()
+        private static void saveFolders(List<string> folders)
         {
-            var json = JsonSerializer.Serialize(folderList);
+            var json = JsonSerializer.Serialize(folders);
             File.WriteAllText(Utility.username + "folders.json", json);            
             exit = true;
         }
@@ -683,7 +708,6 @@ namespace Email_System
 
             return null!;
         }
-
 
         public static void deleteFiles()
         {

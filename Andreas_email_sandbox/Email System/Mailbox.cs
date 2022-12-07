@@ -49,13 +49,6 @@ namespace Email_System
             }
         }
 
-        private async void createFolder()
-        {
-            var c = await Utility.establishConnectionImap();
-            var toplevel = c.GetFolder(c.PersonalNamespaces[0]);
-            toplevel.Create("My new folder", true);
-        }
-
         //adds message to mailbox and checks for flags
         private void addMessageToMailbox(Data.msg item)
         {
@@ -626,7 +619,7 @@ namespace Email_System
                 if (Data.UIMessages[folder].Count <= 0)
                 {
                     toggleButtons(false);
-                    Utility.logMessage("No messages in this folder!");
+                    //Utility.logMessage("No messages in this folder!");
                 }
 
                 else
@@ -661,11 +654,39 @@ namespace Email_System
             catch
             {
                 toggleButtons(false);
-                Utility.logMessage("Messages are being fetched from the server! Please be patient:)");
+                //Utility.logMessage("Messages are being fetched from the server! Please be patient:)");
             }
 
 
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                server.killListeners();
+                string folderName = newFolderTB.Text;
+                createFolder(folderName);
+            }
+
+            catch(Exception ex)
+            {
+                MessageBox.Show("Please enter a foldername!");
+            }
+
+            finally
+            {
+                newFolderTB.Clear();
+                server.startListeners();
+                refreshCurrentFolder();
+            }
+        }
+
+        private async void createFolder(string name)
+        {
+            var c = await Utility.establishConnectionImap();
+            var toplevel = c.GetFolder(c.PersonalNamespaces[0]);
+            toplevel.Create(name, true);
+        }
     }
 }

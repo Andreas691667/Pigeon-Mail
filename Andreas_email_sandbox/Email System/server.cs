@@ -15,7 +15,7 @@ namespace Email_System
                 l.folderListenerBW.Dispose();
             }
 
-            Thread.Sleep(400);
+            Thread.Sleep(1000);
         }
 
         public static void startListeners()

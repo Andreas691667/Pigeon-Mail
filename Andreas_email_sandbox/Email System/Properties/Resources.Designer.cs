@@ -73,6 +73,16 @@ namespace Email_System.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icons8_add_folder_32 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-add-folder-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icons8_attach_32 {
             get {
                 object obj = ResourceManager.GetObject("icons8-attach-32", resourceCulture);
