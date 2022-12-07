@@ -1,6 +1,7 @@
 ﻿using MailKit;
 using MailKit.Net.Imap;
 using Org.BouncyCastle.Asn1.Cmp;
+using System;
 using System.Diagnostics;
 using static Email_System.Data;
 
@@ -13,10 +14,8 @@ namespace Email_System
 {
     public partial class Mailbox : Form
     {
-        // Data structure for storing summaries locally
-        IList<IMessageSummary> messageSummaries = null!;
 
-        // Data structure for ???
+        // Data structure for the messages currently displayed
         List<Data.msg> currentFolderMessages = new List<Data.msg>();
 
         // maintains singleton pattern
@@ -26,7 +25,13 @@ namespace Email_System
         private Mailbox()
         {
             InitializeComponent();
+
+            retrieveInboxMessages();
+
             RetrieveFolders();
+
+
+           // folderDGV_CellClick();
 
             if (!Utility.connectedToInternet())
                 newEmailBt.Enabled = false;
@@ -191,7 +196,7 @@ namespace Email_System
         public static void refreshCurrentFolder(int flag = -1)
         {
 
-            int folderRow = instance.folderDGV.CurrentCell.RowIndex;
+            int folderRow = instance.folderDGV.CurrentRow.Index;
             int folderColumn = instance.folderDGV.CurrentCell.ColumnIndex;
 
             instance.RetrieveFolders();
@@ -499,6 +504,7 @@ namespace Email_System
                     m.flags = m.flags.Replace("(UNREAD)", "");
                     m.flags += ", Seen";
                     Data.UIMessages[folderIndex][index] = m;
+                    Data.pendingMessages[folderIndex][index] = m;
 
                     server.markMsgAsReadServer(m.folder, m.uid);
                 }
@@ -531,7 +537,8 @@ namespace Email_System
             messagesDGV.Rows.Clear();
             currentFolderMessages.Clear();
 
-            int folder = folderDGV.CurrentCell.RowIndex;
+            //int folder = folderDGV.CurrentCell.RowIndex;
+            int folder = folderDGV.CurrentRow.Index;
 
             //folderDGV.SelectedCells
             string folderName = folderDGV.CurrentCell.Value.ToString();
@@ -590,6 +597,67 @@ namespace Email_System
                 toggleButtons(false);
                 Utility.logMessage("Messages are being fetched from the server! Please be patient:)");
             }
+        }
+
+
+        private async void retrieveInboxMessages()
+        {
+
+            //check for stages chnages in data?
+            //Data.existingMessages != Data.staged
+            //then existing should be overwritten with stages 
+            await Data.loadExistingMessages();
+
+            messagesDGV.Rows.Clear();
+            currentFolderMessages.Clear();
+
+            //int folder = folderDGV.CurrentCell.RowIndex;
+            int folder = 0;
+
+            try
+            {
+                if (Data.UIMessages[folder].Count <= 0)
+                {
+                    toggleButtons(false);
+                    Utility.logMessage("No messages in this folder!");
+                }
+
+                else
+                {
+                    var l = login.GetInstance;
+                    if (l.messagesBackgroundWorker.IsBusy || !Utility.connectedToInternet())         //if we are downloading the e-mails or are disconnected
+                    {
+                        toggleButtons(false);
+                        messagesDGV.Enabled = true;
+                    }
+
+                    else
+                        toggleButtons(true);
+
+                    foreach (var item in Data.UIMessages[folder])
+                    {
+                        addMessageToMailbox(item);
+                    }
+
+                    foreach (DataGridViewRow row in messagesDGV.Rows)
+                    {
+                        string sub = row.Cells[2].Value.ToString();
+
+                        if (sub.Contains("UNREAD"))
+                        {
+                            row.DefaultCellStyle.BackColor = Color.DarkSalmon;
+                        }
+                    }
+                }
+            }
+
+            catch
+            {
+                toggleButtons(false);
+                Utility.logMessage("Messages are being fetched from the server! Please be patient:)");
+            }
+
+
         }
 
     }

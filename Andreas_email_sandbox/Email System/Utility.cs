@@ -153,8 +153,8 @@ namespace Email_System
                     {
                         if (m.uid == uid)
                         {
-                            Data.UIMessages[f].Remove(m);
-                            Data.pendingMessages[f].Remove(m);
+                            Data.UIMessages[f].RemoveAt(i);
+                            Data.pendingMessages[f].RemoveAt(i);
 
                             //should only be moved to trash once
                             if (trashQueue.Count <= 0)
@@ -187,23 +187,25 @@ namespace Email_System
 
             var folderIndex = Data.existingFolders.IndexOf(folder);
 
-            Queue<Tuple<string, int>> deleteQueue = new Queue<Tuple<string, int>>();
+            Queue<Tuple<string, uint>> deleteQueue = new Queue<Tuple<string, uint>>();
 
-            foreach (var f in Data.UIMessages.ToList())
+            for(int f = 0; f < Data.UIMessages.Count; f++)
             {
-                foreach (var m in f.ToList())
+                for (int i = 0; i < Data.UIMessages[f].Count; i++)
                 {
-                    if (m.uid == uid && m.subject == sub)
+                    Data.msg m = Data.UIMessages[f][i];
+
+                    if (m.uid == uid)
                     {
                         Debug.WriteLine(m.uid);
-
                         Debug.WriteLine(m.subject + m.folder);
 
-                        int i = Data.UIMessages[folderIndex].IndexOf(m);
+                        Debug.WriteLine("Deleted: " + m.subject + "from: " + m.folder);
 
-                        Data.UIMessages[folderIndex].Remove(m);
+                        Data.UIMessages[f].RemoveAt(i);
+                        Data.pendingMessages[f].RemoveAt(i);
 
-                        Tuple<string, int> t = new Tuple<string, int>(m.folder, i);
+                        Tuple<string, uint> t = new Tuple<string, uint>(m.folder, m.uid);
 
                         deleteQueue.Enqueue(t);
 
@@ -234,7 +236,6 @@ namespace Email_System
 
         public static void restartApplication()
         {
-
             Application.Restart();
         }
 

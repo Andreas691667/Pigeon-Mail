@@ -37,38 +37,38 @@ namespace Email_System
         }
 
         //deletes message from server and starts listening on folders again
-        public static async void deleteMsgServer(Queue<Tuple<string, int>> q)
+        public static async void deleteMsgServer(Queue<Tuple<string, uint>> q)
         {
+            var client = await Utility.establishConnectionImap();
+
             try
             {
                 foreach (var item in q)
                 {
                     var f = item.Item1;
-                    var index = item.Item2;
+                    var id = new UniqueId[] { new UniqueId(item.Item2) };
 
-                    var client = await Utility.establishConnectionImap();
                     var folder = await client.GetFolderAsync(f);
                     await folder.OpenAsync(FolderAccess.ReadWrite);
 
-                    await folder.AddFlagsAsync(index, MessageFlags.Deleted, true);
+                    await folder.AddFlagsAsync(id, MessageFlags.Deleted, true);
                     await folder.ExpungeAsync();
 
                     Utility.logMessage("Message deleted");
-
                     Debug.WriteLine("msg deleted from server from folder: " + folder.FullName);
-
-                    var task = client.DisconnectAsync(true);
-                    task.Wait();
                 }
 
-
                 startListeners();
-
             }
 
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+            }
+
+            finally
+            {
+                await client.DisconnectAsync(true);
             }
         }
 
@@ -106,7 +106,7 @@ namespace Email_System
 
             finally
             {
-                var task = client.DisconnectAsync(true);
+                await client.DisconnectAsync(true);
             }
         }
 

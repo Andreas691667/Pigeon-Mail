@@ -66,7 +66,6 @@ namespace Email_System
             //get attachment from listbox
             int attachmentIndex = attachmentsLb.SelectedIndex;
 
-
             //retrieve attachment from folder 
             var f = client.GetFolder(msg.folder);            
 
