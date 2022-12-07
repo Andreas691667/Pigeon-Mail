@@ -4,6 +4,9 @@
     <_LastSelectedProfileId>C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Andreas_email_sandbox\Email System\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Update="Blacklist.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="login.cs">
       <SubType>Form</SubType>
     </Compile>

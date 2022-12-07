@@ -35,6 +35,8 @@
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.offlineModeCB = new System.Windows.Forms.CheckBox();
             this.richTextBox3 = new System.Windows.Forms.RichTextBox();
+            this.richTextBox4 = new System.Windows.Forms.RichTextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // clearCacheBt
@@ -95,11 +97,31 @@
             this.richTextBox3.TabIndex = 5;
             this.richTextBox3.Text = resources.GetString("richTextBox3.Text");
             // 
+            // richTextBox4
+            // 
+            this.richTextBox4.Location = new System.Drawing.Point(29, 432);
+            this.richTextBox4.Name = "richTextBox4";
+            this.richTextBox4.Size = new System.Drawing.Size(426, 120);
+            this.richTextBox4.TabIndex = 6;
+            this.richTextBox4.Text = "Something about blacklists...";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(472, 523);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(206, 29);
+            this.button1.TabIndex = 7;
+            this.button1.Text = "Edit blacklists";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(800, 607);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.richTextBox4);
             this.Controls.Add(this.richTextBox3);
             this.Controls.Add(this.offlineModeCB);
             this.Controls.Add(this.richTextBox2);
@@ -121,5 +143,7 @@
         private RichTextBox richTextBox2;
         private CheckBox offlineModeCB;
         private RichTextBox richTextBox3;
+        private RichTextBox richTextBox4;
+        private Button button1;
     }
 }
