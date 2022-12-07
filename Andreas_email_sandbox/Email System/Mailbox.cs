@@ -188,8 +188,8 @@ namespace Email_System
         //refreshes and timer tick (10 s)
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
-           Utility.refreshCurrentFolder();
-           Debug.WriteLine("refreshed the folder automatially");
+           //Utility.refreshCurrentFolder();
+           //Debug.WriteLine("refreshed the folder automatially");
         }
 
         //refreshed the current folder

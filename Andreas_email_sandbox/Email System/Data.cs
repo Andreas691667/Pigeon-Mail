@@ -10,6 +10,8 @@ using MailKit;
 using MailKit.Net.Imap;
 using MimeKit;
 using Org.BouncyCastle.Asn1.X509;
+using System.Net.NetworkInformation;
+
 
 namespace Email_System
 {
@@ -239,8 +241,11 @@ namespace Email_System
                         if((missing_uids.Count > 0  ||  removed_uid.Count > 0))
                         {
                             updatePending = true;
+                            
                             saveMessages(pendingMessages);
+
                             Thread.Sleep(1000);
+                            Utility.refreshCurrentFolder();
                         }
 
                     }
@@ -250,6 +255,7 @@ namespace Email_System
 
             client.Disconnect(true);
         }
+
         private static async Task deleteMessage(List<uint> ids, string folder)
         {
             int folderIndex = existingFolders.IndexOf(folder);

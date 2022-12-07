@@ -121,7 +121,8 @@ namespace Email_System
         //refreshes the current open folder in Mailbox
         public static void refreshCurrentFolder()
         {
-            Mailbox.refreshCurrentFolder();
+            var m = Mailbox.GetInstance;
+            m.BeginInvoke(new Action(() => Mailbox.refreshCurrentFolder()));
         }
 
         //finds all messages matching the uid and deletes them locally
