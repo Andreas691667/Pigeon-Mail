@@ -84,5 +84,21 @@ namespace Email_System
                 toggleLocalStorage(offlineModeCB.Checked);
             }
         }
+
+        // SETTINGS
+        // Not used yet
+        private void save_black_list_clicked(object sender, EventArgs e)
+        {
+            // String from textbox
+            // string black_listed_mails = black_list_emails.Text;
+            // string black_listed_words = black_list_words.Text;
+
+            // Array of individuals
+            // string[] new_black_listed_emails = black_listed_mails.Split(", ");
+            // string[] new_black_listed_words = black_listed_words.Split(", ");
+
+            // Append to email
+            // Data.addToBlackList(new_black_listed_words, new_black_listed_emails);
+        }
     }
 }

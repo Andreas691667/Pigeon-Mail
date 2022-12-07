@@ -129,10 +129,13 @@ namespace Email_System
                         message.body = "";
                     }
 
-                    //detect spam here
+                    // Blacklist detecting - Temporarily commented out
+                    // If contained in black list, continue to next message without adding it
+                    // bool inBlackList = containedInBlacklist(message.sender, message.subject, message.body);
+                    // if (inBlackList) continue;
 
                     //existingMessages[folderIndex].Add(message);
-                        pendingMessages[folderIndex].Add(message);
+                    pendingMessages[folderIndex].Add(message);
                         updatePending = true; // nok ikke nødvendigt
 
                     Debug.WriteLine("new message added to: " + folder + folderIndex);
@@ -713,6 +716,81 @@ namespace Email_System
         {
             File.Delete(Utility.username + "messages.json");
             File.Delete(Utility.username + "folders.json");
+        }
+
+
+        // ---- BLACK LIST -----
+        public static string BLACK_LIST_FILE_NAME = "BLACK_LIST.json";
+
+        // 2D blacklist
+        // black_list[0] -> email black_list
+        // black_list[1] -> word black_list
+        public static List<List<string>> black_list = new List<List<string>>();
+
+        // This method is called upon login by X
+        // 1) If a black list file does not exist in the root of the project, 
+        //    then it is creates
+        // 2) If a black list file does exist, then the content is loaded into the attribute black_list
+        public static void loadOrCreateBlackListFile()
+        {
+            bool fileExists = File.Exists(BLACK_LIST_FILE_NAME);
+            // File does exist
+            // Load content into black_list
+            if (fileExists)
+            {
+                string json = File.ReadAllText(BLACK_LIST_FILE_NAME);
+                var temp_black_list = JsonSerializer.Deserialize<List<List<string>>>(json);
+                if (temp_black_list != null) black_list = new List<List<string>>(temp_black_list);
+            }
+            // File does not exist
+            // Creates file
+            else
+            {
+                File.Create(BLACK_LIST_FILE_NAME);
+            }
+        }
+
+        // saveBlackListFile
+        // This method is called upon closing the client
+        // It saves the content from the variable black_list into a file
+        public static void saveBlackListFile()
+        {
+            var json = JsonSerializer.Serialize(black_list);
+            File.WriteAllText(BLACK_LIST_FILE_NAME, json);
+        }
+
+        // addToBlackList
+        // This method is called upon clicking 'Save blacklist'
+        // Add blacklist arrays to black_list
+        public static void addToBlackList(string[] words, string[] emails)
+        {
+            black_list[0].AddRange(emails);
+            black_list[1].AddRange(words);
+        }
+
+        // containedInBlackList
+        // NEED IMPLEMENTATION!
+        private static bool containedInBlacklist(string sender, string subject, string body)
+        {
+            var black_emails = black_list[0];
+            var black_words = black_list[1];
+
+            // Sender check
+            bool inBlackList = false;
+            inBlackList = black_emails.Exists(elem => elem == sender);
+            if (inBlackList) return true;
+
+            // Subject and body check
+            foreach (string black_word in black_words)
+            {
+                bool containedInSubject = subject.Contains(black_word);
+                if (containedInSubject) return true;
+                bool containedInBody = body.Contains(black_word);
+                if (containedInBody) return true;
+            }
+
+            // If reached here, no spam was detected
+            return false;
         }
     }
 }
