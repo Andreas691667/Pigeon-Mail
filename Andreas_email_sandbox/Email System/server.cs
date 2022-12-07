@@ -1,14 +1,5 @@
 ﻿using MailKit;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Email_System
 {
@@ -128,7 +119,7 @@ namespace Email_System
 
             //Thread.Sleep(1000);
 
-            //startListeners();
+            startListeners();
         }
 
         public static async void addFlagServer(string folderIn, int index, uint uid)
@@ -159,7 +150,7 @@ namespace Email_System
             Utility.logMessage("Message flagged on server");
             Utility.refreshCurrentFolder();
 
-            //startListeners();
+            startListeners();
         }
 
         public static async void saveDraftServer()

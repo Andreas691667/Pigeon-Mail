@@ -26,7 +26,9 @@ namespace Email_System
         {
             InitializeComponent();
 
-            retrieveInboxMessages();
+
+            if (File.Exists(Utility.username + "messages.json"))
+                retrieveInboxMessages();
 
             RetrieveFolders();
 
@@ -217,6 +219,8 @@ namespace Email_System
         {
             try
             {
+                server.killListeners();
+
                 int messageIndex = messagesDGV.CurrentCell.RowIndex;            //get messageindex
                 Data.msg m = currentFolderMessages[messageIndex];               //retrieve the messae object
                 string subject = messagesDGV[2, messageIndex].Value.ToString(); //get subject of message
@@ -264,7 +268,6 @@ namespace Email_System
                         refreshCurrentFolder();
                         server.removeFlagServer(m.folder, m.uid);
                     }
-
 
                     refreshCurrentFolder();
                 }
