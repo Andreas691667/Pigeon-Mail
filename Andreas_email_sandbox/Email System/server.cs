@@ -204,7 +204,6 @@ namespace Email_System
 
             var id = new UniqueId[] { new UniqueId(uid) };
 
-
             await folder.OpenAsync(FolderAccess.ReadWrite);
             await folder.RemoveFlagsAsync(id, MessageFlags.Flagged, true);
 
@@ -217,11 +216,13 @@ namespace Email_System
             await Task.Delay(5000);
             Data.changedUids.Remove(idToRemove);
 
-            startListeners();
+            //startListeners();
         }
 
         public static async void addFlagServer(string folderIn, int index, uint uid)
         {
+/*            uint idToRemove = uid;
+*/
             var client = await Utility.establishConnectionImap();
 
             //get source folder
@@ -248,6 +249,9 @@ namespace Email_System
             Utility.logMessage("Message flagged on server", 3000);
             Utility.refreshCurrentFolder();
 
+            await Task.Delay(5000);
+/*            Data.changedUids.Remove(idToRemove);
+*/
             startListeners();
         }
 

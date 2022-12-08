@@ -163,8 +163,10 @@ namespace Email_System
                 {
                     folderDGV.Rows.Add(folderString);
 
+                    // only add to dropdown if not already added and not one of these special folders:
                     if (!folderDropDown.Items.Contains(dropDownString) && dropDownString != Data.trashFolderName 
-                        && dropDownString != Data.draftFolderName && dropDownString != Data.flaggedFolderName)
+                        && dropDownString != Data.draftFolderName && dropDownString != Data.flaggedFolderName 
+                        && dropDownString != Data.allFolderName)
                     {
                         folderDropDown.Items.Add(dropDownString);
                     }
@@ -233,7 +235,7 @@ namespace Email_System
         {
             try
             {
-                server.killListeners();
+                //server.killListeners();
 
                 int messageIndex = messagesDGV.CurrentCell.RowIndex;            //get messageindex
                 Data.msg m = currentFolderMessages[messageIndex];               //retrieve the messae object
@@ -250,7 +252,8 @@ namespace Email_System
                     //update the message in both UI and pending
                     Data.UIMessages[fromFolderIndex][index] = m;
                     Data.pendingMessages[fromFolderIndex][index] = m;
-
+/*                    Data.changedUids.Add(m.uid);
+*/
                     //add message to flagged folder locally
                     int destFolderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
                     Data.UIMessages[destFolderIndex].Add(m);
@@ -263,7 +266,11 @@ namespace Email_System
                 //remove flag instead if the mail was already flagged
                 else if (subject.Contains("(FLAGGED)"))
                 {
-                    int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
+                    //int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
+                    //Data.UIMessages[folderIndex].Remove(m);
+                    //refreshCurrentFolder();
+
+                                        int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
                     Data.UIMessages[folderIndex].Remove(m);
                     var index = Data.UIMessages[folderDGV.CurrentCell.RowIndex].IndexOf(m);
 
@@ -283,12 +290,52 @@ namespace Email_System
                         server.removeFlagServer(m.folder, m.uid);
                     }
 
-                    refreshCurrentFolder();
+                    /*Data.changedUids.Add(m.uid);
+
+                    var index = Data.UIMessages[folderDGV.CurrentCell.RowIndex].IndexOf(m);
+
+                    if (index != -1)
+                    {
+                        m.flags = m.flags.Replace("(FLAGGED)", "");
+                        m.flags = m.flags.Replace("Flagged", "");
+                        for(int i = 0; i < Data.UIMessages.Count; i++)
+                        {
+                            for(int j =0; i < Data.UIMessages[i].Count; j++)
+                            {
+                                var curMsg = Data.UIMessages[i][j];
+
+                                if(curMsg.folder == Data.flaggedFolderName)
+                                {
+                                    Data.UIMessages[i].RemoveAt(j);
+                                    break;
+                                }
+
+                                else if(curMsg.uid == m.uid)
+                                {
+                                    Data.UIMessages[i][j] = m;
+                                    Data.pendingMessages[i][j] = m;
+                                }
+                            }
+                        }
+
+*/
+/*                        refreshCurrentFolder();
+                        server.removeFlagServer(m.folder, m.uid);*/
+/*                    }
+
+                    else
+                    {
+                        refreshCurrentFolder();
+                        server.removeFlagServer(m.folder, m.uid);
+                    }
+
+                    refreshCurrentFolder();*/
                 }
             }
 
-            catch
+            catch(Exception ex)
             {
+                Debug.WriteLine(ex.Message);
                 MessageBox.Show("No message selected!");
             }
 
