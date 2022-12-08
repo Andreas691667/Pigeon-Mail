@@ -292,6 +292,7 @@ namespace Email_System
             Data.GetFlaggedFolder();
             Data.GetDraftFolder();
             Data.GetAllFolder();
+            Data.GetSpamFolder();
 
             Task task = Data.loadMessages(bw);
             task.Wait();

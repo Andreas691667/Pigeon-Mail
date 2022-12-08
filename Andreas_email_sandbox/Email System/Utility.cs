@@ -137,7 +137,7 @@ namespace Email_System
             //check we are not already in the trash folder
             if (trashFolderIndex == folderIndex)
             {
-                Utility.logMessage("Message is already in trash!");
+                Utility.logMessage("Message is already in trash!", 3000);
                 return;
             }
 
@@ -161,6 +161,7 @@ namespace Email_System
                             {
                                 Data.UIMessages[trashFolderIndex].Add(m);
                                 Data.pendingMessages[trashFolderIndex].Add(m);
+                                Data.changedUids.Add(m.uid);
                             }
 
                             //move to trash on server here
@@ -178,6 +179,118 @@ namespace Email_System
             server.moveMsgTrashServer(trashQueue);
         }
 
+
+        public static void moveMsgSpam(uint uid, string srcFolder)
+        {
+
+            var spamFolderIndex = Data.existingFolders.IndexOf(Data.spamFolderName);
+            var folderIndex = Data.existingFolders.IndexOf(srcFolder);
+
+            //check we are not already in the trash folder
+            if (spamFolderIndex == folderIndex)
+            {
+                Utility.logMessage("Message is already in spam!", 3000);
+                return;
+            }
+
+            Queue<Tuple<string, uint>> spamQueue = new Queue<Tuple<string, uint>>();
+
+            for (int f = 0; f < Data.UIMessages.Count; f++)
+            {
+                for (int i = 0; i < Data.UIMessages[f].Count; i++)
+                {
+                    Data.msg m = Data.UIMessages[f][i];
+
+                    if (f != spamFolderIndex)
+                    {
+                        if (m.uid == uid)
+                        {
+                            Data.UIMessages[f].RemoveAt(i);
+                            Data.pendingMessages[f].RemoveAt(i);
+
+                            //should only be moved to trash once
+                            if (spamQueue.Count <= 0)
+                            {
+                                Data.UIMessages[spamFolderIndex].Add(m);
+                                Data.pendingMessages[spamFolderIndex].Add(m);
+                                Data.changedUids.Add(m.uid);
+                            }
+
+                            //move to trash on server here
+                            Tuple<string, uint> t = new Tuple<string, uint>(m.folder, m.uid);
+                            spamQueue.Enqueue(t);
+
+                            refreshCurrentFolder();
+                        }
+                    }
+                }
+            }
+
+
+            Debug.WriteLine("Found " + spamQueue.Count + " messages to move to trash");
+            server.moveMsgSpamServer(spamQueue);
+        }
+
+        public static void moveMsg(uint uid, string sub, string folder)
+        {
+            var mailbox = Mailbox.GetInstance;
+
+            if (mailbox.folderDropDown.SelectedItem == null)
+            {
+                return;
+            }
+
+            string folderName = mailbox.folderDropDown.SelectedItem.ToString();
+            var moveFolderIndex = Data.existingFolders.IndexOf(folderName);
+            var folderIndex = Data.existingFolders.IndexOf(folder);
+
+            //check we are not already in the folder
+            if (moveFolderIndex == folderIndex)
+            {
+                Utility.logMessage("Message is already in folder!", 3000);
+                return;
+            }
+
+            Queue<Tuple<string, uint>> moveQueue = new Queue<Tuple<string, uint>>();
+
+            var UIFolderCount = Data.UIMessages.Count;
+            for (int f = 0; f < UIFolderCount; f++)
+            {
+                for (int i = 0; i < Data.UIMessages[f].Count; i++)
+                {
+                    Data.msg m = Data.UIMessages[f][i];
+
+                    if (f != moveFolderIndex)
+                    {
+                        if (m.uid == uid)
+                        {
+                            Data.UIMessages[f].RemoveAt(i);
+                            Data.pendingMessages[f].RemoveAt(i);
+
+                            //should only be moved to trash once
+                            if (moveQueue.Count <= 0)
+                            {
+                                Data.UIMessages[moveFolderIndex].Add(m);
+                                Data.pendingMessages[moveFolderIndex].Add(m);
+                                Data.changedUids.Add(m.uid);
+                            }
+
+                            Debug.WriteLine("moved message locally");
+
+                            //move to trash on server here
+                            Tuple<string, uint> t = new Tuple<string, uint>(m.folder, m.uid);
+                            moveQueue.Enqueue(t);
+
+                            refreshCurrentFolder();
+                        }
+                    }
+                }
+            }
+
+
+            Debug.WriteLine("Found " + moveQueue.Count + " messages to move to: " + folderName);
+            server.moveMsgServer(moveQueue, folderName);
+        }
 
 
         //stops listening on folders and deletes message locally
@@ -217,17 +330,19 @@ namespace Email_System
             server.deleteMsgServer(deleteQueue);
         }
 
-        public static void logMessage(string message)
+        public static void logMessage(string message, int time)
         {
             Mailbox.setText(message);
+            Mailbox.GetInstance.loadIconPB.Visible = true;
 
             var t = new System.Windows.Forms.Timer();
 
-            t.Interval = 3000; // it will Tick in 3 seconds
+            t.Interval = time; // it will Tick in 3 seconds
 
             t.Tick += (s, e) =>
             {
                 Mailbox.setText("");
+                Mailbox.GetInstance.loadIconPB.Visible = false;
                 t.Stop();
             };
 

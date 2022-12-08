@@ -44,14 +44,16 @@
             this.moveToTrashBt = new System.Windows.Forms.Button();
             this.deleteBt = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.folderDropDown = new System.Windows.Forms.ComboBox();
+            this.moveMessageBt = new System.Windows.Forms.Button();
             this.senderRBT = new System.Windows.Forms.RadioButton();
-            this.logLabel = new System.Windows.Forms.Label();
             this.contentRBT = new System.Windows.Forms.RadioButton();
             this.subjectRBT = new System.Windows.Forms.RadioButton();
             this.searchTb = new System.Windows.Forms.TextBox();
             this.searchBt = new System.Windows.Forms.Button();
             this.logoutBt = new System.Windows.Forms.Button();
             this.settingsBt = new System.Windows.Forms.Button();
+            this.logLabel = new System.Windows.Forms.Label();
             this.messagesDGV = new System.Windows.Forms.DataGridView();
             this.Folder = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.From = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -62,9 +64,12 @@
             this.FolderView = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.addFolderBt = new System.Windows.Forms.Button();
             this.newFolderTB = new System.Windows.Forms.TextBox();
+            this.loadIconPB = new System.Windows.Forms.PictureBox();
+            this.deleteFolderBt = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.messagesDGV)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.folderDGV)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.loadIconPB)).BeginInit();
             this.SuspendLayout();
             // 
             // folderLb
@@ -187,8 +192,9 @@
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.folderDropDown);
+            this.panel1.Controls.Add(this.moveMessageBt);
             this.panel1.Controls.Add(this.senderRBT);
-            this.panel1.Controls.Add(this.logLabel);
             this.panel1.Controls.Add(this.contentRBT);
             this.panel1.Controls.Add(this.subjectRBT);
             this.panel1.Controls.Add(this.searchTb);
@@ -206,6 +212,29 @@
             this.panel1.Size = new System.Drawing.Size(1271, 81);
             this.panel1.TabIndex = 8;
             // 
+            // folderDropDown
+            // 
+            this.folderDropDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.folderDropDown.FormattingEnabled = true;
+            this.folderDropDown.Location = new System.Drawing.Point(677, 34);
+            this.folderDropDown.Name = "folderDropDown";
+            this.folderDropDown.Size = new System.Drawing.Size(151, 28);
+            this.folderDropDown.TabIndex = 16;
+            // 
+            // moveMessageBt
+            // 
+            this.moveMessageBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.moveMessageBt.Image = global::Email_System.Properties.Resources.icons8_live_folder_32;
+            this.moveMessageBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.moveMessageBt.Location = new System.Drawing.Point(580, 2);
+            this.moveMessageBt.Name = "moveMessageBt";
+            this.moveMessageBt.Size = new System.Drawing.Size(94, 61);
+            this.moveMessageBt.TabIndex = 15;
+            this.moveMessageBt.Text = "Move";
+            this.moveMessageBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.moveMessageBt.UseVisualStyleBackColor = true;
+            this.moveMessageBt.Click += new System.EventHandler(this.moveMessageBt_Click);
+            // 
             // senderRBT
             // 
             this.senderRBT.AutoSize = true;
@@ -215,16 +244,6 @@
             this.senderRBT.TabIndex = 14;
             this.senderRBT.Text = "Sender";
             this.senderRBT.UseVisualStyleBackColor = true;
-            // 
-            // logLabel
-            // 
-            this.logLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.logLabel.AutoSize = true;
-            this.logLabel.Enabled = false;
-            this.logLabel.Location = new System.Drawing.Point(542, 35);
-            this.logLabel.Name = "logLabel";
-            this.logLabel.Size = new System.Drawing.Size(0, 20);
-            this.logLabel.TabIndex = 9;
             // 
             // contentRBT
             // 
@@ -297,6 +316,16 @@
             this.settingsBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.settingsBt.UseVisualStyleBackColor = true;
             this.settingsBt.Click += new System.EventHandler(this.settingsBt_Click);
+            // 
+            // logLabel
+            // 
+            this.logLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.logLabel.Enabled = false;
+            this.logLabel.Location = new System.Drawing.Point(453, 560);
+            this.logLabel.Name = "logLabel";
+            this.logLabel.Size = new System.Drawing.Size(766, 27);
+            this.logLabel.TabIndex = 9;
+            this.logLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // messagesDGV
             // 
@@ -422,7 +451,7 @@
             this.folderDGV.RowHeadersWidth = 51;
             this.folderDGV.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.folderDGV.RowTemplate.Height = 29;
-            this.folderDGV.Size = new System.Drawing.Size(275, 438);
+            this.folderDGV.Size = new System.Drawing.Size(275, 401);
             this.folderDGV.TabIndex = 11;
             this.folderDGV.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.folderDGV_CellClick);
             // 
@@ -441,9 +470,9 @@
             this.addFolderBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.addFolderBt.Image = global::Email_System.Properties.Resources.icons8_add_folder_32;
             this.addFolderBt.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.addFolderBt.Location = new System.Drawing.Point(15, 533);
+            this.addFolderBt.Location = new System.Drawing.Point(15, 546);
             this.addFolderBt.Name = "addFolderBt";
-            this.addFolderBt.Size = new System.Drawing.Size(123, 45);
+            this.addFolderBt.Size = new System.Drawing.Size(137, 41);
             this.addFolderBt.TabIndex = 12;
             this.addFolderBt.Text = "Add folder";
             this.addFolderBt.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -453,17 +482,46 @@
             // newFolderTB
             // 
             this.newFolderTB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.newFolderTB.Location = new System.Drawing.Point(144, 551);
+            this.newFolderTB.Location = new System.Drawing.Point(158, 560);
             this.newFolderTB.Name = "newFolderTB";
             this.newFolderTB.PlaceholderText = "Enter name...";
             this.newFolderTB.Size = new System.Drawing.Size(125, 27);
             this.newFolderTB.TabIndex = 13;
+            // 
+            // loadIconPB
+            // 
+            this.loadIconPB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.loadIconPB.Image = global::Email_System.Properties.Resources.giphy;
+            this.loadIconPB.Location = new System.Drawing.Point(1235, 546);
+            this.loadIconPB.Name = "loadIconPB";
+            this.loadIconPB.Size = new System.Drawing.Size(51, 45);
+            this.loadIconPB.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.loadIconPB.TabIndex = 14;
+            this.loadIconPB.TabStop = false;
+            this.loadIconPB.Visible = false;
+            // 
+            // deleteFolderBt
+            // 
+            this.deleteFolderBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.deleteFolderBt.Image = global::Email_System.Properties.Resources.icons8_delete_folder_32;
+            this.deleteFolderBt.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.deleteFolderBt.Location = new System.Drawing.Point(14, 501);
+            this.deleteFolderBt.Name = "deleteFolderBt";
+            this.deleteFolderBt.Size = new System.Drawing.Size(138, 40);
+            this.deleteFolderBt.TabIndex = 16;
+            this.deleteFolderBt.Text = "Delete folder";
+            this.deleteFolderBt.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.deleteFolderBt.UseVisualStyleBackColor = true;
+            this.deleteFolderBt.Click += new System.EventHandler(this.deleteFolderBt_Click);
             // 
             // Mailbox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1307, 596);
+            this.Controls.Add(this.deleteFolderBt);
+            this.Controls.Add(this.loadIconPB);
+            this.Controls.Add(this.logLabel);
             this.Controls.Add(this.newFolderTB);
             this.Controls.Add(this.addFolderBt);
             this.Controls.Add(this.folderDGV);
@@ -481,6 +539,7 @@
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.messagesDGV)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.folderDGV)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.loadIconPB)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -516,5 +575,9 @@
         private DataGridViewTextBoxColumn Date;
         private Button addFolderBt;
         private TextBox newFolderTB;
+        private Button moveMessageBt;
+        private Button deleteFolderBt;
+        public ComboBox folderDropDown;
+        public PictureBox loadIconPB;
     }
 }

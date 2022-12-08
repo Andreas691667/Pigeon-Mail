@@ -356,24 +356,21 @@ namespace Email_System
                 var client = Utility.establishConnectionSmtp();
 
                 server.killListeners();
-                this.Enabled = false;
-                this.Cursor = Cursors.WaitCursor;
+
+                messageSent = true;
+                this.Close();
+                Utility.logMessage("Sending message", 3000);
 
                 try
                 {
                     client.Send(message);
-
-                    Utility.logMessage("Message sent successfully!");
-
                     //if the message was a draft, we should delete it from the draft folder!
                     if (isDraft)
                     {
                         Utility.deleteMsg(msg.uid, msg.folder);
                     }
 
-                    messageSent = true;
 
-                    this.Close();
                 }
 
                 catch (Exception ex)
@@ -383,10 +380,11 @@ namespace Email_System
 
                 finally
                 {
-                    this.Enabled = true;
-                    this.Cursor = Cursors.Default;
+
                     client.Disconnect(true);
                     client.Dispose();
+
+                    Utility.logMessage("Message sent successfully!", 3000);
 
                     if (!isDraft)
                         server.startListeners();

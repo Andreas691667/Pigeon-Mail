@@ -31,14 +31,15 @@
             this.emailBlackList = new System.Windows.Forms.ListView();
             this.Blacklisted_emails = new System.Windows.Forms.ColumnHeader();
             this.button1 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.emailTextBox = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.wordTextBox = new System.Windows.Forms.TextBox();
             this.button4 = new System.Windows.Forms.Button();
-            this.listView2 = new System.Windows.Forms.ListView();
+            this.wordBlackList = new System.Windows.Forms.ListView();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.SuspendLayout();
             // 
             // emailBlackList
@@ -68,12 +69,12 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // textBox1
+            // emailTextBox
             // 
-            this.textBox1.Location = new System.Drawing.Point(147, 61);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(272, 27);
-            this.textBox1.TabIndex = 3;
+            this.emailTextBox.Location = new System.Drawing.Point(147, 61);
+            this.emailTextBox.Name = "emailTextBox";
+            this.emailTextBox.Size = new System.Drawing.Size(272, 27);
+            this.emailTextBox.TabIndex = 3;
             // 
             // button2
             // 
@@ -93,12 +94,12 @@
             this.button3.Text = "Delete";
             this.button3.UseVisualStyleBackColor = true;
             // 
-            // textBox2
+            // wordTextBox
             // 
-            this.textBox2.Location = new System.Drawing.Point(661, 61);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(272, 27);
-            this.textBox2.TabIndex = 7;
+            this.wordTextBox.Location = new System.Drawing.Point(661, 61);
+            this.wordTextBox.Name = "wordTextBox";
+            this.wordTextBox.Size = new System.Drawing.Size(272, 27);
+            this.wordTextBox.TabIndex = 7;
             // 
             // button4
             // 
@@ -108,14 +109,19 @@
             this.button4.TabIndex = 6;
             this.button4.Text = "Add word";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
-            // listView2
+            // wordBlackList
             // 
-            this.listView2.Location = new System.Drawing.Point(661, 99);
-            this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(272, 291);
-            this.listView2.TabIndex = 5;
-            this.listView2.UseCompatibleStateImageBehavior = false;
+            this.wordBlackList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1});
+            this.wordBlackList.FullRowSelect = true;
+            this.wordBlackList.Location = new System.Drawing.Point(661, 99);
+            this.wordBlackList.Name = "wordBlackList";
+            this.wordBlackList.Size = new System.Drawing.Size(272, 291);
+            this.wordBlackList.TabIndex = 5;
+            this.wordBlackList.UseCompatibleStateImageBehavior = false;
+            this.wordBlackList.View = System.Windows.Forms.View.Tile;
             // 
             // label1
             // 
@@ -135,6 +141,10 @@
             this.label2.TabIndex = 10;
             this.label2.Text = "Blacklisted words";
             // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Width = 100;
+            // 
             // Blacklist
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -143,11 +153,11 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button3);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.wordTextBox);
             this.Controls.Add(this.button4);
-            this.Controls.Add(this.listView2);
+            this.Controls.Add(this.wordBlackList);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.emailTextBox);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.emailBlackList);
             this.Name = "Blacklist";
@@ -161,14 +171,15 @@
 
         private ListView emailBlackList;
         private Button button1;
-        private TextBox textBox1;
+        private TextBox emailTextBox;
         private Button button2;
         private Button button3;
-        private TextBox textBox2;
+        private TextBox wordTextBox;
         private Button button4;
-        private ListView listView2;
+        private ListView wordBlackList;
         private Label label1;
         private Label label2;
         private ColumnHeader Blacklisted_emails;
+        private ColumnHeader columnHeader1;
     }
 }

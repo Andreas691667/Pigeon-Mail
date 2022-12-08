@@ -45,7 +45,7 @@ namespace Email_System
                     await folder.AddFlagsAsync(id, MessageFlags.Deleted, true);
                     await folder.ExpungeAsync();
 
-                    Utility.logMessage("Message deleted");
+                    Utility.logMessage("Message deleted", 3000);
                     Debug.WriteLine("msg deleted from server from folder: " + folder.FullName);
                 }
 
@@ -67,11 +67,15 @@ namespace Email_System
         {
             var client = await Utility.establishConnectionImap();
 
+            uint idToRemove = 0;
+
             try
             {
                 foreach (var item in q)
                 {
                     var f = item.Item1;
+
+                    idToRemove = item.Item2;
 
                     var id = new UniqueId[] { new UniqueId(item.Item2) };
 
@@ -83,7 +87,7 @@ namespace Email_System
 
                     await folder.MoveToAsync(id, trashFolder);
 
-                    Utility.logMessage("Message moved to trash");
+                    Utility.logMessage("Message moved to trash", 3000);
                 }
 
                 startListeners();
@@ -98,11 +102,101 @@ namespace Email_System
             finally
             {
                 await client.DisconnectAsync(true);
+                await Task.Delay(5000);
+                Data.changedUids.Remove(idToRemove);
+            }
+        }
+
+        public static async void moveMsgSpamServer(Queue<Tuple<string, uint>> q)
+        {
+            var client = await Utility.establishConnectionImap();
+
+            uint idToRemove = 0;
+
+            try
+            {
+                foreach (var item in q)
+                {
+                    var f = item.Item1;
+
+                    idToRemove = item.Item2;
+
+                    var id = new UniqueId[] { new UniqueId(item.Item2) };
+
+                    var spamFolder = await Data.GetSpamFolder(client);
+
+                    var folder = await client.GetFolderAsync(f);
+
+                    await folder.OpenAsync(FolderAccess.ReadWrite);
+
+                    await folder.MoveToAsync(id, spamFolder);
+
+                    //Utility.logMessage("Message moved to spam", 3000);
+                    Debug.WriteLine("Moved message to spam");
+                }
+
+                startListeners();
+
+            }
+
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            finally
+            {
+                await client.DisconnectAsync(true);
+                await Task.Delay(5000);
+                Data.changedUids.Remove(idToRemove);
+            }
+        }
+
+        public static async void moveMsgServer(Queue<Tuple<string, uint>> q, string moveToFolder)
+        {
+            var client = await Utility.establishConnectionImap();
+            uint idToRemove = 0;
+
+            try
+            {
+                foreach (var item in q)
+                {
+                    var f = item.Item1;
+
+                    idToRemove = item.Item2;
+
+                    var id = new UniqueId[] { new UniqueId(item.Item2) };
+
+                    var destFolder = await client.GetFolderAsync(moveToFolder);
+
+                    var folder = await client.GetFolderAsync(f);
+
+                    await folder.OpenAsync(FolderAccess.ReadWrite);
+
+                    var task = folder.MoveToAsync(id, destFolder);
+
+                    task.Wait();
+
+                    Utility.logMessage("Message moved!", 3000);
+                }
+            }
+
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            finally
+            {
+                await client.DisconnectAsync(true);
+                await Task.Delay(5000);
+                Data.changedUids.Remove(idToRemove);
             }
         }
 
         public static async void removeFlagServer(string folderIn, uint uid)
         {
+            uint idToRemove = uid;
 
             var client = await Utility.establishConnectionImap();         
 
@@ -110,14 +204,18 @@ namespace Email_System
 
             var id = new UniqueId[] { new UniqueId(uid) };
 
+
             await folder.OpenAsync(FolderAccess.ReadWrite);
             await folder.RemoveFlagsAsync(id, MessageFlags.Flagged, true);
 
             await client.DisconnectAsync(true);
 
-            Utility.logMessage("Message unflagged");
+            Utility.logMessage("Message unflagged", 3000);
 
             //Thread.Sleep(1000);
+
+            await Task.Delay(5000);
+            Data.changedUids.Remove(idToRemove);
 
             startListeners();
         }
@@ -147,7 +245,7 @@ namespace Email_System
             //add flag and copy message
             await folder.AddFlagsAsync(uids[uidIndex], MessageFlags.Flagged, true);
             await client.DisconnectAsync(true);
-            Utility.logMessage("Message flagged on server");
+            Utility.logMessage("Message flagged on server", 3000);
             Utility.refreshCurrentFolder();
 
             startListeners();
@@ -163,7 +261,7 @@ namespace Email_System
             await folder.AddFlagsAsync(id, MessageFlags.Seen, true);
             await client.DisconnectAsync(true);
 
-            Utility.logMessage("Message read");
+            Utility.logMessage("Message read", 3000);
 
             startListeners();
         }

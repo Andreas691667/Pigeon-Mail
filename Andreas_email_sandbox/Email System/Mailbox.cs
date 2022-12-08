@@ -3,6 +3,7 @@ using MailKit.Net.Imap;
 using Org.BouncyCastle.Asn1.Cmp;
 using System;
 using System.Diagnostics;
+using System.Xml.Linq;
 using static Email_System.Data;
 
 /*
@@ -108,6 +109,11 @@ namespace Email_System
             moveToTrashBt.Visible = value;
             deleteBt.Visible = value;
             messagesDGV.Enabled = value;
+            //deleteFolderBt.Visible = value;
+            //addFolderBt.Visible = value;
+            //newFolderTB.Visible = value;
+            moveMessageBt.Visible = value;
+            folderDropDown.Visible = value;
         }
 
         // method that retrieve folders and add the names to the listbox
@@ -124,6 +130,8 @@ namespace Email_System
 
             //folderLb.Items.Clear();
             folderDGV.Rows.Clear();
+            folderDropDown.Items.Clear();
+            folderDropDown.Text = "";
 
             folderDGV.Columns[0].HeaderText = Utility.username;
             //folderDGV.Columns[0].HeaderCell.Visible = (true);
@@ -135,6 +143,7 @@ namespace Email_System
 
                 folderString += f;
 
+                string dropDownString = folderString;
 
                 int folderIndex = Data.existingFolders.IndexOf(f);
 
@@ -153,6 +162,14 @@ namespace Email_System
                 finally
                 {
                     folderDGV.Rows.Add(folderString);
+
+                    if (!folderDropDown.Items.Contains(dropDownString) && dropDownString != Data.trashFolderName 
+                        && dropDownString != Data.draftFolderName && dropDownString != Data.flaggedFolderName)
+                    {
+                        folderDropDown.Items.Add(dropDownString);
+                    }
+                        
+
                 }
             }
 
@@ -290,7 +307,7 @@ namespace Email_System
 
             catch(Exception ex)
             {
-                Utility.logMessage("No message selected!");
+                Utility.logMessage("No message selected!", 3000);
                 Debug.WriteLine(ex.Message);
             }         
 
@@ -309,7 +326,7 @@ namespace Email_System
 
             catch(Exception ex)
             {
-                Utility.logMessage("No message selected!");
+                Utility.logMessage("No message selected!", 3000);
                 Debug.WriteLine(ex.Message);
             }
         }
@@ -369,7 +386,10 @@ namespace Email_System
             l.Show();
 
             if (Properties.Settings.Default.downloadMessagesEnabled)
+            {
                 Data.saveMessages(Data.UIMessages);
+                Data.saveFolders(Data.existingFolders);
+            }
 
             if (!Properties.Settings.Default.downloadMessagesEnabled)
             {
@@ -430,7 +450,7 @@ namespace Email_System
             if (msgs.Count <= 0)
             {
                 toggleButtons(false);
-                Utility.logMessage("No results!");
+                Utility.logMessage("No results!", 4000);
                 messagesDGV.Rows.Clear();
             }
 
@@ -549,7 +569,7 @@ namespace Email_System
                 if (Data.UIMessages[folder].Count <= 0)
                 {
                     toggleButtons(false);
-                    Utility.logMessage("No messages in this folder!");
+                    Utility.logMessage("No messages in this folder!", 3000);
                 }
 
                 else
@@ -595,7 +615,7 @@ namespace Email_System
             catch
             {
                 toggleButtons(false);
-                Utility.logMessage("Messages are being fetched from the server! Please be patient:)");
+                Utility.logMessage("Messages are being fetched from the server! Please be patient:)", 4000);
             }
         }
 
@@ -660,10 +680,18 @@ namespace Email_System
 
         }
 
+        //creates new folder
         private void button1_Click(object sender, EventArgs e)
         {
             try
             {
+                if(string.IsNullOrEmpty(newFolderTB.Text))
+                {
+                    MessageBox.Show("Please enter a foldername!");
+                    return;
+                }
+
+                Utility.logMessage("Creating folder. This might take a while", 6000);
                 server.killListeners();
                 string folderName = newFolderTB.Text;
                 createFolder(folderName);
@@ -678,7 +706,9 @@ namespace Email_System
             {
                 newFolderTB.Clear();
                 server.startListeners();
-                refreshCurrentFolder();
+                //refreshCurrentFolder();
+                Utility.logMessage("Creating folder. This might take a while", 10000);
+
             }
         }
 
@@ -687,6 +717,73 @@ namespace Email_System
             var c = await Utility.establishConnectionImap();
             var toplevel = c.GetFolder(c.PersonalNamespaces[0]);
             toplevel.Create(name, true);
+        }
+
+        private void moveMessageBt_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int messageIndex = messagesDGV.CurrentCell.RowIndex;
+                Data.msg m = currentFolderMessages[messageIndex];
+                Utility.moveMsg(m.uid, m.subject, m.folder);
+            }
+
+            catch (Exception ex)
+            {
+                Utility.logMessage("No message selected!", 3000);
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        private async void deleteFolderBt_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Utility.logMessage("Deleting folder. This might take a while", 11000);
+
+                server.killListeners();
+
+                var digitsToRemove = new[] { '0','1','2','3','4','5','6','7','8','9','(',')'}; //remove count digits from string
+
+                string folderName = folderDGV.CurrentCell.Value.ToString(); //get foldername (i.e. selected folder in DGV)
+
+                folderName = folderName.TrimEnd(digitsToRemove);
+                folderName = folderName.Trim();
+
+                int folderIndex = Data.existingFolders.IndexOf(folderName); //get index of folder in list     
+
+                //check if folder is empty
+                if (Data.UIMessages[folderIndex].Count > 0)
+                {
+                    DialogResult dr = MessageBox.Show("This folder contains messages, do you wish to continue?", "Warning", MessageBoxButtons.YesNo);
+
+                    if(dr == DialogResult.No)
+                    {
+                        return;
+                    }
+                }
+
+                var c = await Utility.establishConnectionImap();            //establish connection
+                var folder = c.GetFolder(folderName);                       //get the folder from server from specifed name
+                folder.Delete();                                            //delete the folder
+
+                Data.existingFolders.Remove(folderName);                    //remove the folder from folderList
+                Data.UIMessages.RemoveAt(folderIndex);                      //remove from UI-list
+                Data.pendingMessages.RemoveAt(folderIndex);                 //remove from pending-list
+
+            }
+
+            catch(Exception ex)
+            {
+                MessageBox.Show("Unable to delete folder. You should only delete folders that you have created yourself.");
+                Debug.WriteLine(ex.Message);
+            }
+
+            finally
+            {
+                RetrieveFolders();
+                server.startListeners();
+            }
         }
     }
 }

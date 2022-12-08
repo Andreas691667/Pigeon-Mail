@@ -11,7 +11,7 @@ using MailKit.Net.Imap;
 using MimeKit;
 using Org.BouncyCastle.Asn1.X509;
 using System.Net.NetworkInformation;
-
+using System.Xml.Serialization;
 
 namespace Email_System
 {
@@ -37,6 +37,7 @@ namespace Email_System
         public static string draftFolderName = "";
         public static string flaggedFolderName = "";
         public static string allFolderName = "";
+        public static string spamFolderName = "";
 
         //list to load folders on login
         private static List<string> folderList = new List<string>();
@@ -49,49 +50,14 @@ namespace Email_System
 
         public static List<List<msg>> pendingMessages = new List<List<msg>>();
 
+        public static List<uint> changedUids = new List<uint>();
+
         public static bool updatePending = false;
 
         public static bool exit = false;
 
         //private list to load messages on login
         private static List<List<msg>> msgs = new List<List<msg>>();
-
-        public static async void listenInboxFolder()
-        {
-            var client = await Utility.establishConnectionImap();
-            var inboxFolder = client.Inbox;
-
-            var i = login.GetInstance;
-            var bw = i.folderListenerBW;
-            
-            while (!bw.CancellationPending)
-            {
-                int currentCount = UIMessages[0].Count; //local count
-                inboxFolder.Open(FolderAccess.ReadOnly);
-                int newCount = inboxFolder.Count; //server cocunt
-
-                if (newCount != currentCount)
-                {
-                    //if there is more messages on the server than we have locally
-                    if (newCount > currentCount)
-                    {
-                        //Debug.WriteLine("New count = " + newCount + " Old count: " + currentCount);
-
-                       // var Task = addNewMessage(inboxFolder.FullName, newCount - currentCount);
-                        //Task.Wait();
-                    }
-
-                    if(newCount < currentCount)
-                    {
-                        //this is when a message is deleted on server
-                        //not implemented
-                    }                    
-                }
-            }
-
-            client.Disconnect(true);
-        }
-
         private static async Task addNewMessage(string folder, IList<UniqueId> uids)
         {
             //establish connecrion
@@ -135,10 +101,13 @@ namespace Email_System
                     // if (inBlackList) continue;
 
                     //existingMessages[folderIndex].Add(message);
-                    pendingMessages[folderIndex].Add(message);
-                        updatePending = true; // nok ikke nødvendigt
 
-                    Debug.WriteLine("new message added to: " + folder + folderIndex);
+                    if (!pendingMessages[folderIndex].Contains(message))
+                    {
+                        pendingMessages[folderIndex].Add(message);
+                       // updatePending = true; // nok ikke nødvendigt
+                        Debug.WriteLine("new message added to: " + folder + folderIndex);
+                    }
 
                 }
             }
@@ -156,7 +125,7 @@ namespace Email_System
 
         // Listen All folders
         // Checks for changes on the server, and updates local instance of server messages - pendingMessages
-        public static async void listenAllFolders()
+        public static async Task listenAllFolders()
         {
             // Establish connection
             var client = await Utility.establishConnectionImap();
@@ -165,11 +134,20 @@ namespace Email_System
             var i = login.GetInstance;
             var bw = i.folderListenerBW;
 
-            var folders = client.GetFolders(client.PersonalNamespaces[0]);
 
             //while we haven't cancelled the BW
             while (!bw.CancellationPending)
-            {
+            {          
+                
+                if(changedUids.Count > 0)
+                {
+                    Thread.Sleep(5000);
+                }
+
+                var folders = client.GetFolders(client.PersonalNamespaces[0]);
+
+                bool flag= false;
+
                 //loop through all folders
                 foreach (var folder in folders)
                 {
@@ -181,15 +159,26 @@ namespace Email_System
                     {
                         folder.Open(FolderAccess.ReadOnly);
 
+                        //for adding new folders
                         if (!existingFolders.Contains(folder.FullName))
                         {
                             existingFolders.Add(folder.FullName);
+
                             saveFolders(existingFolders);
                             Task task = loadFolders(bw);
                             task.Wait();
 
-                            Task task1 = Data.loadMessages(bw);
-                            task1.Wait();
+                            Debug.WriteLine("Created new folder");
+
+                            updatePending = true;
+
+                            List<msg> newFolderList = new List<msg>();
+                            pendingMessages.Add(newFolderList);
+
+                            saveMessages(pendingMessages);
+
+                            Thread.Sleep(1000);
+                            //Utility.refreshCurrentFolder();
 
                             Utility.refreshCurrentFolder();
                         }
@@ -228,8 +217,11 @@ namespace Email_System
                             {
                                 if (!uidsExisting.Contains(u.Id))
                                 {
-                                    //we have recieved a new message on the server
-                                    missing_uids.Add(u);
+                                    if (!changedUids.Contains(u.Id))
+                                    {
+                                        //we have recieved a new message on the server
+                                        missing_uids.Add(u);
+                                    }
                                 }
                             }
 
@@ -240,7 +232,8 @@ namespace Email_System
                                 //if serverIds doesn't contain some uid we have locally, it must be the case that it was deleted
                                 if (!serverAllIds.Contains(u))
                                 {
-                                    removed_uid.Add(u);
+                                    if(!changedUids.Contains(u))
+                                        removed_uid.Add(u);
                                 }
                             }
 
@@ -258,18 +251,22 @@ namespace Email_System
                                 Task.Wait();
                             }
 
+                            //if something was found to add or remove, set updatepending to true
                             if ((missing_uids.Count > 0 || removed_uid.Count > 0))
                             {
-                                updatePending = true;
-
-                                saveMessages(pendingMessages);
-
-                                Thread.Sleep(1000);
-                                Utility.refreshCurrentFolder();
+                                flag = true;
                             }
+                        }
 
+                        if (flag)
+                        {
+                            saveMessages(pendingMessages);
 
+                            updatePending = true;
+                            Thread.Sleep(1000);
+                            Utility.refreshCurrentFolder();
 
+                            flag = false;
                         }
                     }
 
@@ -453,6 +450,8 @@ namespace Email_System
                 }                
             }
 
+
+
             Debug.WriteLine("messages loaded");
             loadExistingMessages();
         }
@@ -549,23 +548,29 @@ namespace Email_System
 
             message.flags = messageSummary.Flags.ToString()!;
 
+            // Make blacklist check
+            bool black = containedInBlacklist(message.sender, message.subject, message.body);
+            if (black)
+            {
+                message.flags += ", BLACK";
+            }
+
             return message;
         }
 
-        private static void saveFolders(List<string> folders)
+        public static void saveFolders(List<string> folders)
         {
             var json = JsonSerializer.Serialize(folders);
-            File.WriteAllText(Utility.username + "folders.json", json);            
+            File.WriteAllText(Utility.username + "folders.json", json);
+            Debug.WriteLine("all folders saved");
             exit = true;
         }
         public static void saveMessages(List<List<msg>> list)
         {
             var json = JsonSerializer.Serialize(list);
-//            File.WriteAllText("messages.json", json);
             File.WriteAllText(Utility.username + "messages.json", json);
             Debug.WriteLine("all messages saved");
         }
-
 
         //maybe add even more names?
         static string[] TrashFolderNames = { "Deleted", "Trash", "Papirkurv" };
@@ -712,6 +717,41 @@ namespace Email_System
             return null!;
         }
 
+        static string[] SpamFolderNames = { "Spam", "Junk", "Reklame" };
+        public static async Task<IMailFolder> GetSpamFolder(ImapClient client = null!)
+        {
+            if (client == null)
+            {
+                client = await Utility.establishConnectionImap();
+            }
+
+            if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0)
+            {
+                var spamFolder = client.GetFolder(SpecialFolder.Junk);
+                spamFolderName = spamFolder.FullName;
+                return spamFolder;
+            }
+
+            else
+            {
+                var personal = client.GetFolder(client.PersonalNamespaces[0]);
+
+                foreach (var folder in personal.GetSubfolders(false, CancellationToken.None))
+                {
+                    foreach (var name in SpamFolderNames)
+                    {
+                        if (folder.Name == name)
+                        {
+                            spamFolderName = folder.FullName;
+                            return folder;
+                        }
+                    }
+                }
+            }
+
+            return null!;
+        }
+
         public static void deleteFiles()
         {
             File.Delete(Utility.username + "messages.json");
@@ -719,13 +759,16 @@ namespace Email_System
         }
 
 
+
         // ---- BLACK LIST -----
-        public static string BLACK_LIST_FILE_NAME = "BLACK_LIST.json";
+        public static string BLACK_LIST_EMAILS_FILE_NAME = "BLACK_LIST_EMAILS.json";
+        public static string BLACK_LIST_WORDS_FILE_NAME = "BLACK_LIST_WORDS.json";
 
         // 2D blacklist
         // black_list[0] -> email black_list
         // black_list[1] -> word black_list
-        public static List<List<string>> black_list = new List<List<string>>();
+        public static List<string> black_list_emails = new List<string>();
+        public static List<string> black_list_words = new List<string>();
 
         // This method is called upon login by X
         // 1) If a black list file does not exist in the root of the project, 
@@ -733,20 +776,44 @@ namespace Email_System
         // 2) If a black list file does exist, then the content is loaded into the attribute black_list
         public static void loadOrCreateBlackListFile()
         {
-            bool fileExists = File.Exists(BLACK_LIST_FILE_NAME);
+            bool emailFileExists = File.Exists(BLACK_LIST_EMAILS_FILE_NAME);
+            bool wordFileExists = File.Exists(BLACK_LIST_WORDS_FILE_NAME);
             // File does exist
-            // Load content into black_list
-            if (fileExists)
+            // Load content into black_list_emails
+            if (emailFileExists)
             {
-                string json = File.ReadAllText(BLACK_LIST_FILE_NAME);
-                var temp_black_list = JsonSerializer.Deserialize<List<List<string>>>(json);
-                if (temp_black_list != null) black_list = new List<List<string>>(temp_black_list);
+                Debug.WriteLine("Black Email File Exist");
+                string json = File.ReadAllText(BLACK_LIST_EMAILS_FILE_NAME);
+                if (new FileInfo(BLACK_LIST_EMAILS_FILE_NAME).Length != 0)
+                {
+                    var temp_black_list = JsonSerializer.Deserialize<List<string>>(json);
+                    if (temp_black_list != null) black_list_emails = new List<string>(temp_black_list);
+                }
+
             }
-            // File does not exist
-            // Creates file
-            else
+            // Load content into black_list_words
+            if (wordFileExists)
             {
-                File.Create(BLACK_LIST_FILE_NAME);
+                Debug.WriteLine("Black Word File Exist");
+                string json = File.ReadAllText(BLACK_LIST_WORDS_FILE_NAME);
+                if (new FileInfo(BLACK_LIST_WORDS_FILE_NAME).Length != 0)
+                {
+                    var temp_black_list = JsonSerializer.Deserialize<List<string>>(json);
+                    if (temp_black_list != null) black_list_words = new List<string>(temp_black_list);
+                }
+            }
+
+            // File does not exist
+            // Create files
+            if (!emailFileExists)
+            {
+                Debug.WriteLine("Black email file does not exist, creating now");
+                File.Create(BLACK_LIST_EMAILS_FILE_NAME);
+            }
+            if (!wordFileExists)
+            {
+                Debug.WriteLine("Black word file does not exist, creating now");
+                File.Create(BLACK_LIST_WORDS_FILE_NAME);
             }
         }
 
@@ -755,8 +822,21 @@ namespace Email_System
         // It saves the content from the variable black_list into a file
         public static void saveBlackListFile()
         {
-            var json = JsonSerializer.Serialize(black_list);
-            File.WriteAllText(BLACK_LIST_FILE_NAME, json);
+            // Write to blacklist emails file
+            if (black_list_emails.Count != 0)
+            {
+                var json_emails = JsonSerializer.Serialize(black_list_emails);
+                File.WriteAllText(BLACK_LIST_EMAILS_FILE_NAME, json_emails);
+            }
+
+
+            // Write to blacklist words file
+            if (black_list_words.Count != 0)
+            {
+                var json_words = JsonSerializer.Serialize(black_list_words);
+                File.WriteAllText(BLACK_LIST_WORDS_FILE_NAME, json_words);
+            }
+
         }
 
         // addToBlackList
@@ -764,16 +844,16 @@ namespace Email_System
         // Add blacklist arrays to black_list
         public static void addToBlackList(string[] words, string[] emails)
         {
-            black_list[0].AddRange(emails);
-            black_list[1].AddRange(words);
+            black_list_emails.AddRange(emails);
+            black_list_words.AddRange(words);
         }
 
         // containedInBlackList
         // NEED IMPLEMENTATION!
         private static bool containedInBlacklist(string sender, string subject, string body)
         {
-            var black_emails = black_list[0];
-            var black_words = black_list[1];
+            var black_emails = black_list_emails;
+            var black_words = black_list_words;
 
             // Sender check
             bool inBlackList = false;
@@ -791,6 +871,38 @@ namespace Email_System
 
             // If reached here, no spam was detected
             return false;
+        }
+
+        // blackListFilter
+        // Filters out messages containing a blacklisted word or a blacklisted sender
+        public static void blackListFilter()
+        {
+            // Get Index of junk folder
+            int junkFolderIndex = existingFolders.IndexOf(spamFolderName);
+
+            // Loop through all messages except the ones in trashfolder 
+            for (int folderIndex = 0; folderIndex < pendingMessages.Count; folderIndex++)
+            {
+                // Junkfolder encountered
+                if (folderIndex == junkFolderIndex) continue;
+
+                // Loop through messages in folder
+                int messagesInFolder = pendingMessages[folderIndex].Count;
+                for (int messageIndex = 0; messageIndex < messagesInFolder; messageIndex++)
+                {
+                    msg curMessage = pendingMessages[folderIndex][messageIndex];
+                    string flags = curMessage.flags;
+                    bool containBlack = flags.Contains("BLACK");
+                    if (containBlack)
+                    {
+                        // Move to different folder:)))
+                        Utility.moveMsgSpam(curMessage.uid, curMessage.folder);
+
+                    }
+                }
+            }
+
+            // Set pending flag to true
         }
     }
 }
