@@ -84,5 +84,14 @@ namespace Email_System
                 toggleLocalStorage(offlineModeCB.Checked);
             }
         }
+
+
+        // Blacklist button clicked
+        // NOTE: Designer does not allow me to change the name! 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Blacklist blacklist = new Blacklist();
+            blacklist.Show();
+        }
     }
 }

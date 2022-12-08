@@ -165,3 +165,4 @@ D:\Software_engineering_project\Andreas_email_sandbox\Email System\obj\Debug\net
 D:\Software_engineering_project\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.pdb
 D:\Software_engineering_project\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email System.genruntimeconfig.cache
 D:\Software_engineering_project\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\ref\Email System.dll
+C:\Users\buste\Source\Repos\Software_engineering_project\Andreas_email_sandbox\Email System\obj\Debug\net6.0-windows\Email_System.Blacklist.resources
