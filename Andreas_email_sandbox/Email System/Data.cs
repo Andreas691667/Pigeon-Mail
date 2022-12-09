@@ -20,7 +20,7 @@ namespace Email_System
         public struct msg
         {
             public uint uid { get; set; }
-            public ulong gmailMessageId { get; set; }
+            public ulong? gmailMessageId { get; set; }
             public string body { get; set; }
             public string htmlBody { get; set; }
             public string from { get; set; }
@@ -397,7 +397,7 @@ namespace Email_System
 
                         await folder.OpenAsync(FolderAccess.ReadOnly);
 
-                        var messageSummaries = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags);
+                        var messageSummaries = await folder.FetchAsync(0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags | MessageSummaryItems.GMailMessageId);
 
                         List<msg> messages = new List<msg>();
 
@@ -462,7 +462,11 @@ namespace Email_System
 
             if(messageSummary.GMailMessageId != null)
             {
-                message.gmailMessageId = (ulong)messageSummary.GMailMessageId;
+                message.gmailMessageId = messageSummary.GMailMessageId;
+            }
+            else
+            {
+                message.gmailMessageId = 0;
             }
 
 

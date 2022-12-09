@@ -258,16 +258,13 @@ namespace Email_System
 
                     //make the changes on server and refresh
                     server.addFlagServer(m.folder, index, m.uid);
-                    refreshCurrentFolder();
-
-
-                    
+                    refreshCurrentFolder();                    
                 }
 
                 //remove flag instead if the mail was already flagged
                 else if (subject.Contains("(FLAGGED)"))
                 {
-                    uint uid = m.uid;
+                    ulong? gmailMessageId = m.gmailMessageId;
 
                     int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
                     Data.UIMessages[folderIndex].Remove(m);
@@ -293,8 +290,7 @@ namespace Email_System
 
                                 Data.msg curMsg = Data.UIMessages[folder][msg];
 
-                                if (curMsg.subject == m.subject && curMsg.body == m.body && curMsg.cc == m.cc && curMsg.from == m.from 
-                                    && curMsg.to == m.to && curMsg.sender == m.sender && curMsg.date == m.date)
+                                if(curMsg.gmailMessageId == gmailMessageId)
                                 {
                                     curMsg.flags = curMsg.flags.Replace("(FLAGGED)", "");
                                     curMsg.flags = curMsg.flags.Replace("Flagged", "");
