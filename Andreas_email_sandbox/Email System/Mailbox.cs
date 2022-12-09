@@ -235,8 +235,6 @@ namespace Email_System
         {
             try
             {
-                //server.killListeners();
-
                 int messageIndex = messagesDGV.CurrentCell.RowIndex;            //get messageindex
                 Data.msg m = currentFolderMessages[messageIndex];               //retrieve the messae object
                 string subject = messagesDGV[2, messageIndex].Value.ToString(); //get subject of message
@@ -261,16 +259,17 @@ namespace Email_System
                     //make the changes on server and refresh
                     server.addFlagServer(m.folder, index, m.uid);
                     refreshCurrentFolder();
+
+
+                    
                 }
 
                 //remove flag instead if the mail was already flagged
                 else if (subject.Contains("(FLAGGED)"))
                 {
-                    //int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
-                    //Data.UIMessages[folderIndex].Remove(m);
-                    //refreshCurrentFolder();
+                    uint uid = m.uid;
 
-                                        int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
+                    int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
                     Data.UIMessages[folderIndex].Remove(m);
                     var index = Data.UIMessages[folderDGV.CurrentCell.RowIndex].IndexOf(m);
 
@@ -284,52 +283,31 @@ namespace Email_System
                         server.removeFlagServer(m.folder, m.uid);
                     }
 
+                    //if the message is unflagged from flagged folder
                     else
                     {
-                        refreshCurrentFolder();
-                        server.removeFlagServer(m.folder, m.uid);
-                    }
-
-                    /*Data.changedUids.Add(m.uid);
-
-                    var index = Data.UIMessages[folderDGV.CurrentCell.RowIndex].IndexOf(m);
-
-                    if (index != -1)
-                    {
-                        m.flags = m.flags.Replace("(FLAGGED)", "");
-                        m.flags = m.flags.Replace("Flagged", "");
-                        for(int i = 0; i < Data.UIMessages.Count; i++)
+                        for (int folder = 0; folder < Data.UIMessages.Count; folder++)
                         {
-                            for(int j =0; i < Data.UIMessages[i].Count; j++)
+                            for (int msg = 0; msg < Data.UIMessages[folder].Count; msg ++)
                             {
-                                var curMsg = Data.UIMessages[i][j];
 
-                                if(curMsg.folder == Data.flaggedFolderName)
-                                {
-                                    Data.UIMessages[i].RemoveAt(j);
-                                    break;
-                                }
+                                Data.msg curMsg = Data.UIMessages[folder][msg];
 
-                                else if(curMsg.uid == m.uid)
+                                if (curMsg.subject == m.subject && curMsg.body == m.body && curMsg.cc == m.cc && curMsg.from == m.from 
+                                    && curMsg.to == m.to && curMsg.sender == m.sender && curMsg.date == m.date)
                                 {
-                                    Data.UIMessages[i][j] = m;
-                                    Data.pendingMessages[i][j] = m;
+                                    curMsg.flags = curMsg.flags.Replace("(FLAGGED)", "");
+                                    curMsg.flags = curMsg.flags.Replace("Flagged", "");
+                                    Data.UIMessages[folder][msg] = curMsg;
+                                    Data.pendingMessages[folder][msg] = curMsg;
                                 }
                             }
                         }
 
-*/
-/*                        refreshCurrentFolder();
-                        server.removeFlagServer(m.folder, m.uid);*/
-/*                    }
-
-                    else
-                    {
                         refreshCurrentFolder();
                         server.removeFlagServer(m.folder, m.uid);
+                        
                     }
-
-                    refreshCurrentFolder();*/
                 }
             }
 
@@ -337,9 +315,7 @@ namespace Email_System
             {
                 Debug.WriteLine(ex.Message);
                 MessageBox.Show("No message selected!");
-            }
-
-           
+            }           
         }
 
         //deletes the selected message completely
@@ -738,7 +714,6 @@ namespace Email_System
                     return;
                 }
 
-                Utility.logMessage("Creating folder. This might take a while", 6000);
                 server.killListeners();
                 string folderName = newFolderTB.Text;
                 createFolder(folderName);
@@ -753,9 +728,7 @@ namespace Email_System
             {
                 newFolderTB.Clear();
                 server.startListeners();
-                //refreshCurrentFolder();
                 Utility.logMessage("Creating folder. This might take a while", 10000);
-
             }
         }
 

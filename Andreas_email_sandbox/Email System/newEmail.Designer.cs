@@ -230,7 +230,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(934, 553);
             this.Name = "newEmail";
-            this.Text = "Form2";
+            this.Text = "New e-mail";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.newEmail_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();

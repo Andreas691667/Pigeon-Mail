@@ -20,6 +20,7 @@ namespace Email_System
         public struct msg
         {
             public uint uid { get; set; }
+            public ulong gmailMessageId { get; set; }
             public string body { get; set; }
             public string htmlBody { get; set; }
             public string from { get; set; }
@@ -459,11 +460,9 @@ namespace Email_System
         private static msg buildMessage(msg message, IMessageSummary messageSummary, string folderName)
         {
 
-            if (messageSummary.HtmlBody != null)
+            if(messageSummary.GMailMessageId != null)
             {
-                var h = messageSummary.HtmlBody.ToString();
-
-                message.htmlBody = h;
+                message.gmailMessageId = (ulong)messageSummary.GMailMessageId;
             }
 
 

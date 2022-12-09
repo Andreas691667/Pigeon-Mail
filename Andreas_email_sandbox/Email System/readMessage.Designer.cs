@@ -284,7 +284,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(1117, 745);
             this.Name = "readMessage";
-            this.Text = "readMessage";
+            this.Text = "Mail";
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.attachmentsPanel.ResumeLayout(false);
