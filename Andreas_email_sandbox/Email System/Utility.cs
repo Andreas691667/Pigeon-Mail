@@ -355,3 +355,13 @@ namespace Email_System
         }
     }
 }
+
+//case insensitive string contains function from:
+//https://stackoverflow.com/questions/444798/case-insensitive-containsstring
+public static class StringExtensions
+{
+    public static bool Contains(this string source, string toCheck, StringComparison comp)
+    {
+        return source?.IndexOf(toCheck, comp) >= 0;
+    }
+}

@@ -86,7 +86,7 @@
             this.replyBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.replyBt.Image = global::Email_System.Properties.Resources.icons8_reply_32;
             this.replyBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.replyBt.Location = new System.Drawing.Point(20, 26);
+            this.replyBt.Location = new System.Drawing.Point(20, 43);
             this.replyBt.Name = "replyBt";
             this.replyBt.Size = new System.Drawing.Size(94, 58);
             this.replyBt.TabIndex = 0;
@@ -100,7 +100,7 @@
             this.replyAllBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.replyAllBt.Image = global::Email_System.Properties.Resources.icons8_reply_all_32;
             this.replyAllBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.replyAllBt.Location = new System.Drawing.Point(120, 26);
+            this.replyAllBt.Location = new System.Drawing.Point(120, 43);
             this.replyAllBt.Name = "replyAllBt";
             this.replyAllBt.Size = new System.Drawing.Size(94, 58);
             this.replyAllBt.TabIndex = 1;
@@ -114,7 +114,7 @@
             this.forwardBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.forwardBt.Image = global::Email_System.Properties.Resources.icons8_forward_message_32;
             this.forwardBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.forwardBt.Location = new System.Drawing.Point(220, 26);
+            this.forwardBt.Location = new System.Drawing.Point(220, 43);
             this.forwardBt.Name = "forwardBt";
             this.forwardBt.Size = new System.Drawing.Size(94, 58);
             this.forwardBt.TabIndex = 2;
@@ -140,7 +140,7 @@
             this.closeBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.closeBt.Image = global::Email_System.Properties.Resources.icons8_close_32;
             this.closeBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.closeBt.Location = new System.Drawing.Point(518, 26);
+            this.closeBt.Location = new System.Drawing.Point(518, 43);
             this.closeBt.Name = "closeBt";
             this.closeBt.Size = new System.Drawing.Size(94, 58);
             this.closeBt.TabIndex = 5;
@@ -154,7 +154,7 @@
             this.deleteMessageBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.deleteMessageBt.Image = global::Email_System.Properties.Resources.icons8_remove_32;
             this.deleteMessageBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.deleteMessageBt.Location = new System.Drawing.Point(419, 26);
+            this.deleteMessageBt.Location = new System.Drawing.Point(419, 43);
             this.deleteMessageBt.Name = "deleteMessageBt";
             this.deleteMessageBt.Size = new System.Drawing.Size(93, 58);
             this.deleteMessageBt.TabIndex = 4;
@@ -168,7 +168,7 @@
             this.moveToTrashBT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.moveToTrashBT.Image = global::Email_System.Properties.Resources.icons8_trash_32;
             this.moveToTrashBT.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.moveToTrashBT.Location = new System.Drawing.Point(319, 26);
+            this.moveToTrashBT.Location = new System.Drawing.Point(319, 43);
             this.moveToTrashBT.Name = "moveToTrashBT";
             this.moveToTrashBT.Size = new System.Drawing.Size(94, 58);
             this.moveToTrashBT.TabIndex = 3;
@@ -181,16 +181,16 @@
             // 
             this.attachmentsLb.FormattingEnabled = true;
             this.attachmentsLb.ItemHeight = 20;
-            this.attachmentsLb.Location = new System.Drawing.Point(3, 30);
+            this.attachmentsLb.Location = new System.Drawing.Point(3, 41);
             this.attachmentsLb.Name = "attachmentsLb";
-            this.attachmentsLb.Size = new System.Drawing.Size(251, 84);
+            this.attachmentsLb.Size = new System.Drawing.Size(316, 104);
             this.attachmentsLb.TabIndex = 0;
             // 
             // downloadAttachmentBt
             // 
             this.downloadAttachmentBt.Image = global::Email_System.Properties.Resources.icons8_download_32;
             this.downloadAttachmentBt.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.downloadAttachmentBt.Location = new System.Drawing.Point(260, 75);
+            this.downloadAttachmentBt.Location = new System.Drawing.Point(325, 109);
             this.downloadAttachmentBt.Name = "downloadAttachmentBt";
             this.downloadAttachmentBt.Size = new System.Drawing.Size(113, 36);
             this.downloadAttachmentBt.TabIndex = 1;
@@ -210,7 +210,7 @@
             this.panel1.Controls.Add(this.replyAllBt);
             this.panel1.Location = new System.Drawing.Point(459, 582);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(628, 87);
+            this.panel1.Size = new System.Drawing.Size(628, 104);
             this.panel1.TabIndex = 0;
             // 
             // attachmentsPanel
@@ -220,9 +220,9 @@
             this.attachmentsPanel.Controls.Add(this.label1);
             this.attachmentsPanel.Controls.Add(this.downloadAttachmentBt);
             this.attachmentsPanel.Controls.Add(this.pictureBox1);
-            this.attachmentsPanel.Location = new System.Drawing.Point(12, 555);
+            this.attachmentsPanel.Location = new System.Drawing.Point(12, 537);
             this.attachmentsPanel.Name = "attachmentsPanel";
-            this.attachmentsPanel.Size = new System.Drawing.Size(402, 117);
+            this.attachmentsPanel.Size = new System.Drawing.Size(441, 149);
             this.attachmentsPanel.TabIndex = 1;
             this.attachmentsPanel.Visible = false;
             // 

@@ -44,6 +44,7 @@
             this.attachmentsLb = new System.Windows.Forms.ListBox();
             this.removeAttachmentBt = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
+            this.sizeLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // sendBt
@@ -206,12 +207,23 @@
             this.label4.Text = "Message:";
             this.label4.Visible = false;
             // 
+            // sizeLabel
+            // 
+            this.sizeLabel.AutoSize = true;
+            this.sizeLabel.Location = new System.Drawing.Point(136, 170);
+            this.sizeLabel.Name = "sizeLabel";
+            this.sizeLabel.Size = new System.Drawing.Size(34, 20);
+            this.sizeLabel.TabIndex = 14;
+            this.sizeLabel.Text = "size";
+            this.sizeLabel.Visible = false;
+            // 
             // newEmail
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(916, 506);
+            this.Controls.Add(this.sizeLabel);
             this.Controls.Add(this.removeAttachmentBt);
             this.Controls.Add(this.attachmentsLb);
             this.Controls.Add(this.attachmentsLabel);
@@ -254,5 +266,6 @@
         private ListBox attachmentsLb;
         private Button removeAttachmentBt;
         private Label label4;
+        private Label sizeLabel;
     }
 }

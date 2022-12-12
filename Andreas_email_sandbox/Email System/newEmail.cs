@@ -32,6 +32,7 @@ namespace Email_System
         bool isDraft = false;
         bool exitFromBt = false;
         bool messageSent = false;
+        double collectedFileSize = 0;
 
         //type keys:
         // 0: blank email
@@ -325,8 +326,19 @@ namespace Email_System
                 attachmentsLb.Visible = true;
                 removeAttachmentBt.Visible = true;
 
+                var size =(double) new FileInfo(openFileDialog.FileName).Length;
+                size *= 0.000001;
+
+                collectedFileSize += size;
+
+                collectedFileSize = Math.Round(collectedFileSize, 2);
+
+                sizeLabel.Visible = true;
+                sizeLabel.Text = "(" + collectedFileSize.ToString() + "MB" + " )";
+
                 string fileName = openFileDialog.FileName;
                 string fileNameShort = fileName.Substring(fileName.LastIndexOf('\\') + 1) + " ";
+
 
                 attachmentsLb.Items.Add(fileNameShort);
 
@@ -359,11 +371,13 @@ namespace Email_System
 
                 messageSent = true;
                 this.Close();
+
                 Utility.logMessage("Sending message", 3000);
 
                 try
                 {
                     client.Send(message);
+
                     //if the message was a draft, we should delete it from the draft folder!
                     if (isDraft)
                     {
@@ -384,10 +398,10 @@ namespace Email_System
                     client.Disconnect(true);
                     client.Dispose();
 
-                    Utility.logMessage("Message sent successfully!", 3000);
-
                     if (!isDraft)
                         server.startListeners();
+
+                    Utility.logMessage("Message sent successfully!", 3000);
                 }
             }
 
@@ -561,6 +575,7 @@ namespace Email_System
                 removeAttachmentBt.Visible = false;
                 attachmentsLb.Visible = false;
                 attachmentsLabel.Visible = false;
+                sizeLabel.Visible = false;  
             }
         }
 

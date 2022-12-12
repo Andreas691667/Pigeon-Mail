@@ -3,6 +3,7 @@ using MailKit.Net.Imap;
 using Org.BouncyCastle.Asn1.Cmp;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Xml.Linq;
 using static Email_System.Data;
 
@@ -264,7 +265,7 @@ namespace Email_System
                 //remove flag instead if the mail was already flagged
                 else if (subject.Contains("(FLAGGED)"))
                 {
-                    ulong? gmailMessageId = m.gmailMessageId;
+                    //ulong? gmailMessageId = m.gmailMessageId;
 
                     int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
                     Data.UIMessages[folderIndex].Remove(m);
@@ -287,10 +288,11 @@ namespace Email_System
                         {
                             for (int msg = 0; msg < Data.UIMessages[folder].Count; msg ++)
                             {
-
                                 Data.msg curMsg = Data.UIMessages[folder][msg];
 
-                                if(curMsg.gmailMessageId == gmailMessageId)
+                                // if(curMsg.gmailMessageId == gmailMessageId)
+                                if (curMsg.subject == m.subject && curMsg.body == m.body && curMsg.cc == m.cc && curMsg.from == m.from
+                                    && curMsg.to == m.to && curMsg.sender == m.sender && curMsg.date == m.date)
                                 {
                                     curMsg.flags = curMsg.flags.Replace("(FLAGGED)", "");
                                     curMsg.flags = curMsg.flags.Replace("Flagged", "");
@@ -301,8 +303,7 @@ namespace Email_System
                         }
 
                         refreshCurrentFolder();
-                        server.removeFlagServer(m.folder, m.uid);
-                        
+                        server.removeFlagServer(m.folder, m.uid);                        
                     }
                 }
             }
@@ -430,7 +431,8 @@ namespace Email_System
                 {
                     if (contentRBT.Checked)
                     {
-                        if(msg.body.Contains(searchQuery))
+                        //if(msg.body.Contains(searchQuery))
+                        if (msg.body.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
                         {
                             searchResults.Add(msg);
                         }
@@ -438,7 +440,9 @@ namespace Email_System
 
                     else if (subjectRBT.Checked)
                     {
-                        if (msg.subject.Contains(searchQuery))
+                        //if (msg.subject.Contains(searchQuery))
+                        
+                        if(msg.subject.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
                         {
                             searchResults.Add(msg);
                         }
@@ -446,7 +450,8 @@ namespace Email_System
 
                     else if (senderRBT.Checked)
                     {
-                        if (msg.from.Contains(searchQuery))
+                        //if (msg.from.Contains(searchQuery))
+                        if (msg.from.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
                         {
                             searchResults.Add(msg);
                         }
