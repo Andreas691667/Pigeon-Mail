@@ -3,6 +3,7 @@ using MailKit.Net.Imap;
 using Org.BouncyCastle.Asn1.Cmp;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using static Email_System.Data;
@@ -90,7 +91,7 @@ namespace Email_System
 
             try
             {
-                var dt2 = DateTime.ParseExact(date, "dd-MM-yyyy HH:mm:ss", null);
+                var dt2 = DateTime.Parse(date);
                 messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body, dt2);
             }
 

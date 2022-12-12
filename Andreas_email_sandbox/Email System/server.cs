@@ -102,7 +102,7 @@ namespace Email_System
             finally
             {
                 await client.DisconnectAsync(true);
-                await Task.Delay(5000);
+                //await Task.Delay(5000);
                 Data.changedUids.Remove(idToRemove);
             }
         }
@@ -193,7 +193,6 @@ namespace Email_System
             finally
             {
                 await client.DisconnectAsync(true);
-                await Task.Delay(5000);
                 Data.changedUids.Remove(idToRemove);
             }
         }
