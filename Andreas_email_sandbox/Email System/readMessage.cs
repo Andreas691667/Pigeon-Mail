@@ -184,7 +184,13 @@ namespace Email_System
 
         private void forwardBt_Click(object sender, EventArgs e)
         {
-            new newEmail(3, null!, msg.body, msg.subject, msg.to, msg.from, msg.cc, msg.attachments, msg.folder).Show();
+            DialogResult d = MessageBox.Show("Do you wish to include attachments?", "Include attachments?", MessageBoxButtons.YesNo);
+
+            if(d == DialogResult.Yes)
+                new newEmail(3, null!, msg.body, msg.subject, msg.to, msg.from, msg.cc, msg.attachments, msg.folder, msg.uid).Show();
+
+            else if(d == DialogResult.No)
+                new newEmail(3, null!, msg.body, msg.subject, msg.to, msg.from, msg.cc, null!, msg.folder, msg.uid).Show();
         }
 
         private void replyAllBt_Click(object sender, EventArgs e)

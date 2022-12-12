@@ -409,6 +409,7 @@ namespace Email_System
             {
                 Data.saveMessages(Data.UIMessages);
                 Data.saveFolders(Data.existingFolders);
+                Data.saveBlackListFile();
             }
 
             if (!Properties.Settings.Default.downloadMessagesEnabled)

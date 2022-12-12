@@ -89,6 +89,8 @@ namespace Email_System
                 Properties.Settings.Default.Save();
             }
 
+            Data.loadOrCreateBlackListFile();
+
             // Get username and password
             string username = usernameTb.Text;
             string password = passwordTb.Text;

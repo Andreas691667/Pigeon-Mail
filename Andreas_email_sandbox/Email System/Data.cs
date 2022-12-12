@@ -103,6 +103,12 @@ namespace Email_System
 
                     //existingMessages[folderIndex].Add(message);
 
+                    if(containedInBlacklist(message.from, message.subject, message.body))
+                    {
+                        Utility.moveMsgSpam(message.uid, message.folder);
+                    }
+
+
                     if (!pendingMessages[folderIndex].Contains(message))
                     {
                         pendingMessages[folderIndex].Add(message);
@@ -552,11 +558,11 @@ namespace Email_System
             message.flags = messageSummary.Flags.ToString()!;
 
             // Make blacklist check
-            bool black = containedInBlacklist(message.sender, message.subject, message.body);
+/*            bool black = containedInBlacklist(message.sender, message.subject, message.body);
             if (black)
             {
                 message.flags += ", BLACK";
-            }
+            }*/
 
             return message;
         }

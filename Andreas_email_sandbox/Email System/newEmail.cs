@@ -124,7 +124,7 @@ namespace Email_System
             }
         }
 
-        private void flagForward()
+        private async void flagForward()
         {
             //messageSender = m;
 
@@ -140,9 +140,74 @@ namespace Email_System
             messageBodyTb.AppendText(msg.to);
             messageBodyTb.AppendText(Environment.NewLine);
             messageBodyTb.AppendText(msg.body);
+
+            //get attachments from message
+            if (msg.attachments != null && Utility.connectedToInternet())
+            {
+                string[] attachments = msg.attachments.Split(';');
+
+                var client = await Utility.establishConnectionImap();
+                var f = client.GetFolder(msg.folder);
+                f.Open(FolderAccess.ReadWrite);
+
+                var id = new UniqueId[] { new UniqueId(msg.uid) };
+
+                var items = f.Fetch(id, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure);
+
+                //traverse over the attachments
+                foreach (var item in items)
+                {
+                    attachmentsLabel.Visible = true;
+                    attachmentsLb.Visible = true;
+                    removeAttachmentBt.Visible = true;
+
+                    foreach (var attachment in item.Attachments)
+                    {
+                        //add filename to listbox
+                        attachmentsLb.Items.Add(attachment.FileName);
+
+                        MimeEntity entity = f.GetBodyPart(item.UniqueId, attachment);
+
+                        var tempFolder = Path.GetTempPath();
+
+                        if (entity is MessagePart)
+                        {
+                            var rfc822 = (MessagePart)entity;
+                            var path = Path.Combine(tempFolder, attachment.PartSpecifier + ".eml");
+                            rfc822.Message.WriteTo(path);
+
+                            //display the file in file explorer
+                            string argument = "/select, \"" + path + "\"";
+
+                            addAttachment(path);
+                        }
+
+                        else
+                        {
+                            var part = (MimePart)entity;
+
+                            // note: it's possible for this to be null, but most will specify a filename
+                            var fileName = part.FileName;
+
+                            var path = Path.Combine(tempFolder, fileName);
+
+                            // decode and save the content to a file
+                            using (var stream = File.Create(path))
+                                part.Content.DecodeTo(stream);
+
+                            //display the file in file explorer
+                            string argument = "/select, \"" + path + "\"";
+
+                            addAttachment(path);
+                        }
+                    }
+
+                }
+
+            }
         }
 
-        private async void flagDraft()
+            private async void flagDraft()
         {
             isDraft = true;
             draftBt.Enabled = false;
