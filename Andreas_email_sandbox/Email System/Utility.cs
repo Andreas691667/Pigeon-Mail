@@ -189,7 +189,7 @@ namespace Email_System
             //check we are not already in the trash folder
             if (spamFolderIndex == folderIndex)
             {
-                Utility.logMessage("Message is already in spam!", 3000);
+                //Utility.logMessage("Message is already in spam!", 3000);
                 return;
             }
 

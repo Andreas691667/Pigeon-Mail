@@ -96,23 +96,31 @@ namespace Email_System
                         message.body = "";
                     }
 
-                    // Blacklist detecting - Temporarily commented out
-                    // If contained in black list, continue to next message without adding it
-                    // bool inBlackList = containedInBlacklist(message.sender, message.subject, message.body);
-                    // if (inBlackList) continue;
+                    //moving a message to spam, is not implemented!
 
-                    //existingMessages[folderIndex].Add(message);
-
-                    if(containedInBlacklist(message.from, message.subject, message.body))
+/*                    if (containedInBlacklist(message.from, message.subject, message.body))
                     {
-                        Utility.moveMsgSpam(message.uid, message.folder);
-                    }
+                        //Utility.moveMsgSpam(message.uid, message.folder);
+                        var spamFolderIndex = Data.existingFolders.IndexOf(Data.spamFolderName);
+                        //check we are not already in the trash folder
+
+                        changedUids.Add(message.uid);
+                        pendingMessages[spamFolderIndex].Add(message);
+
+                        Tuple<string, uint> t = new Tuple<string, uint>(message.folder, message.uid);
+                        Queue<Tuple<string, uint>> spamQueue = new Queue<Tuple<string, uint>>();
+
+                        spamQueue.Enqueue(t);
+
+                        server.moveMsgSpamServer(spamQueue);
+
+                    }*/
 
 
                     if (!pendingMessages[folderIndex].Contains(message))
                     {
                         pendingMessages[folderIndex].Add(message);
-                       // updatePending = true; // nok ikke nødvendigt
+                        // updatePending = true; // nok ikke nødvendigt
                         Debug.WriteLine("new message added to: " + folder + folderIndex);
                     }
 

@@ -129,13 +129,17 @@ namespace Email_System
 
                     await folder.OpenAsync(FolderAccess.ReadWrite);
 
-                    await folder.MoveToAsync(id, spamFolder);
+                    var map = await folder.MoveToAsync(id, spamFolder);
+
+                    //var reMapped = map[id[0]];
+
+                    //Data.changedUids.Add(reMapped.Id);
 
                     //Utility.logMessage("Message moved to spam", 3000);
                     Debug.WriteLine("Moved message to spam");
                 }
 
-                startListeners();
+                //startListeners();
 
             }
 
@@ -146,8 +150,8 @@ namespace Email_System
 
             finally
             {
-                await client.DisconnectAsync(true);
-                await Task.Delay(5000);
+                client.Disconnect(true);
+                Thread.Sleep(5000);
                 Data.changedUids.Remove(idToRemove);
             }
         }
