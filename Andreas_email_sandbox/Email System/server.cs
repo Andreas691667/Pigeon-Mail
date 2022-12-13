@@ -272,5 +272,20 @@ namespace Email_System
 
             startListeners();
         }
+
+        public static async void markMsgAsUnreadServer(string folderIn, uint uid)
+        {
+            var client = await Utility.establishConnectionImap();
+            //remove flag to message
+            var folder = await client.GetFolderAsync(folderIn);
+            await folder.OpenAsync(FolderAccess.ReadWrite);
+            var id = new UniqueId[] { new UniqueId(uid) };
+            await folder.RemoveFlagsAsync(id, MessageFlags.Seen, true);
+            await client.DisconnectAsync(true);
+
+            Utility.logMessage("Message unread", 3000);
+
+            startListeners();
+        }
     }
 }
