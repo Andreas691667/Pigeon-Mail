@@ -341,6 +341,8 @@ namespace Email_System
                     Data.UIMessages[folderIndex][index] = m;
                     Data.pendingMessages[folderIndex][index] = m;
 
+                    refreshCurrentFolder();
+
                     // update on server
                     server.markMsgAsReadServer(m.folder, m.uid);
                 }
@@ -353,12 +355,14 @@ namespace Email_System
                     var folderIndex = Data.existingFolders.IndexOf(m.folder);
 
                     var index = Data.UIMessages[folderIndex].IndexOf(m);
-                    m.flags = m.flags.Replace("", "(UNREAD)");
-                    m.flags = m.flags.Replace(", Seen", "");
+                    //m.flags = m.flags += (", (UNREAD)");
+                    m.flags = m.flags.Replace("Seen", "");
 
                     // update the message in both UI and pending
                     Data.UIMessages[folderIndex][index] = m;
                     Data.pendingMessages[folderIndex][index] = m;
+
+                    refreshCurrentFolder();
 
                     // update on server
                     server.markMsgAsUnreadServer(m.folder, m.uid);
