@@ -125,9 +125,9 @@ namespace Email_System
             moveToTrashBt.Visible = value;
             deleteBt.Visible = value;
             messagesDGV.Enabled = value;
-            //deleteFolderBt.Visible = value;
-            //addFolderBt.Visible = value;
-            //newFolderTB.Visible = value;
+            deleteFolderBt.Visible = value;
+            addFolderBt.Visible = value;
+            newFolderTB.Visible = value;
             moveMessageBt.Visible = value;
             folderDropDown.Visible = value;
         }
@@ -432,6 +432,11 @@ namespace Email_System
                 Environment.Exit(0);
             }
 
+            if(!Utility.connectedToInternet())
+            {
+                Application.Exit();
+            }
+
             instance.Dispose();
         }
         //performing search in all emails
@@ -502,6 +507,12 @@ namespace Email_System
                     toggleButtons(true);
                     addMessageToMailbox(item);
                 }
+
+                if (!Utility.connectedToInternet())
+                {
+                    toggleButtons(false);
+                    messagesDGV.Enabled = true;
+                }
             }
         }
 
@@ -565,7 +576,8 @@ namespace Email_System
                     Data.UIMessages[folderIndex][index] = m;
                     Data.pendingMessages[folderIndex][index] = m;
 
-                    server.markMsgAsReadServer(m.folder, m.uid);
+                    if(Utility.connectedToInternet())
+                        server.markMsgAsReadServer(m.folder, m.uid);
                 }
 
                 new readMessage(m.body, m.from, m.to, m.cc, m.date, m.subject, m.attachments, m.folder, m.uid).Show();
