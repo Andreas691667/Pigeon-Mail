@@ -89,7 +89,6 @@ namespace Email_System
                 Properties.Settings.Default.Save();
             }
 
-            Data.loadOrCreateBlackListFile();
 
             // Get username and password
             string username = usernameTb.Text;
@@ -109,7 +108,10 @@ namespace Email_System
             
             // Set username and password in Utility class
             Utility.setUsername(usernameTb.Text);
-            Utility.setPassword(passwordTb.Text);                      
+            Utility.setPassword(passwordTb.Text);  
+            
+
+            Data.loadOrCreateBlackListFile();
 
 
             // Get SMTP Client

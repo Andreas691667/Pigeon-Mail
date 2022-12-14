@@ -564,7 +564,8 @@ namespace Email_System
                     message.attachments += attachment.FileName + ";";
                 }
             }
-            if (message.flags != null)
+
+            if (messageSummary.Flags != null)
             {
                 message.flags = messageSummary.Flags.ToString()!;
             } 
@@ -809,8 +810,8 @@ namespace Email_System
 
 
         // ---- BLACK LIST -----
-        public static string BLACK_LIST_EMAILS_FILE_NAME = "BLACK_LIST_EMAILS.json";
-        public static string BLACK_LIST_WORDS_FILE_NAME = "BLACK_LIST_WORDS.json";
+        public static string BLACK_LIST_EMAILS_FILE_NAME = Utility.username + "BLACK_LIST_EMAILS.json";
+        public static string BLACK_LIST_WORDS_FILE_NAME =  Utility.username + "BLACK_LIST_WORDS.json";
 
         // 2D blacklist
         // black_list[0] -> email black_list

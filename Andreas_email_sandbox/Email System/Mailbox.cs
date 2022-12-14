@@ -62,7 +62,7 @@ namespace Email_System
 
             try
             {
-                if (flagString != null)
+                if (!string.IsNullOrEmpty(flagString))
                 {
                     if (flagString.Contains("Flagged") || flagString.Contains("(FLAGGED)"))
                     {
@@ -80,31 +80,31 @@ namespace Email_System
                         if (item.folder != draftFolder)
                             subject += "(UNREAD) ";
                     }
-
-                    if (item.subject != "")
-                    {
-                        subject += item.subject;
-                    }
-
-                    else
-                    {
-                        item.subject = "<no subject>";
-                        subject += item.subject;
-                    }
                 }
-                
+
+                if (item.subject != "")
+                {
+                    subject += item.subject;
+                }
+
+                else
+                {
+                    item.subject = "<no subject>";
+                    subject += item.subject;
+                }
+
             } 
             catch(Exception ex) {
                 Debug.WriteLine("EXCEPTION!!!");
-            }
+            }           
 
             try
             {
                 if (item.date != null)
                 {
                     string date = item.date.Remove(item.date.LastIndexOf(' '));
-                    var dt2 = DateTime.Parse(date);
-                    messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body, dt2);
+                    //var dt2 = DateTime.Parse(date);
+                    messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body, date);
                 }
                 
             }
