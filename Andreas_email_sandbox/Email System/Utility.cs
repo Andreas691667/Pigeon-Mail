@@ -180,6 +180,7 @@ namespace Email_System
         }
 
 
+        /*
         public static void moveMsgSpam(uint uid, string srcFolder)
         {
 
@@ -230,6 +231,31 @@ namespace Email_System
             Debug.WriteLine("Found " + spamQueue.Count + " messages to move to trash");
             server.moveMsgSpamServer(spamQueue);
         }
+        */
+
+        // moveMsgFolderToFolder
+        // Moves a messages from one folder to another locally and on server
+        public static void moveMsgFolderToFolder (uint msg_uid, string srcFolderNamespace, string dstFolderNamespace)
+        {
+            // MOVE LOCALLY
+            // Get indexes
+            int srcFolderIndex = Data.existingFolders.IndexOf(srcFolderNamespace);
+            int dstFolderIndex = Data.existingFolders.IndexOf(dstFolderNamespace);
+
+            // Get message from message uid in UIMessages
+            Data.msg msg = Data.UIMessages[srcFolderIndex].Find(cur_msg => cur_msg.uid == msg_uid);
+
+            // Add to dstFolder in both UIMessages and PendingMessages
+            Data.pendingMessages[dstFolderIndex].Add(msg);
+
+            // Remove from srcFolder in both UIMessages and PendingMessages
+            Data.pendingMessages[srcFolderIndex].Remove(msg);
+
+            // Add to changeUids, to ensure no syncronization is happening until changes are made on server
+            Data.changedUids.Add(msg_uid);
+        }
+
+
 
         public static void moveMsg(uint uid, string sub, string folder)
         {

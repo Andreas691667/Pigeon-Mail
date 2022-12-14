@@ -75,9 +75,27 @@ namespace Email_System
 
         }
 
-        private void deleteItemFromBlackList(string type, string item)
+        // Delete word from blacklist clicked
+        private void button3_Click(object sender, EventArgs e)
         {
+            
+            var selectedItem = wordBlackList.SelectedItems[0];
+            if (selectedItem != null)
+            {
+                Data.black_list_words.Remove(selectedItem.Text);
+                wordBlackList.Items.Remove(selectedItem);
+            }
+        }
 
+        // Delete email from blacklist cliced
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var selectedItem = emailBlackList.SelectedItems[0];
+            if (selectedItem != null)
+            {
+                Data.black_list_emails.Remove(selectedItem.Text);
+                emailBlackList.Items.Remove(selectedItem);
+            }
         }
     }
 }
