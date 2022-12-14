@@ -98,26 +98,13 @@ namespace Email_System
 
                     //moving a message to spam, is not implemented!
 
-/*                    if (containedInBlacklist(message.from, message.subject, message.body))
+                    if (containedInBlacklist(message.from, message.subject, message.body))
                     {
-                        //Utility.moveMsgSpam(message.uid, message.folder);
-                        var spamFolderIndex = Data.existingFolders.IndexOf(Data.spamFolderName);
-                        //check we are not already in the trash folder
-
-                        changedUids.Add(message.uid);
-                        pendingMessages[spamFolderIndex].Add(message);
-
-                        Tuple<string, uint> t = new Tuple<string, uint>(message.folder, message.uid);
-                        Queue<Tuple<string, uint>> spamQueue = new Queue<Tuple<string, uint>>();
-
-                        spamQueue.Enqueue(t);
-
-                        server.moveMsgSpamServer(spamQueue);
-
-                    }*/
+                        moveToSpam(message);
+                    }
 
 
-                    if (!pendingMessages[folderIndex].Contains(message))
+                    else if (!pendingMessages[folderIndex].Contains(message))
                     {
                         pendingMessages[folderIndex].Add(message);
                         // updatePending = true; // nok ikke nødvendigt
@@ -136,6 +123,20 @@ namespace Email_System
             {
                 client.Disconnect(true);
             }
+        }
+
+        private static void moveToSpam(msg message)
+        {
+            // Add locally
+            int spamIndex = Data.existingFolders.IndexOf(spamFolderName);
+            pendingMessages[spamIndex].Add(message);
+            changedUids.Add(message.uid);
+
+            // Add to server
+            Queue<Tuple<string, uint>> q = new Queue<Tuple<string, uint>>();
+            Tuple<string, uint> tp = new Tuple<string, uint>(message.folder, message.uid);
+            q.Enqueue(tp);
+            server.moveMsgServer(q, spamFolderName);
         }
 
         // Listen All folders
@@ -469,6 +470,7 @@ namespace Email_System
 
             Debug.WriteLine("messages loaded");
             loadExistingMessages();
+
         }
 
         private static msg buildMessage(msg message, IMessageSummary messageSummary, string folderName)
@@ -562,8 +564,15 @@ namespace Email_System
                     message.attachments += attachment.FileName + ";";
                 }
             }
-
-            message.flags = messageSummary.Flags.ToString()!;
+            if (message.flags != null)
+            {
+                message.flags = messageSummary.Flags.ToString()!;
+            } 
+            else
+            {
+                message.flags = "";
+            }
+            
 
             // Make blacklist check
 /*            bool black = containedInBlacklist(message.sender, message.subject, message.body);
@@ -769,6 +778,28 @@ namespace Email_System
             return null!;
         }
 
+        public static async Task<IMailFolder> GetFolder(string folderName)
+        {
+            ImapClient client = await Utility.establishConnectionImap();
+
+            
+            switch(folderName)
+            {
+                case "LOL":
+                    return null;
+                    break;
+                default:
+                    break;
+
+            }
+
+
+            var spamFolder = client.GetFolder(SpecialFolder.Junk);
+            spamFolderName = spamFolder.FullName;
+            return spamFolder;
+
+        }
+
         public static void deleteFiles()
         {
             File.Delete(Utility.username + "messages.json");
@@ -840,19 +871,15 @@ namespace Email_System
         public static void saveBlackListFile()
         {
             // Write to blacklist emails file
-            if (black_list_emails.Count != 0)
-            {
-                var json_emails = JsonSerializer.Serialize(black_list_emails);
-                File.WriteAllText(BLACK_LIST_EMAILS_FILE_NAME, json_emails);
-            }
+            var json_emails = JsonSerializer.Serialize(black_list_emails);
+            File.WriteAllText(BLACK_LIST_EMAILS_FILE_NAME, json_emails);
+            
 
 
-            // Write to blacklist words file
-            if (black_list_words.Count != 0)
-            {
-                var json_words = JsonSerializer.Serialize(black_list_words);
-                File.WriteAllText(BLACK_LIST_WORDS_FILE_NAME, json_words);
-            }
+            // Write to blacklist words file    
+            var json_words = JsonSerializer.Serialize(black_list_words);
+            File.WriteAllText(BLACK_LIST_WORDS_FILE_NAME, json_words);
+            
 
         }
 
@@ -874,15 +901,15 @@ namespace Email_System
 
             // Sender check
             bool inBlackList = false;
-            inBlackList = black_emails.Exists(elem => elem == sender);
+            inBlackList = black_emails.Exists(elem => sender.Contains(elem, StringComparison.OrdinalIgnoreCase));
             if (inBlackList) return true;
 
             // Subject and body check
             foreach (string black_word in black_words)
             {
-                bool containedInSubject = subject.Contains(black_word);
+                bool containedInSubject = subject.Contains(black_word, StringComparison.OrdinalIgnoreCase);
                 if (containedInSubject) return true;
-                bool containedInBody = body.Contains(black_word);
+                bool containedInBody = body.Contains(black_word, StringComparison.OrdinalIgnoreCase);
                 if (containedInBody) return true;
             }
 
@@ -894,6 +921,8 @@ namespace Email_System
         // Filters out messages containing a blacklisted word or a blacklisted sender
         public static void blackListFilter()
         {
+            Queue<Tuple<string, uint>> q = new Queue<Tuple<string, uint>>();
+
             // Get Index of junk folder
             int junkFolderIndex = existingFolders.IndexOf(spamFolderName);
 
@@ -909,17 +938,24 @@ namespace Email_System
                 {
                     msg curMessage = pendingMessages[folderIndex][messageIndex];
                     string flags = curMessage.flags;
-                    bool containBlack = flags.Contains("BLACK");
-                    if (containBlack)
+                    
+
+                    if (containedInBlacklist(curMessage.sender, curMessage.subject, curMessage.body))
                     {
                         // Move to different folder:)))
-                        Utility.moveMsgSpam(curMessage.uid, curMessage.folder);
-
+                        Utility.moveMsgFolderToFolder(curMessage.uid, curMessage.folder, spamFolderName);
+                        Tuple<string, uint> tp = new Tuple<string, uint>(curMessage.folder, curMessage.uid);
+                        q.Enqueue(tp);
+                        messagesInFolder--;
                     }
                 }
             }
 
-            // Set pending flag to true
+           if (q.Count > 0)
+           {
+                updatePending = true;
+                server.moveMsgServer(q, spamFolderName);
+           }
         }
     }
 }

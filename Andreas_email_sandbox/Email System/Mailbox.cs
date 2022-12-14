@@ -59,40 +59,54 @@ namespace Email_System
 
             string flagString = item.flags;
 
-            if (flagString.Contains("Flagged") || flagString.Contains("(FLAGGED)"))
-            {
-                subject += "(FLAGGED) ";
-            }
-
-            if(flagString.Contains("Draft"))
-            {
-                subject += "(DRAFT) ";
-            }
-
-            if (!(flagString.Contains("Seen")))
-            {
-                string draftFolder = Data.draftFolderName;
-                if (item.folder != draftFolder)
-                    subject += "(UNREAD) ";
-            }
-
-            if (item.subject != "")
-            {
-                subject += item.subject;
-            }
-
-            else
-            {
-                item.subject = "<no subject>";
-                subject += item.subject;
-            }
-
-            string date = item.date.Remove(item.date.LastIndexOf(' '));
 
             try
             {
-                var dt2 = DateTime.Parse(date);
-                messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body, dt2);
+                if (flagString != null)
+                {
+                    if (flagString.Contains("Flagged") || flagString.Contains("(FLAGGED)"))
+                    {
+                        subject += "(FLAGGED) ";
+                    }
+
+                    if (flagString.Contains("Draft"))
+                    {
+                        subject += "(DRAFT) ";
+                    }
+
+                    if (!(flagString.Contains("Seen")))
+                    {
+                        string draftFolder = Data.draftFolderName;
+                        if (item.folder != draftFolder)
+                            subject += "(UNREAD) ";
+                    }
+
+                    if (item.subject != "")
+                    {
+                        subject += item.subject;
+                    }
+
+                    else
+                    {
+                        item.subject = "<no subject>";
+                        subject += item.subject;
+                    }
+                }
+                
+            } 
+            catch(Exception ex) {
+                Debug.WriteLine("EXCEPTION!!!");
+            }
+
+            try
+            {
+                if (item.date != null)
+                {
+                    string date = item.date.Remove(item.date.LastIndexOf(' '));
+                    var dt2 = DateTime.Parse(date);
+                    messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body, dt2);
+                }
+                
             }
 
             catch
@@ -138,7 +152,6 @@ namespace Email_System
             folderDGV.Columns[0].HeaderText = Utility.username;
             //folderDGV.Columns[0].HeaderCell.Visible = (true);
 
-            // What is happening here?
             foreach (var f in Data.existingFolders)
             {
                 string folderString = "";
