@@ -90,7 +90,7 @@ namespace Email_System
                     Utility.logMessage("Message moved to trash", 3000);
                 }
 
-                startListeners();
+                //startListeners();
 
             }
 
@@ -185,7 +185,7 @@ namespace Email_System
 
             finally
             {
-                await client.DisconnectAsync(true);
+                client.Disconnect(true);
                 Data.changedUids.Remove(idToRemove);
             }
         }
@@ -248,7 +248,7 @@ namespace Email_System
             await Task.Delay(5000);
 /*            Data.changedUids.Remove(idToRemove);
 */
-            startListeners();
+            //startListeners();
         }
 
         public static async void markMsgAsReadServer(string folderIn, uint uid)
