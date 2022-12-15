@@ -39,11 +39,6 @@ namespace Email_System
             Data.deleteFiles();
         }
 
-        private void addAccount()
-        {
-            //???
-        }
-
         private void toggleLocalStorage(bool value)
         {
             Properties.Settings.Default.downloadMessagesEnabled = value;

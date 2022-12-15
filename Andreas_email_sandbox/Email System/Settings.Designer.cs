@@ -87,7 +87,7 @@
             this.offlineModeCB.TabIndex = 4;
             this.offlineModeCB.Text = "Offline mode enabled";
             this.offlineModeCB.UseVisualStyleBackColor = true;
-            this.offlineModeCB.CheckStateChanged += new System.EventHandler(this.offlineModeCB_CheckStateChanged);
+            this.offlineModeCB.Click += new System.EventHandler(this.offlineModeCB_CheckStateChanged);
             // 
             // richTextBox3
             // 

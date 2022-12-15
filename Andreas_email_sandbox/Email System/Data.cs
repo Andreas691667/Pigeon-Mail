@@ -447,13 +447,14 @@ namespace Email_System
 
                             messages.Add(message);
 
-                            if (messages.Count % 10 == 0 && messages.Count != 0)
+                            if (messages.Count % 20 == 0 && messages.Count != 0)
                             {
                                 msgs[i].AddRange(messages);
                                 saveMessages(msgs);
                                 Task t = loadExistingMessages();
                                 t.Wait();
                                 messages.Clear();
+                                Utility.refreshCurrentFolder();
                             }
                         }
 
@@ -461,6 +462,8 @@ namespace Email_System
                         saveMessages(msgs);
                         Task task = loadExistingMessages();
                         task.Wait();
+                        Utility.refreshCurrentFolder();
+
 
                         i++;
                     }
