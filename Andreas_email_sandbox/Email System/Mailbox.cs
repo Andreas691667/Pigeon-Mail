@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using static Email_System.Data;
 
@@ -28,7 +29,6 @@ namespace Email_System
         private Mailbox()
         {
             InitializeComponent();
-
 
             if (File.Exists(Utility.username + "messages.json"))
                 retrieveInboxMessages();
@@ -59,40 +59,58 @@ namespace Email_System
 
             string flagString = item.flags;
 
-            if (flagString.Contains("Flagged") || flagString.Contains("(FLAGGED)"))
-            {
-                subject += "(FLAGGED) ";
-            }
-
-            if(flagString.Contains("Draft"))
-            {
-                subject += "(DRAFT) ";
-            }
-
-            if (!(flagString.Contains("Seen")))
-            {
-                string draftFolder = Data.draftFolderName;
-                if (item.folder != draftFolder)
-                    subject += "(UNREAD) ";
-            }
-
-            if (item.subject != "")
-            {
-                subject += item.subject;
-            }
-
-            else
-            {
-                item.subject = "<no subject>";
-                subject += item.subject;
-            }
-
-            string date = item.date.Remove(item.date.LastIndexOf(' '));
 
             try
             {
-                var dt2 = DateTime.Parse(date);
-                messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body, dt2);
+                if (flagString != null)
+                {
+                    if (flagString.Contains("Flagged") || flagString.Contains("(FLAGGED)"))
+                    {
+                        subject += "(FLAGGED) ";
+                    }
+
+                    if (flagString.Contains("Draft"))
+                    {
+                        subject += "(DRAFT) ";
+                        markMessageBt.Visible = false;
+                        moveMessageBt.Visible = false;
+                        folderDropDown.Visible = false;
+                        addFlagBt.Visible = false;
+                    }
+
+                    if (!(flagString.Contains("Seen")))
+                    {
+                        string draftFolder = Data.draftFolderName;
+                        if (item.folder != draftFolder)
+                            subject += "(UNREAD) ";
+                    }
+                }
+
+                if (item.subject != "")
+                {
+                    subject += item.subject;
+                }
+
+                else
+                {
+                    item.subject = "<no subject>";
+                    subject += item.subject;
+                }
+
+            } 
+            catch(Exception ex) {
+                Debug.WriteLine("EXCEPTION!!!");
+            }           
+
+            try
+            {
+                if (item.date != null)
+                {
+                    string date = item.date.Remove(item.date.LastIndexOf(' '));
+                    //var dt2 = DateTime.Parse(date);
+                    messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body, date);
+                }
+                
             }
 
             catch
@@ -111,11 +129,12 @@ namespace Email_System
             moveToTrashBt.Visible = value;
             deleteBt.Visible = value;
             messagesDGV.Enabled = value;
-            //deleteFolderBt.Visible = value;
-            //addFolderBt.Visible = value;
-            //newFolderTB.Visible = value;
+            deleteFolderBt.Visible = value;
+            addFolderBt.Visible = value;
+            //newFolderNameTB.Visible = value;
             moveMessageBt.Visible = value;
             folderDropDown.Visible = value;
+            markMessageBt.Visible = value;
         }
 
         // method that retrieve folders and add the names to the listbox
@@ -138,7 +157,6 @@ namespace Email_System
             folderDGV.Columns[0].HeaderText = Utility.username;
             //folderDGV.Columns[0].HeaderCell.Visible = (true);
 
-            // What is happening here?
             foreach (var f in Data.existingFolders)
             {
                 string folderString = "";
@@ -316,14 +334,85 @@ namespace Email_System
             }           
         }
 
+        private void markMessageBt_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int messageIndex = messagesDGV.CurrentCell.RowIndex;    // get messageindex
+                Data.msg m = currentFolderMessages[messageIndex];       // retrieve the message object
+                string subject = messagesDGV[2, messageIndex].Value.ToString(); // get subject of message
+                Debug.WriteLine(subject);
+
+                // if message is unread
+                if (subject.Contains("(UNREAD)"))
+                {
+                    server.killListeners();
+
+                    var folderIndex = Data.existingFolders.IndexOf(m.folder);
+
+                    var index = Data.UIMessages[folderIndex].IndexOf(m);
+                    m.flags = m.flags.Replace("(UNREAD)", "");
+                    m.flags += ", Seen";
+
+                    // update the message in both UI and pending
+                    Data.UIMessages[folderIndex][index] = m;
+                    Data.pendingMessages[folderIndex][index] = m;
+
+                    refreshCurrentFolder();
+
+                    // update on server
+                    server.markMsgAsReadServer(m.folder, m.uid);
+                }
+
+                // if message is read
+                else if (!subject.Contains("(UNREAD)"))
+                {
+                    server.killListeners();
+
+                    var folderIndex = Data.existingFolders.IndexOf(m.folder);
+
+                    var index = Data.UIMessages[folderIndex].IndexOf(m);
+                    //m.flags = m.flags += (", (UNREAD)");
+                    m.flags = m.flags.Replace("Seen", "");
+
+                    // update the message in both UI and pending
+                    Data.UIMessages[folderIndex][index] = m;
+                    Data.pendingMessages[folderIndex][index] = m;
+
+                    refreshCurrentFolder();
+
+                    // update on server
+                    server.markMsgAsUnreadServer(m.folder, m.uid);
+                }
+            }
+
+            catch (Exception ex)
+            {
+                Utility.logMessage("No message selected!", 3000);
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
         //deletes the selected message completely
         private void deleteBt_Click(object sender, EventArgs e)
         {
             try
             {
-                int messageIndex = messagesDGV.CurrentCell.RowIndex;
-                Data.msg m = currentFolderMessages[messageIndex];
-                Utility.deleteMsg(m.uid, m.folder);
+
+                DialogResult d = MessageBox.Show("The message will be completely deleted without being sent to trash. Do you wish to continue?", "Warning", MessageBoxButtons.YesNo);
+
+                if (d == DialogResult.Yes)
+                {
+
+                    int messageIndex = messagesDGV.CurrentCell.RowIndex;
+                    Data.msg m = currentFolderMessages[messageIndex];
+                    Utility.deleteMsg(m.uid, m.folder);
+                }
+
+                else if (d == DialogResult.No)
+                {
+                    return;
+                }
             }
 
             catch(Exception ex)
@@ -419,6 +508,11 @@ namespace Email_System
                 Environment.Exit(0);
             }
 
+            if(!Utility.connectedToInternet())
+            {
+                Application.Exit();
+            }
+
             instance.Dispose();
         }
         //performing search in all emails
@@ -489,6 +583,12 @@ namespace Email_System
                     toggleButtons(true);
                     addMessageToMailbox(item);
                 }
+
+                if (!Utility.connectedToInternet())
+                {
+                    toggleButtons(false);
+                    messagesDGV.Enabled = true;
+                }
             }
         }
 
@@ -552,7 +652,8 @@ namespace Email_System
                     Data.UIMessages[folderIndex][index] = m;
                     Data.pendingMessages[folderIndex][index] = m;
 
-                    server.markMsgAsReadServer(m.folder, m.uid);
+                    if(Utility.connectedToInternet())
+                        server.markMsgAsReadServer(m.folder, m.uid);
                 }
 
                 new readMessage(m.body, m.from, m.to, m.cc, m.date, m.subject, m.attachments, m.folder, m.uid).Show();
@@ -711,14 +812,14 @@ namespace Email_System
         {
             try
             {
-                if(string.IsNullOrEmpty(newFolderTB.Text))
+                if(string.IsNullOrEmpty(newFolderNameTB.Text))
                 {
                     MessageBox.Show("Please enter a foldername!");
                     return;
                 }
 
                 server.killListeners();
-                string folderName = newFolderTB.Text;
+                string folderName = newFolderNameTB.Text;
                 createFolder(folderName);
             }
 
@@ -729,7 +830,7 @@ namespace Email_System
 
             finally
             {
-                newFolderTB.Clear();
+                newFolderNameTB.Clear();
                 server.startListeners();
                 Utility.logMessage("Creating folder. This might take a while", 10000);
             }
@@ -806,6 +907,24 @@ namespace Email_System
             {
                 RetrieveFolders();
                 server.startListeners();
+            }
+        }
+
+        private void messagesDGV_SelectionChanged(object sender, EventArgs e)
+        {
+            //get the current message subject
+            int messageIndex = messagesDGV.CurrentCell.RowIndex;
+            string subject = messagesDGV[2, messageIndex].Value.ToString(); // get subject of message
+
+
+            if (!subject.Contains("UNREAD"))
+            {
+                markMessageBt.Image = Properties.Resources.icons8_secured_letter_32;
+            }
+
+            else
+            {
+                markMessageBt.Image = Properties.Resources.icons8_open_envelope_32;
             }
         }
     }

@@ -90,7 +90,7 @@ namespace Email_System
                     Utility.logMessage("Message moved to trash", 3000);
                 }
 
-                startListeners();
+                //startListeners();
 
             }
 
@@ -107,40 +107,32 @@ namespace Email_System
             }
         }
 
-        public static async void moveMsgSpamServer(Queue<Tuple<string, uint>> q)
+        /*
+        public static async void moveMsgSpamServer(string msg_folder, uint msg_uid)
         {
+            // Get IMap client
             var client = await Utility.establishConnectionImap();
-
-            uint idToRemove = 0;
-
+          
             try
             {
-                foreach (var item in q)
-                {
-                    var f = item.Item1;
 
-                    idToRemove = item.Item2;
+                // Creates new UniqueId with id of msg_uid      
+                var id = new UniqueId[] { new UniqueId (msg_uid) };
 
-                    var id = new UniqueId[] { new UniqueId(item.Item2) };
+                // Get spam folder of type IMailFolder
+                var spamFolder = await Data.GetSpamFolder(client);
 
-                    var spamFolder = await Data.GetSpamFolder(client);
+                // Get current folder of type IMailFolder
+                var folder = await client.GetFolderAsync(msg_folder);
 
-                    var folder = await client.GetFolderAsync(f);
+                // Open folder to allow access
+                await folder.OpenAsync(FolderAccess.ReadWrite);
 
-                    await folder.OpenAsync(FolderAccess.ReadWrite);
+                // Move message to spam
+                var map = await folder.MoveToAsync(id, spamFolder);
 
-                    var map = await folder.MoveToAsync(id, spamFolder);
-
-                    //var reMapped = map[id[0]];
-
-                    //Data.changedUids.Add(reMapped.Id);
-
-                    //Utility.logMessage("Message moved to spam", 3000);
-                    Debug.WriteLine("Moved message to spam");
-                }
-
-                //startListeners();
-
+                Debug.WriteLine("Moved message to spam");
+                
             }
 
             catch (Exception ex)
@@ -152,9 +144,10 @@ namespace Email_System
             {
                 client.Disconnect(true);
                 Thread.Sleep(5000);
-                Data.changedUids.Remove(idToRemove);
+                Data.changedUids.Remove(msg_uid);
             }
         }
+        */
 
         public static async void moveMsgServer(Queue<Tuple<string, uint>> q, string moveToFolder)
         {
@@ -192,7 +185,7 @@ namespace Email_System
 
             finally
             {
-                await client.DisconnectAsync(true);
+                client.Disconnect(true);
                 Data.changedUids.Remove(idToRemove);
             }
         }
@@ -255,7 +248,7 @@ namespace Email_System
             await Task.Delay(5000);
 /*            Data.changedUids.Remove(idToRemove);
 */
-            startListeners();
+            //startListeners();
         }
 
         public static async void markMsgAsReadServer(string folderIn, uint uid)
@@ -269,6 +262,21 @@ namespace Email_System
             await client.DisconnectAsync(true);
 
             Utility.logMessage("Message read", 3000);
+
+            startListeners();
+        }
+
+        public static async void markMsgAsUnreadServer(string folderIn, uint uid)
+        {
+            var client = await Utility.establishConnectionImap();
+            //remove flag to message
+            var folder = await client.GetFolderAsync(folderIn);
+            await folder.OpenAsync(FolderAccess.ReadWrite);
+            var id = new UniqueId[] { new UniqueId(uid) };
+            await folder.RemoveFlagsAsync(id, MessageFlags.Seen, true);
+            await client.DisconnectAsync(true);
+
+            Utility.logMessage("Message unread", 3000);
 
             startListeners();
         }

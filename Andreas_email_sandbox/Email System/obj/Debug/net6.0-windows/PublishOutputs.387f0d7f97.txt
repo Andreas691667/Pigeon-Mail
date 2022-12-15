@@ -1,0 +1,10 @@
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\publish\Email System.exe
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\publish\Email System.dll
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\publish\Email System.deps.json
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\publish\Email System.runtimeconfig.json
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\publish\Email System.dll.config
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\publish\Email System.pdb
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\publish\EmailValidation.dll
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\publish\MailKit.dll
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\publish\MimeKit.dll
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Andreas_email_sandbox\Email System\bin\Debug\net6.0-windows\publish\BouncyCastle.Crypto.dll

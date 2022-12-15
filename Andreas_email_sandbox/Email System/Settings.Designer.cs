@@ -103,7 +103,7 @@
             this.richTextBox4.Name = "richTextBox4";
             this.richTextBox4.Size = new System.Drawing.Size(426, 120);
             this.richTextBox4.TabIndex = 6;
-            this.richTextBox4.Text = "Something about blacklists...";
+            this.richTextBox4.Text = resources.GetString("richTextBox4.Text");
             // 
             // button1
             // 
@@ -128,6 +128,8 @@
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.localStorageCB);
             this.Controls.Add(this.clearCacheBt);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "Settings";
             this.Text = "Settings";
             this.ResumeLayout(false);

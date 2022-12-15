@@ -113,6 +113,16 @@ namespace Email_System.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icons8_composing_mail_32 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-composing-mail-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icons8_delete_folder_32 {
             get {
                 object obj = ResourceManager.GetObject("icons8-delete-folder-32", resourceCulture);
@@ -203,6 +213,16 @@ namespace Email_System.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icons8_open_envelope_32 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-open-envelope-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icons8_remove_32 {
             get {
                 object obj = ResourceManager.GetObject("icons8-remove-32", resourceCulture);
@@ -246,6 +266,16 @@ namespace Email_System.Properties {
         internal static System.Drawing.Bitmap icons8_secured_letter_32 {
             get {
                 object obj = ResourceManager.GetObject("icons8-secured-letter-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_secured_letter_321 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-secured-letter-321", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
