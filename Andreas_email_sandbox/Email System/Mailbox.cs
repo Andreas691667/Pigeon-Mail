@@ -346,7 +346,7 @@ namespace Email_System
                 // if message is unread
                 if (subject.Contains("(UNREAD)"))
                 {
-                    server.killListeners();
+                    //server.killListeners();
 
                     var folderIndex = Data.existingFolders.IndexOf(m.folder);
 
@@ -367,7 +367,7 @@ namespace Email_System
                 // if message is read
                 else if (!subject.Contains("(UNREAD)"))
                 {
-                    server.killListeners();
+                    //server.killListeners();
 
                     var folderIndex = Data.existingFolders.IndexOf(m.folder);
 
@@ -642,7 +642,7 @@ namespace Email_System
 
                 if (subject.Contains("(UNREAD)"))
                 {
-                    server.killListeners();
+                    //server.killListeners();
 
                     var folderIndex = Data.existingFolders.IndexOf(m.folder);
 

@@ -22,8 +22,8 @@ namespace Email_System
         {
             var l = login.GetInstance;
 
-            if(!l.folderListenerBW.IsBusy)
-                l.folderListenerBW.RunWorkerAsync();
+            if(!l.folderListenerBW.IsBusy) { }
+                //l.folderListenerBW.RunWorkerAsync();
 
         }
 
@@ -166,11 +166,6 @@ namespace Email_System
 
                     var destFolder = await client.GetFolderAsync(moveToFolder);
 
-                    if(f == destFolder.FullName) 
-                    {
-                        //return;    
-                    }
-
                     var folder = await client.GetFolderAsync(f);
 
                     await folder.OpenAsync(FolderAccess.ReadWrite);
@@ -186,8 +181,9 @@ namespace Email_System
                     m.uid= destId;
                     Data.pendingMessages[folderIndex][messageIndex] = m;
 
+                    Debug.WriteLine("Message moved to: " + destFolder.FullName);
 
-                    Utility.logMessage("Message moved!", 3000);
+                    //Utility.logMessage("Message moved!", 3000);
                 }
             }
 
@@ -276,7 +272,7 @@ namespace Email_System
 
             Utility.logMessage("Message read", 3000);
 
-            startListeners();
+            //startListeners();
         }
 
         public static async void markMsgAsUnreadServer(string folderIn, uint uid)
@@ -291,7 +287,7 @@ namespace Email_System
 
             Utility.logMessage("Message unread", 3000);
 
-            startListeners();
+            //startListeners();
         }
     }
 }
