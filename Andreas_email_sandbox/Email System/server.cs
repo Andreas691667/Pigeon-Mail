@@ -226,8 +226,6 @@ namespace Email_System
 
         public static async void addFlagServer(string folderIn, int index, uint uid)
         {
-/*            uint idToRemove = uid;
-*/
             var client = await Utility.establishConnectionImap();
 
             //get source folder
@@ -248,6 +246,7 @@ namespace Email_System
             }            
 
             var id = new UniqueId[] { new UniqueId(uid) };
+
             //add flag and copy message
             await folder.AddFlagsAsync(uids[uidIndex], MessageFlags.Flagged, true);
             await client.DisconnectAsync(true);
@@ -255,9 +254,6 @@ namespace Email_System
             Utility.refreshCurrentFolder();
 
             await Task.Delay(5000);
-/*            Data.changedUids.Remove(idToRemove);
-*/
-            //startListeners();
         }
 
         public static async void markMsgAsReadServer(string folderIn, uint uid)

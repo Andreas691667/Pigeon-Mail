@@ -284,10 +284,14 @@ namespace Email_System
                 //remove flag instead if the mail was already flagged
                 else if (subject.Contains("(FLAGGED)"))
                 {
-                    //ulong? gmailMessageId = m.gmailMessageId;
-
                     int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
-                    Data.UIMessages[folderIndex].Remove(m);
+                    
+                    int mi = Data.UIMessages[folderIndex].FindIndex(x => x.date == m.date);
+
+                    Data.UIMessages[folderIndex].RemoveAt(mi);
+
+
+
                     var index = Data.UIMessages[folderDGV.CurrentCell.RowIndex].IndexOf(m);
 
                     if (index != -1)
