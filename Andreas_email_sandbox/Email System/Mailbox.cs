@@ -36,7 +36,12 @@ namespace Email_System
             RetrieveFolders();
 
             if (!Utility.connectedToInternet())
+            {
                 newEmailBt.Enabled = false;
+                deleteFolderBt.Enabled = false;
+                addFolderBt.Enabled = false;
+                newFolderNameTB.Enabled = false;
+            }
         }
 
         // Ensures singleton pattern is maintained (only one instance at all times)
@@ -129,8 +134,8 @@ namespace Email_System
             moveToTrashBt.Visible = value;
             deleteBt.Visible = value;
             messagesDGV.Enabled = value;
-            deleteFolderBt.Visible = value;
-            addFolderBt.Visible = value;
+            //deleteFolderBt.Visible = value;
+            //addFolderBt.Visible = value;
             //newFolderNameTB.Visible = value;
             moveMessageBt.Visible = value;
             folderDropDown.Visible = value;
@@ -169,9 +174,21 @@ namespace Email_System
 
                 try
                 {
-                    int count = Data.UIMessages[folderIndex].Count;
-                    folderString += " (" + count + ")";
+                    if (folderString != Data.draftFolderName)
+                    {
 
+                        int count = 0;
+
+                        foreach (var message in Data.UIMessages[folderIndex])
+                        {
+                            if (!message.flags.Contains("Seen"))
+                            {
+                                count++;
+                            }
+                        }
+
+                        folderString += " (" + count + ")";
+                    }
                 }
 
                 catch
@@ -635,7 +652,7 @@ namespace Email_System
 
             if (m.flags.Contains("Draft"))
             {
-                new newEmail(4, null!, m.body, m.subject, m.to, m.from, m.cc, m.attachments, m.folder, m.uid, m.flags, m.sender).Show();
+                new newEmail(4, m.body, m.subject, m.to, m.from, m.cc, m.attachments, m.folder, m.uid, m.flags, m.sender).Show();
             }
 
             else
@@ -691,12 +708,14 @@ namespace Email_System
             //int folder = folderDGV.CurrentCell.RowIndex;
             int folder = folderDGV.CurrentRow.Index;
 
-            //folderDGV.SelectedCells
-            string folderName = folderDGV.CurrentCell.Value.ToString();
-            folderName = folderName.Remove(folderName.LastIndexOf(' '));
-
             try
             {
+                string folderName = folderDGV.CurrentCell.Value.ToString();
+
+                if(!folderName.Contains(Data.draftFolderName))
+                    folderName = folderName.Remove(folderName.LastIndexOf(' '));
+
+
                 if (Data.UIMessages[folder].Count <= 0)
                 {
                     toggleButtons(false);

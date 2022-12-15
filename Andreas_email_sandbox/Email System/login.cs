@@ -201,13 +201,6 @@ namespace Email_System
                     SmtpPort = 465;
                     break;
 
-                case "hotmail.com":
-                    Imapserver = "imap-mail.outlook.com";
-                    Imapport = 993;
-                    SmtpServer = "smtp.office365.com";
-                    SmtpPort = 587;
-                    break;
-
                 default:
                     MessageBox.Show("E-mail provider not supported.");
                     break;

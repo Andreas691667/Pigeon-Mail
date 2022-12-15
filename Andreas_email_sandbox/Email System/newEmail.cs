@@ -26,12 +26,15 @@ namespace Email_System
         //Dictionary<string, string> attachments = new Dictionary<string, string>();
         Data.msg msg = new Data.msg();
 
-        static string[] DraftFolderNames = { "Drafts", "Kladder", "Draft" };
+
+
 
         bool stopSend = false;
         bool isDraft = false;
         bool exitFromBt = false;
         bool messageSent = false;
+
+        Dictionary<string, double> attachments = new Dictionary<string, double>();
         double collectedFileSize = 0;
 
         //type keys:
@@ -40,7 +43,7 @@ namespace Email_System
         // 2: reply all
         // 3: forward
         // 4: drafts
-        public newEmail(int flag, IMessageSummary m = null!, string body = null!, string subject = null!, string rec = null!, string from = null!, string ccRec = null!, string attachments = null!, string folder = null!, uint uid = 0, string flags = null!, string sender = null!)
+        public newEmail(int flag, string body = null!, string subject = null!, string rec = null!, string from = null!, string ccRec = null!, string attachments = null!, string folder = null!, uint uid = 0, string flags = null!, string sender = null!, string date = null!)
         {
             InitializeComponent();
 
@@ -54,6 +57,7 @@ namespace Email_System
             msg.uid = uid;
             msg.sender = sender;
             msg.flags = flags;
+            msg.date = date;
 
             switch (flag)
             {
@@ -90,6 +94,16 @@ namespace Email_System
             recipientsTb.Text = recipient;
 
             subjectTb.Text = "Re: " + msg.subject;
+
+
+            messageBodyTb.AppendText(Environment.NewLine);
+            messageBodyTb.AppendText("---------------------------------");
+            messageBodyTb.AppendText(Environment.NewLine);
+            messageBodyTb.AppendText("At " + msg.date + " " + msg.from + " wrote:");
+            messageBodyTb.AppendText(Environment.NewLine);
+
+            if(!string.IsNullOrEmpty(msg.body))
+                messageBodyTb.AppendText(msg.body);
         }
 
         private void flagReplyAll()
@@ -122,12 +136,19 @@ namespace Email_System
             {
                 Debug.WriteLine(ex.Message);
             }
+
+            messageBodyTb.AppendText(Environment.NewLine);
+            messageBodyTb.AppendText("---------------------------------");
+            messageBodyTb.AppendText(Environment.NewLine);
+            messageBodyTb.AppendText("At " + msg.date + " " + msg.from + " wrote:");
+            messageBodyTb.AppendText(Environment.NewLine);
+
+            if (!string.IsNullOrEmpty(msg.body))
+                messageBodyTb.AppendText(msg.body);
         }
 
         private async void flagForward()
         {
-            //messageSender = m;
-
             subjectTb.Text = "Fwrd: " + msg.subject;
 
             messageBodyTb.AppendText(Environment.NewLine);
@@ -207,7 +228,7 @@ namespace Email_System
             }
         }
 
-            private async void flagDraft()
+        private async void flagDraft()
         {
             isDraft = true;
             draftBt.Enabled = false;
@@ -395,7 +416,6 @@ namespace Email_System
                 size *= 0.000001;
 
                 collectedFileSize += size;
-
                 collectedFileSize = Math.Round(collectedFileSize, 2);
 
                 sizeLabel.Visible = true;
@@ -405,6 +425,14 @@ namespace Email_System
                 string fileNameShort = fileName.Substring(fileName.LastIndexOf('\\') + 1) + " ";
 
 
+               if(attachments.ContainsKey(fileNameShort))
+                {
+                    MessageBox.Show("Attachment with such a name already exists. Please select another or rename the file.");
+                    return "";
+                }
+
+                //add to dictionary
+                attachments.Add(fileNameShort, size);
                 attachmentsLb.Items.Add(fileNameShort);
 
                 return fileName;
@@ -583,6 +611,7 @@ namespace Email_System
             else if(isDraft)
             {
                 updateLocalDraftMessage();
+                Utility.refreshCurrentFolder();
             }
 
             else if (!allEmpty())
@@ -625,9 +654,19 @@ namespace Email_System
             {
                 //remove item from the listbox
                 var attachmentIndex = attachmentsLb.SelectedIndex;
+                string attachmentName = attachmentsLb.SelectedItem.ToString();
+
                 attachmentsLb.Items.RemoveAt(attachmentIndex);
                 //remove from message
                 builder.Attachments.RemoveAt(attachmentIndex);
+
+
+                double size = attachments[attachmentName];
+                collectedFileSize -= size;
+
+                collectedFileSize = Math.Round(collectedFileSize, 2);
+                sizeLabel.Visible = true;
+                sizeLabel.Text = "(" + collectedFileSize.ToString() + "MB" + " )";
             }
 
             catch
@@ -640,7 +679,9 @@ namespace Email_System
                 removeAttachmentBt.Visible = false;
                 attachmentsLb.Visible = false;
                 attachmentsLabel.Visible = false;
-                sizeLabel.Visible = false;  
+                sizeLabel.Visible = false;
+                collectedFileSize = 0;
+                attachments.Clear();
             }
         }
 

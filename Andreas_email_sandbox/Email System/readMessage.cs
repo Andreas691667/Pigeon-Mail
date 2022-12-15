@@ -37,6 +37,12 @@ namespace Email_System
                 moveToTrashBT.Enabled = false;
                 deleteMessageBt.Enabled = false;
             }
+
+            if(msg.folder == Data.allFolderName)
+            {
+                moveToTrashBT.Enabled = false;
+                deleteMessageBt.Enabled = false;
+            }
         }
 
         //adds attachments from message to listbox
@@ -122,53 +128,14 @@ namespace Email_System
         }
         
 
-/*        private async void getTextBody()
-        {
-            try
-            {
-                var client = await Utility.establishConnectionImap();
-
-                var bodyPart = message.TextBody;
-
-                var folder = await client.GetFolderAsync(message.Folder.ToString());
-                await folder.OpenAsync(FolderAccess.ReadOnly);
-
-                var body = (TextPart)folder.GetBodyPart(message.UniqueId, bodyPart);
-
-                var text = body.Text;
-                bodyText = text;
-
-                bodyRtb.Text = text;
-
-                await client.DisconnectAsync(true);
-            }
-
-            catch(Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }*/
-
         private void initializeMessage()
         {
-            /*            fromTb.Text += message.Envelope.From.ToString();
-
-                        toTb.Text += message.Envelope.To.ToString();
-
-                        dateTb.Text +=  message.Envelope.Date.ToString();
-
-                        //NEED TO CHECK IF THIS IS NULL
-                        subjectTb.Text = message.Envelope.Subject.ToString();*/
-
-            //ccRecipientsTb.Text = message.Envelope.Cc.ToString();
-
             fromTb.Text += msg.from;
             toTb.Text += msg.to;
             toTb.Text += ", " +msg.cc;
             dateTb.Text += msg.date;
             subjectTb.Text += msg.subject;
             bodyRtb.Text += msg.body;
-           
 
             getAttachments(); 
         }
@@ -179,23 +146,26 @@ namespace Email_System
 
         private void replyBt_Click(object sender, EventArgs e)
         {
-            new newEmail(1, null!, msg.body, msg.subject, msg.to,msg.from, msg.cc, msg.attachments, msg.folder).Show();
+            new newEmail(1, msg.body, msg.subject, msg.to,msg.from, msg.cc, msg.attachments, msg.folder, msg.uid, msg.flags, msg.sender, msg.date).Show();
         }
 
         private void forwardBt_Click(object sender, EventArgs e)
         {
-            DialogResult d = MessageBox.Show("Do you wish to include attachments?", "Include attachments?", MessageBoxButtons.YesNo);
+            if (!string.IsNullOrEmpty(msg.attachments))
+            {
+                DialogResult d = MessageBox.Show("Do you wish to include attachments?", "Include attachments?", MessageBoxButtons.YesNo);
 
-            if(d == DialogResult.Yes)
-                new newEmail(3, null!, msg.body, msg.subject, msg.to, msg.from, msg.cc, msg.attachments, msg.folder, msg.uid).Show();
+                if (d == DialogResult.Yes)
+                    new newEmail(3,  msg.body, msg.subject, msg.to, msg.from, msg.cc, msg.attachments, msg.folder, msg.uid, msg.flags, msg.sender, msg.date).Show();
+            }
 
-            else if(d == DialogResult.No)
-                new newEmail(3, null!, msg.body, msg.subject, msg.to, msg.from, msg.cc, null!, msg.folder, msg.uid).Show();
+            else
+                new newEmail(3, msg.body, msg.subject, msg.to, msg.from, msg.cc, null!, msg.folder, msg.uid, msg.flags, msg.sender, msg.date).Show();
         }
 
         private void replyAllBt_Click(object sender, EventArgs e)
         {
-            new newEmail(2, null!, msg.body, msg.subject, msg.to, msg.from, msg.cc, msg.attachments, msg.folder).Show();
+            new newEmail(2, msg.body, msg.subject, msg.to, msg.from, msg.cc, msg.attachments, msg.folder, msg.uid, msg.flags, msg.sender, msg.date).Show();
         }
 
         private void deleteMessageBt_Click(object sender, EventArgs e)
