@@ -136,7 +136,8 @@ namespace Email_System
             Queue<Tuple<string, uint>> q = new Queue<Tuple<string, uint>>();
             Tuple<string, uint> tp = new Tuple<string, uint>(message.folder, message.uid);
             q.Enqueue(tp);
-            server.moveMsgServer(q, spamFolderName);
+            var t = server.moveMsgServer(q, spamFolderName);
+            t.Wait();
         }
 
         // Listen All folders
@@ -950,7 +951,7 @@ namespace Email_System
                     if (containedInBlacklist(curMessage.sender, curMessage.subject, curMessage.body))
                     {
                         // Move to different folder:)))
-                        Utility.moveMsgFolderToFolder(curMessage.uid, curMessage.folder, spamFolderName);
+                        //Utility.moveMsgFolderToFolder(curMessage.uid, curMessage.folder, spamFolderName);
                         Tuple<string, uint> tp = new Tuple<string, uint>(curMessage.folder, curMessage.uid);
                         q.Enqueue(tp);
                         messagesInFolder--;

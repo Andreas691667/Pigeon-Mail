@@ -149,7 +149,7 @@ namespace Email_System
         }
         */
 
-        public static async void moveMsgServer(Queue<Tuple<string, uint>> q, string moveToFolder)
+        public static async Task moveMsgServer(Queue<Tuple<string, uint>> q, string moveToFolder)
         {
             var client = await Utility.establishConnectionImap();
             uint idToRemove = 0;
@@ -166,13 +166,26 @@ namespace Email_System
 
                     var destFolder = await client.GetFolderAsync(moveToFolder);
 
+                    if(f == destFolder.FullName) 
+                    {
+                        //return;    
+                    }
+
                     var folder = await client.GetFolderAsync(f);
 
                     await folder.OpenAsync(FolderAccess.ReadWrite);
 
-                    var task = folder.MoveToAsync(id, destFolder);
+                    var task = await folder.MoveToAsync(id, destFolder);
 
-                    task.Wait();
+                    var destId = task[id[0]].Id;
+
+                    int folderIndex = Data.existingFolders.IndexOf(f);
+                    int messageIndex = Data.pendingMessages[folderIndex].FindIndex(x => x.uid == idToRemove);
+
+                    var m = Data.pendingMessages[folderIndex][messageIndex];
+                    m.uid= destId;
+                    Data.pendingMessages[folderIndex][messageIndex] = m;
+
 
                     Utility.logMessage("Message moved!", 3000);
                 }
