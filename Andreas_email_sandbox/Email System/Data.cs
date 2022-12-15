@@ -172,6 +172,11 @@ namespace Email_System
                     //IMailFolder f = client.GetFolder(folder);
                     try
                     {
+                        var p = folder.Attributes.ToString();
+
+                        if (p.Contains("NonExistent"))
+                            continue;
+
                         folder.Open(FolderAccess.ReadOnly);
 
                         //for adding new folders
@@ -247,7 +252,7 @@ namespace Email_System
                                 //if serverIds doesn't contain some uid we have locally, it must be the case that it was deleted
                                 if (!serverAllIds.Contains(u))
                                 {
-                                    if(!changedUids.Contains(u))
+                                    if (!changedUids.Contains(u))
                                         removed_uid.Add(u);
                                 }
                             }
@@ -284,6 +289,7 @@ namespace Email_System
                             flag = false;
                         }
                     }
+
 
                     catch (Exception ex)
                     {
