@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using static Email_System.Data;
 
@@ -327,6 +328,65 @@ namespace Email_System
                 Debug.WriteLine(ex.Message);
                 MessageBox.Show("No message selected!");
             }           
+        }
+
+        private void markMessageBt_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int messageIndex = messagesDGV.CurrentCell.RowIndex;    // get messageindex
+                Data.msg m = currentFolderMessages[messageIndex];       // retrieve the message object
+                string subject = messagesDGV[2, messageIndex].Value.ToString(); // get subject of message
+                Debug.WriteLine(subject);
+
+                // if message is unread
+                if (subject.Contains("(UNREAD)"))
+                {
+                    server.killListeners();
+
+                    var folderIndex = Data.existingFolders.IndexOf(m.folder);
+
+                    var index = Data.UIMessages[folderIndex].IndexOf(m);
+                    m.flags = m.flags.Replace("(UNREAD)", "");
+                    m.flags += ", Seen";
+
+                    // update the message in both UI and pending
+                    Data.UIMessages[folderIndex][index] = m;
+                    Data.pendingMessages[folderIndex][index] = m;
+
+                    refreshCurrentFolder();
+
+                    // update on server
+                    server.markMsgAsReadServer(m.folder, m.uid);
+                }
+
+                // if message is read
+                else if (!subject.Contains("(UNREAD)"))
+                {
+                    server.killListeners();
+
+                    var folderIndex = Data.existingFolders.IndexOf(m.folder);
+
+                    var index = Data.UIMessages[folderIndex].IndexOf(m);
+                    //m.flags = m.flags += (", (UNREAD)");
+                    m.flags = m.flags.Replace("Seen", "");
+
+                    // update the message in both UI and pending
+                    Data.UIMessages[folderIndex][index] = m;
+                    Data.pendingMessages[folderIndex][index] = m;
+
+                    refreshCurrentFolder();
+
+                    // update on server
+                    server.markMsgAsUnreadServer(m.folder, m.uid);
+                }
+            }
+
+            catch (Exception ex)
+            {
+                Utility.logMessage("No message selected!", 3000);
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         //deletes the selected message completely
