@@ -67,6 +67,7 @@
             this.newFolderTB = new System.Windows.Forms.TextBox();
             this.loadIconPB = new System.Windows.Forms.PictureBox();
             this.deleteFolderBt = new System.Windows.Forms.Button();
+            this.newFolderNameTB = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.messagesDGV)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.folderDGV)).BeginInit();
@@ -103,7 +104,7 @@
             // 
             // newEmailBt
             // 
-            this.newEmailBt.Image = global::Email_System.Properties.Resources.icons8_secured_letter_32;
+            this.newEmailBt.Image = global::Email_System.Properties.Resources.icons8_composing_mail_32;
             this.newEmailBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.newEmailBt.Location = new System.Drawing.Point(3, 0);
             this.newEmailBt.Name = "newEmailBt";
@@ -217,12 +218,13 @@
             // markMessageBt
             // 
             this.markMessageBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.markMessageBt.Image = global::Email_System.Properties.Resources.icons8_secured_letter_321;
             this.markMessageBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.markMessageBt.Location = new System.Drawing.Point(1048, 3);
+            this.markMessageBt.Location = new System.Drawing.Point(1033, 3);
             this.markMessageBt.Name = "markMessageBt";
-            this.markMessageBt.Size = new System.Drawing.Size(94, 61);
+            this.markMessageBt.Size = new System.Drawing.Size(109, 61);
             this.markMessageBt.TabIndex = 17;
-            this.markMessageBt.Text = "Mark as read/unread";
+            this.markMessageBt.Text = "Read/unread";
             this.markMessageBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.markMessageBt.UseVisualStyleBackColor = true;
             this.markMessageBt.Click += new System.EventHandler(this.markMessageBt_Click);
@@ -384,9 +386,10 @@
             this.messagesDGV.RowHeadersWidth = 51;
             this.messagesDGV.RowTemplate.Height = 29;
             this.messagesDGV.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.messagesDGV.Size = new System.Drawing.Size(1607, 912);
+            this.messagesDGV.Size = new System.Drawing.Size(1607, 861);
             this.messagesDGV.TabIndex = 10;
             this.messagesDGV.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.messagesDGV_CellDoubleClick);
+            this.messagesDGV.SelectionChanged += new System.EventHandler(this.messagesDGV_SelectionChanged);
             // 
             // Folder
             // 
@@ -530,11 +533,21 @@
             this.deleteFolderBt.UseVisualStyleBackColor = true;
             this.deleteFolderBt.Click += new System.EventHandler(this.deleteFolderBt_Click);
             // 
+            // newFolderNameTB
+            // 
+            this.newFolderNameTB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.newFolderNameTB.Location = new System.Drawing.Point(158, 1019);
+            this.newFolderNameTB.Name = "newFolderNameTB";
+            this.newFolderNameTB.PlaceholderText = "Enter foldername...";
+            this.newFolderNameTB.Size = new System.Drawing.Size(176, 27);
+            this.newFolderNameTB.TabIndex = 17;
+            // 
             // Mailbox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1924, 1055);
+            this.Controls.Add(this.newFolderNameTB);
             this.Controls.Add(this.deleteFolderBt);
             this.Controls.Add(this.loadIconPB);
             this.Controls.Add(this.logLabel);
@@ -596,5 +609,6 @@
         private DataGridViewTextBoxColumn Body;
         private DataGridViewTextBoxColumn Date;
         private Button markMessageBt;
+        private TextBox newFolderNameTB;
     }
 }

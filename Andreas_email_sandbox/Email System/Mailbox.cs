@@ -30,7 +30,6 @@ namespace Email_System
         {
             InitializeComponent();
 
-
             if (File.Exists(Utility.username + "messages.json"))
                 retrieveInboxMessages();
 
@@ -63,7 +62,7 @@ namespace Email_System
 
             try
             {
-                if (!string.IsNullOrEmpty(flagString))
+                if (flagString != null)
                 {
                     if (flagString.Contains("Flagged") || flagString.Contains("(FLAGGED)"))
                     {
@@ -73,6 +72,10 @@ namespace Email_System
                     if (flagString.Contains("Draft"))
                     {
                         subject += "(DRAFT) ";
+                        markMessageBt.Visible = false;
+                        moveMessageBt.Visible = false;
+                        folderDropDown.Visible = false;
+                        addFlagBt.Visible = false;
                     }
 
                     if (!(flagString.Contains("Seen")))
@@ -128,9 +131,10 @@ namespace Email_System
             messagesDGV.Enabled = value;
             deleteFolderBt.Visible = value;
             addFolderBt.Visible = value;
-            newFolderTB.Visible = value;
+            //newFolderNameTB.Visible = value;
             moveMessageBt.Visible = value;
             folderDropDown.Visible = value;
+            markMessageBt.Visible = value;
         }
 
         // method that retrieve folders and add the names to the listbox
@@ -394,9 +398,21 @@ namespace Email_System
         {
             try
             {
-                int messageIndex = messagesDGV.CurrentCell.RowIndex;
-                Data.msg m = currentFolderMessages[messageIndex];
-                Utility.deleteMsg(m.uid, m.folder);
+
+                DialogResult d = MessageBox.Show("The message will be completely deleted without being sent to trash. Do you wish to continue?", "Warning", MessageBoxButtons.YesNo);
+
+                if (d == DialogResult.Yes)
+                {
+
+                    int messageIndex = messagesDGV.CurrentCell.RowIndex;
+                    Data.msg m = currentFolderMessages[messageIndex];
+                    Utility.deleteMsg(m.uid, m.folder);
+                }
+
+                else if (d == DialogResult.No)
+                {
+                    return;
+                }
             }
 
             catch(Exception ex)
@@ -796,14 +812,14 @@ namespace Email_System
         {
             try
             {
-                if(string.IsNullOrEmpty(newFolderTB.Text))
+                if(string.IsNullOrEmpty(newFolderNameTB.Text))
                 {
                     MessageBox.Show("Please enter a foldername!");
                     return;
                 }
 
                 server.killListeners();
-                string folderName = newFolderTB.Text;
+                string folderName = newFolderNameTB.Text;
                 createFolder(folderName);
             }
 
@@ -814,7 +830,7 @@ namespace Email_System
 
             finally
             {
-                newFolderTB.Clear();
+                newFolderNameTB.Clear();
                 server.startListeners();
                 Utility.logMessage("Creating folder. This might take a while", 10000);
             }
@@ -891,6 +907,24 @@ namespace Email_System
             {
                 RetrieveFolders();
                 server.startListeners();
+            }
+        }
+
+        private void messagesDGV_SelectionChanged(object sender, EventArgs e)
+        {
+            //get the current message subject
+            int messageIndex = messagesDGV.CurrentCell.RowIndex;
+            string subject = messagesDGV[2, messageIndex].Value.ToString(); // get subject of message
+
+
+            if (!subject.Contains("UNREAD"))
+            {
+                markMessageBt.Image = Properties.Resources.icons8_secured_letter_32;
+            }
+
+            else
+            {
+                markMessageBt.Image = Properties.Resources.icons8_open_envelope_32;
             }
         }
     }
