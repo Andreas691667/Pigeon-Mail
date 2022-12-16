@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "1y7pwaVvVHOw8j8NbQtL2NS9PTCBGPcEnneTBosfp9UAERrohBIyRuph7+g86t//OlpAwV5AnW/6mMLPwBzfeg==",
+  "dgSpecHash": "pSzNiXfLOOUQBO6We9KC29YJO/Ek0lgtN2aRF0JDsEniel5/U67Mpv3H88a7AX5RZdc6i+dYqkAQYaUM+qtUeA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Andreas\\Documents\\GitHub\\Software_engineering_project\\Andreas_email_sandbox\\Email System\\Email System.csproj",
+  "projectFilePath": "C:\\Users\\Andreas\\Documents\\GitHub\\Software_engineering_project\\Pigeon Mail\\Email System\\Email System.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Andreas\\.nuget\\packages\\emailvalidation\\1.0.8\\emailvalidation.1.0.8.nupkg.sha512",
     "C:\\Users\\Andreas\\.nuget\\packages\\mailkit\\3.4.1\\mailkit.3.4.1.nupkg.sha512",
