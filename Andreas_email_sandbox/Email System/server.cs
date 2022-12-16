@@ -22,8 +22,8 @@ namespace Email_System
         {
             var l = login.GetInstance;
 
-            if(!l.folderListenerBW.IsBusy) { }
-                //l.folderListenerBW.RunWorkerAsync();
+            if (!l.folderListenerBW.IsBusy) { }
+            //l.folderListenerBW.RunWorkerAsync();
 
         }
 
@@ -136,7 +136,7 @@ namespace Email_System
                     int messageIndex = Data.pendingMessages[folderIndex].FindIndex(x => x.uid == idToRemove);
 
                     var m = Data.pendingMessages[folderIndex][messageIndex];
-                    m.uid= destId;
+                    m.uid = destId;
                     Data.pendingMessages[folderIndex][messageIndex] = m;
 
                     Debug.WriteLine("Message moved to: " + destFolder.FullName);
@@ -166,18 +166,18 @@ namespace Email_System
             var f = await client.GetFolderAsync(folder);
             await f.OpenAsync(FolderAccess.ReadWrite);
 
-            var allMessages = f.Fetch(0,-1, MessageSummaryItems.UniqueId);
+            var allMessages = f.Fetch(0, -1, MessageSummaryItems.UniqueId);
 
-            foreach(var msg in allMessages)
+            foreach (var msg in allMessages)
             {
                 idsToRemove.Add(msg.UniqueId.Id);
                 await f.AddFlagsAsync(msg.UniqueId, MessageFlags.Deleted, true);
             }
 
             await f.ExpungeAsync();
-            await client.DisconnectAsync(true);     
-            
-            foreach(uint id in idsToRemove)
+            await client.DisconnectAsync(true);
+
+            foreach (uint id in idsToRemove)
             {
                 Data.changedUids.Remove(id);
             }
@@ -187,7 +187,7 @@ namespace Email_System
         {
             uint idToRemove = uid;
 
-            var client = await Utility.establishConnectionImap();         
+            var client = await Utility.establishConnectionImap();
 
             var folder = await client.GetFolderAsync(folderIn);
 
@@ -227,7 +227,7 @@ namespace Email_System
                 {
                     uidIndex = i;
                 }
-            }            
+            }
 
             var id = new UniqueId[] { new UniqueId(uid) };
 

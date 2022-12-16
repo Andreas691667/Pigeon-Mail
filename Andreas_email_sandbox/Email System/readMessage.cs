@@ -2,8 +2,6 @@
 using MailKit.Net.Imap;
 using MailKit.Search;
 using MimeKit;
-using System.Diagnostics;
-using System.IO;
 
 namespace Email_System
 {
@@ -28,7 +26,7 @@ namespace Email_System
 
             initializeMessage();
 
-            if(!Utility.connectedToInternet())
+            if (!Utility.connectedToInternet())
             {
                 replyAllBt.Enabled = false;
                 replyBt.Enabled = false;
@@ -38,7 +36,7 @@ namespace Email_System
                 deleteMessageBt.Enabled = false;
             }
 
-            if(msg.folder == Data.allFolderName)
+            if (msg.folder == Data.allFolderName)
             {
                 moveToTrashBT.Enabled = false;
                 deleteMessageBt.Enabled = false;
@@ -69,13 +67,13 @@ namespace Email_System
             int attachmentIndex = attachmentsLb.SelectedIndex;
 
             //retrieve attachment from folder 
-            var f = client.GetFolder(msg.folder);            
+            var f = client.GetFolder(msg.folder);
 
             f.Open(FolderAccess.ReadWrite);
-            
+
             var query = SearchQuery.SubjectContains(msg.subject);
 
-            var uids = f.Search(query);            
+            var uids = f.Search(query);
 
             var items = f.Fetch(uids, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure);
 
@@ -123,21 +121,21 @@ namespace Email_System
                         System.Diagnostics.Process.Start("explorer.exe", argument);
                     }
                 }
-                }
-            
+            }
+
         }
-        
+
 
         private void initializeMessage()
         {
             fromTb.Text += msg.from;
             toTb.Text += msg.to;
-            toTb.Text += ", " +msg.cc;
+            toTb.Text += ", " + msg.cc;
             dateTb.Text += msg.date;
             subjectTb.Text += msg.subject;
             bodyRtb.Text += msg.body;
 
-            getAttachments(); 
+            getAttachments();
         }
         private void closeBt_Click(object sender, EventArgs e)
         {
@@ -146,7 +144,7 @@ namespace Email_System
 
         private void replyBt_Click(object sender, EventArgs e)
         {
-            new newEmail(1, msg.body, msg.subject, msg.to,msg.from, msg.cc, msg.attachments, msg.folder, msg.uid, msg.flags, msg.sender, msg.date).Show();
+            new newEmail(1, msg.body, msg.subject, msg.to, msg.from, msg.cc, msg.attachments, msg.folder, msg.uid, msg.flags, msg.sender, msg.date).Show();
         }
 
         private void forwardBt_Click(object sender, EventArgs e)
@@ -156,7 +154,7 @@ namespace Email_System
                 DialogResult d = MessageBox.Show("Do you wish to include attachments?", "Include attachments?", MessageBoxButtons.YesNo);
 
                 if (d == DialogResult.Yes)
-                    new newEmail(3,  msg.body, msg.subject, msg.to, msg.from, msg.cc, msg.attachments, msg.folder, msg.uid, msg.flags, msg.sender, msg.date).Show();
+                    new newEmail(3, msg.body, msg.subject, msg.to, msg.from, msg.cc, msg.attachments, msg.folder, msg.uid, msg.flags, msg.sender, msg.date).Show();
             }
 
             else
@@ -170,14 +168,14 @@ namespace Email_System
 
         private void deleteMessageBt_Click(object sender, EventArgs e)
         {
-           Utility.deleteMsg(msg.uid, msg.folder);
+            Utility.deleteMsg(msg.uid, msg.folder);
             this.Close();
         }
 
         private void moveToTrashBT_Click(object sender, EventArgs e)
         {
             Utility.moveMsgTrash(msg.uid, msg.subject, msg.folder);
-            this.Close();            
+            this.Close();
         }
 
         private async void downloadAttachmentBt_Click(object sender, EventArgs e)

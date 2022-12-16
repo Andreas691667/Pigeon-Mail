@@ -1,16 +1,8 @@
-﻿using MailKit;
-using MailKit.Net.Imap;
+﻿using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using MimeKit.Encodings;
-using Org.BouncyCastle.Asn1.X509;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
-using System.Reflection;
-using System.Windows.Forms;
 using static Email_System.Data;
 
 namespace Email_System
@@ -180,7 +172,7 @@ namespace Email_System
 
         // moveMsgFolderToFolder
         // Moves a messages from one folder to another locally and on server
-        public static void moveMsgFolderToFolder (uint msg_uid, string srcFolderNamespace, string dstFolderNamespace)
+        public static void moveMsgFolderToFolder(uint msg_uid, string srcFolderNamespace, string dstFolderNamespace)
         {
             // MOVE LOCALLY
             // Get indexes
@@ -303,7 +295,7 @@ namespace Email_System
         {
             int index = Data.existingFolders.IndexOf(folder);
 
-            foreach(var m in Data.UIMessages[index])
+            foreach (var m in Data.UIMessages[index])
             {
                 changedUids.Add(m.uid);
             }

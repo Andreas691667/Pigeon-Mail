@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static Email_System.Data;
+﻿using static Email_System.Data;
 
 namespace Email_System
 {
@@ -78,7 +69,7 @@ namespace Email_System
         // Delete word from blacklist clicked
         private void button3_Click(object sender, EventArgs e)
         {
-            
+
             var selectedItem = wordBlackList.SelectedItems[0];
             if (selectedItem != null)
             {

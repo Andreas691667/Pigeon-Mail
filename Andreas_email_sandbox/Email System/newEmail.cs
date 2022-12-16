@@ -1,20 +1,7 @@
-﻿using MailKit.Net.Smtp;
+﻿using EmailValidation;
 using MailKit;
 using MimeKit; //allow us to use mime messages
-using System.Windows.Forms;
-using Org.BouncyCastle.Asn1.X509;
-using MailKit.Net.Imap;
-using System.Net.Mail;
 using System.Diagnostics;
-using System.Threading;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
-using System.Windows.Forms.Design;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
-using EmailValidation;
-using System.Text.RegularExpressions;
-using Org.BouncyCastle.Cms;
-using System.Linq.Expressions;
-using MailKit.Search;
 
 namespace Email_System
 {
@@ -102,7 +89,7 @@ namespace Email_System
             messageBodyTb.AppendText("At " + msg.date + " " + msg.from + " wrote:");
             messageBodyTb.AppendText(Environment.NewLine);
 
-            if(!string.IsNullOrEmpty(msg.body))
+            if (!string.IsNullOrEmpty(msg.body))
                 messageBodyTb.AppendText(msg.body);
         }
 
@@ -132,7 +119,7 @@ namespace Email_System
                 }
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
             }
@@ -412,7 +399,7 @@ namespace Email_System
                 attachmentsLb.Visible = true;
                 removeAttachmentBt.Visible = true;
 
-                var size =(double) new FileInfo(openFileDialog.FileName).Length;
+                var size = (double)new FileInfo(openFileDialog.FileName).Length;
                 size *= 0.000001;
 
                 collectedFileSize += size;
@@ -425,7 +412,7 @@ namespace Email_System
                 string fileNameShort = fileName.Substring(fileName.LastIndexOf('\\') + 1) + " ";
 
 
-               if(attachments.ContainsKey(fileNameShort))
+                if (attachments.ContainsKey(fileNameShort))
                 {
                     MessageBox.Show("Attachment with such a name already exists. Please select another or rename the file.");
                     return "";
@@ -566,12 +553,12 @@ namespace Email_System
             msg.body = messageBodyTb.Text;
             msg.date = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
             msg.date += " temp";
-               
-            for(int i = 0; i < Data.UIMessages.Count; i++)
+
+            for (int i = 0; i < Data.UIMessages.Count; i++)
             {
-                for(int j = 0; j< Data.UIMessages[i].Count; j++)
+                for (int j = 0; j < Data.UIMessages[i].Count; j++)
                 {
-                    if(msg.uid == Data.UIMessages[i][j].uid)
+                    if (msg.uid == Data.UIMessages[i][j].uid)
                         Data.UIMessages[i][j] = msg;
                 }
             }
@@ -603,12 +590,12 @@ namespace Email_System
 
         private void newEmail_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (messageSent || exitFromBt) 
+            if (messageSent || exitFromBt)
             {
                 return;
             }
 
-            else if(isDraft)
+            else if (isDraft)
             {
                 updateLocalDraftMessage();
                 Utility.refreshCurrentFolder();
@@ -725,7 +712,7 @@ namespace Email_System
             string[] ccRecipients = ccRecipientsTb.Text.Split(",");
             bool valid = validateStringList(ccRecipients);
 
-            if (string.IsNullOrEmpty(recipientsTb.Text)  || !string.IsNullOrEmpty(ccRecipientsTb.Text))
+            if (string.IsNullOrEmpty(recipientsTb.Text) || !string.IsNullOrEmpty(ccRecipientsTb.Text))
             {
                 sendBt.Enabled = valid;
             }
