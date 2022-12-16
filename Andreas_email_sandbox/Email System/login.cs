@@ -1,8 +1,8 @@
+using EmailValidation;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using System.ComponentModel;
 using System.Diagnostics;
-using EmailValidation;
 using System.Net.NetworkInformation;
 
 /*
@@ -82,7 +82,7 @@ namespace Email_System
                 Properties.Settings.Default.Save();
             }
 
-            if(!rememberMeCB.Checked)
+            if (!rememberMeCB.Checked)
             {
                 Properties.Settings.Default.Username = "";
                 Properties.Settings.Default.Password = "";
@@ -95,7 +95,7 @@ namespace Email_System
             string password = passwordTb.Text;
 
             bool valid = EmailValidator.Validate(username);
-            if(!valid)
+            if (!valid)
             {
                 loginBt.Enabled = false;
             }
@@ -105,11 +105,11 @@ namespace Email_System
                 loginBt.Enabled = true;
             }
 
-            
+
             // Set username and password in Utility class
             Utility.setUsername(usernameTb.Text);
-            Utility.setPassword(passwordTb.Text);  
-            
+            Utility.setPassword(passwordTb.Text);
+
 
             Data.loadOrCreateBlackListFile();
 
@@ -140,9 +140,9 @@ namespace Email_System
 
                     default:
                         return;
-                } 
+                }
                 Debug.WriteLine("connecting");
-                
+
                 // Authentication! 
                 client.Authenticate(username, password);
                 Debug.WriteLine("authenticating"); // Write to debug terminal
@@ -158,7 +158,7 @@ namespace Email_System
 
             catch (Exception ex)
             {
-                if(!Utility.connectedToInternet())
+                if (!Utility.connectedToInternet())
                 {
                     MessageBox.Show("You are offline and have not enabled offline mode. You can do so in Settings.");
                 }
@@ -195,17 +195,10 @@ namespace Email_System
             switch (mail)
             {
                 case "gmail.com":
-                    Imapserver= "imap.gmail.com";
+                    Imapserver = "imap.gmail.com";
                     Imapport = 993;
                     SmtpServer = "smtp.gmail.com";
                     SmtpPort = 465;
-                    break;
-
-                case "hotmail.com":
-                    Imapserver = "imap-mail.outlook.com";
-                    Imapport = 993;
-                    SmtpServer = "smtp.office365.com";
-                    SmtpPort = 587;
                     break;
 
                 default:
@@ -276,7 +269,7 @@ namespace Email_System
                 string msg = String.Format("An error occurred: {0}", e.Error.Message);
                 MessageBox.Show(msg);
             }
-            else            
+            else
             {
                 Mailbox m = Mailbox.GetInstance;
                 m.Show();
@@ -300,7 +293,7 @@ namespace Email_System
             getSpamFolderTask.Wait();
             Task task = Data.loadMessages(bw);
             task.Wait();
-        }        
+        }
 
         private void folderListenerBW_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -336,7 +329,7 @@ namespace Email_System
 
         private void internetBW_DoWork(object sender, DoWorkEventArgs e)
         {
-            while(!internetBW.CancellationPending)
+            while (!internetBW.CancellationPending)
             {
                 try
                 {
@@ -347,16 +340,16 @@ namespace Email_System
                     PingOptions pingOptions = new PingOptions();
                     PingReply reply = myPing.Send(host, timeout, buffer, pingOptions);
 
-                    if(reply.Status == IPStatus.Success)
+                    if (reply.Status == IPStatus.Success)
                     {
-                        DialogResult d = MessageBox.Show("You have reconnected! Press OK to restart the app.","Connection restored",  MessageBoxButtons.OK);
+                        DialogResult d = MessageBox.Show("You have reconnected! Press OK to restart the app.", "Connection restored", MessageBoxButtons.OK);
 
                         //apparently this only works the second time??
-                        if(d == DialogResult.OK)
+                        if (d == DialogResult.OK)
                         {
                             internetBW.CancelAsync();
                             BeginInvoke(new Action(() => Utility.restartApplication()));
-                        }                        
+                        }
                     }
                 }
                 catch (Exception)
@@ -384,5 +377,5 @@ namespace Email_System
                 loginBt.Enabled = true;
             }
         }
-    }        
+    }
 }

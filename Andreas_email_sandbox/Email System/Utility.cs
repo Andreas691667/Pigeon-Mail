@@ -1,16 +1,8 @@
-﻿using MailKit;
-using MailKit.Net.Imap;
+﻿using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using MimeKit.Encodings;
-using Org.BouncyCastle.Asn1.X509;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
-using System.Reflection;
-using System.Windows.Forms;
 using static Email_System.Data;
 
 namespace Email_System
@@ -45,7 +37,6 @@ namespace Email_System
 
         // ------ Other stuff -----
         // establish an imap connection and return the client
-
         public static bool connectedToInternet()
         {
             try
@@ -121,6 +112,7 @@ namespace Email_System
         //refreshes the current open folder in Mailbox
         public static void refreshCurrentFolder()
         {
+            //by this approach we ensure that the method is called from the thread it was created on (main)
             var m = Mailbox.GetInstance;
             m.BeginInvoke(new Action(() => Mailbox.refreshCurrentFolder()));
         }
@@ -129,8 +121,6 @@ namespace Email_System
         //adds the uid to a queue and deletes the messages on server afterwards.
         public static void moveMsgTrash(uint uid, string sub, string folder)
         {
-            //server.killListeners();
-
             var trashFolderIndex = Data.existingFolders.IndexOf(Data.trashFolderName);
             var folderIndex = Data.existingFolders.IndexOf(folder);
 
@@ -180,62 +170,9 @@ namespace Email_System
         }
 
 
-        /*
-        public static void moveMsgSpam(uint uid, string srcFolder)
-        {
-
-            var spamFolderIndex = Data.existingFolders.IndexOf(Data.spamFolderName);
-            var folderIndex = Data.existingFolders.IndexOf(srcFolder);
-
-            //check we are not already in the trash folder
-            if (spamFolderIndex == folderIndex)
-            {
-                //Utility.logMessage("Message is already in spam!", 3000);
-                return;
-            }
-
-            Queue<Tuple<string, uint>> spamQueue = new Queue<Tuple<string, uint>>();
-
-            for (int f = 0; f < Data.UIMessages.Count; f++)
-            {
-                for (int i = 0; i < Data.UIMessages[f].Count; i++)
-                {
-                    Data.msg m = Data.UIMessages[f][i];
-
-                    if (f != spamFolderIndex)
-                    {
-                        if (m.uid == uid)
-                        {
-                            Data.UIMessages[f].RemoveAt(i);
-                            Data.pendingMessages[f].RemoveAt(i);
-
-                            //should only be moved to trash once
-                            if (spamQueue.Count <= 0)
-                            {
-                                Data.UIMessages[spamFolderIndex].Add(m);
-                                Data.pendingMessages[spamFolderIndex].Add(m);
-                                Data.changedUids.Add(m.uid);
-                            }
-
-                            //move to trash on server here
-                            Tuple<string, uint> t = new Tuple<string, uint>(m.folder, m.uid);
-                            spamQueue.Enqueue(t);
-
-                            refreshCurrentFolder();
-                        }
-                    }
-                }
-            }
-
-
-            Debug.WriteLine("Found " + spamQueue.Count + " messages to move to trash");
-            server.moveMsgSpamServer(spamQueue);
-        }
-        */
-
         // moveMsgFolderToFolder
         // Moves a messages from one folder to another locally and on server
-        public static void moveMsgFolderToFolder (uint msg_uid, string srcFolderNamespace, string dstFolderNamespace)
+        public static void moveMsgFolderToFolder(uint msg_uid, string srcFolderNamespace, string dstFolderNamespace)
         {
             // MOVE LOCALLY
             // Get indexes
@@ -254,8 +191,6 @@ namespace Email_System
             // Add to changeUids, to ensure no syncronization is happening until changes are made on server
             Data.changedUids.Add(msg_uid);
         }
-
-
 
         public static void moveMsg(uint uid, string sub, string folder)
         {
@@ -356,23 +291,49 @@ namespace Email_System
             server.deleteMsgServer(deleteQueue);
         }
 
+        public static void emptyFolder(string folder)
+        {
+            int index = Data.existingFolders.IndexOf(folder);
+
+            foreach (var m in Data.UIMessages[index])
+            {
+                changedUids.Add(m.uid);
+            }
+
+            Data.UIMessages[index].Clear();
+
+            server.emptyFolderServer(folder);
+        }
+
         public static void logMessage(string message, int time)
         {
-            Mailbox.setText(message);
-            Mailbox.GetInstance.loadIconPB.Visible = true;
-
-            var t = new System.Windows.Forms.Timer();
-
-            t.Interval = time; // it will Tick in 3 seconds
-
-            t.Tick += (s, e) =>
+            try
             {
-                Mailbox.setText("");
-                Mailbox.GetInstance.loadIconPB.Visible = false;
-                t.Stop();
-            };
 
-            t.Start();
+                var m = Mailbox.GetInstance;
+
+                m.BeginInvoke(new Action(() => Mailbox.setText(message)));
+
+                m.loadIconPB.Visible = true;
+
+                var t = new System.Windows.Forms.Timer();
+
+                t.Interval = time; // it will Tick in 3 seconds
+
+                t.Tick += (s, e) =>
+                {
+                    m.BeginInvoke(new Action(() => Mailbox.setText("")));
+                    m.loadIconPB.Visible = false;
+                    t.Stop();
+                };
+
+                t.Start();
+            }
+
+            catch ( Exception ex)
+            {
+
+            }
         }
 
         public static void restartApplication()

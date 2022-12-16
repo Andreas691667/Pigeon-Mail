@@ -1,12 +1,4 @@
-﻿using MailKit;
-using MailKit.Net.Imap;
-using Org.BouncyCastle.Asn1.Cmp;
-using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Xml.Linq;
+﻿using System.Diagnostics;
 using static Email_System.Data;
 
 /*
@@ -36,7 +28,12 @@ namespace Email_System
             RetrieveFolders();
 
             if (!Utility.connectedToInternet())
+            {
                 newEmailBt.Enabled = false;
+                deleteFolderBt.Enabled = false;
+                addFolderBt.Enabled = false;
+                newFolderNameTB.Enabled = false;
+            }
         }
 
         // Ensures singleton pattern is maintained (only one instance at all times)
@@ -97,10 +94,11 @@ namespace Email_System
                     subject += item.subject;
                 }
 
-            } 
-            catch(Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Debug.WriteLine("EXCEPTION!!!");
-            }           
+            }
 
             try
             {
@@ -110,7 +108,7 @@ namespace Email_System
                     //var dt2 = DateTime.Parse(date);
                     messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body, date);
                 }
-                
+
             }
 
             catch
@@ -129,8 +127,8 @@ namespace Email_System
             moveToTrashBt.Visible = value;
             deleteBt.Visible = value;
             messagesDGV.Enabled = value;
-            deleteFolderBt.Visible = value;
-            addFolderBt.Visible = value;
+            //deleteFolderBt.Visible = value;
+            //addFolderBt.Visible = value;
             //newFolderNameTB.Visible = value;
             moveMessageBt.Visible = value;
             folderDropDown.Visible = value;
@@ -139,9 +137,9 @@ namespace Email_System
 
         // method that retrieve folders and add the names to the listbox
         private void RetrieveFolders()
-        {         
-            
-            if(Data.updatePending)
+        {
+
+            if (Data.updatePending)
             {
                 var task = Data.loadExistingMessages();
                 task.Wait();
@@ -169,9 +167,21 @@ namespace Email_System
 
                 try
                 {
-                    int count = Data.UIMessages[folderIndex].Count;
-                    folderString += " (" + count + ")";
+                    if (folderString != Data.draftFolderName)
+                    {
 
+                        int count = 0;
+
+                        foreach (var message in Data.UIMessages[folderIndex])
+                        {
+                            if (!message.flags.Contains("Seen"))
+                            {
+                                count++;
+                            }
+                        }
+
+                        folderString += " (" + count + ")";
+                    }
                 }
 
                 catch
@@ -184,13 +194,13 @@ namespace Email_System
                     folderDGV.Rows.Add(folderString);
 
                     // only add to dropdown if not already added and not one of these special folders:
-                    if (!folderDropDown.Items.Contains(dropDownString) && dropDownString != Data.trashFolderName 
-                        && dropDownString != Data.draftFolderName && dropDownString != Data.flaggedFolderName 
+                    if (!folderDropDown.Items.Contains(dropDownString) && dropDownString != Data.trashFolderName
+                        && dropDownString != Data.draftFolderName && dropDownString != Data.flaggedFolderName
                         && dropDownString != Data.allFolderName)
                     {
                         folderDropDown.Items.Add(dropDownString);
                     }
-                        
+
 
                 }
             }
@@ -212,7 +222,7 @@ namespace Email_System
                 Utility.refreshCurrentFolder();
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
@@ -226,8 +236,8 @@ namespace Email_System
         //refreshes and timer tick (10 s)
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
-           //Utility.refreshCurrentFolder();
-           //Debug.WriteLine("refreshed the folder automatially");
+            //Utility.refreshCurrentFolder();
+            //Debug.WriteLine("refreshed the folder automatially");
         }
 
         //refreshed the current folder
@@ -270,24 +280,28 @@ namespace Email_System
                     //update the message in both UI and pending
                     Data.UIMessages[fromFolderIndex][index] = m;
                     Data.pendingMessages[fromFolderIndex][index] = m;
-/*                    Data.changedUids.Add(m.uid);
-*/
+                    /*                    Data.changedUids.Add(m.uid);
+                    */
                     //add message to flagged folder locally
                     int destFolderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
                     Data.UIMessages[destFolderIndex].Add(m);
 
                     //make the changes on server and refresh
                     server.addFlagServer(m.folder, index, m.uid);
-                    refreshCurrentFolder();                    
+                    refreshCurrentFolder();
                 }
 
                 //remove flag instead if the mail was already flagged
                 else if (subject.Contains("(FLAGGED)"))
                 {
-                    //ulong? gmailMessageId = m.gmailMessageId;
-
                     int folderIndex = Data.existingFolders.IndexOf(Data.flaggedFolderName);
-                    Data.UIMessages[folderIndex].Remove(m);
+
+                    int mi = Data.UIMessages[folderIndex].FindIndex(x => x.date == m.date);
+
+                    Data.UIMessages[folderIndex].RemoveAt(mi);
+
+
+
                     var index = Data.UIMessages[folderDGV.CurrentCell.RowIndex].IndexOf(m);
 
                     if (index != -1)
@@ -305,7 +319,7 @@ namespace Email_System
                     {
                         for (int folder = 0; folder < Data.UIMessages.Count; folder++)
                         {
-                            for (int msg = 0; msg < Data.UIMessages[folder].Count; msg ++)
+                            for (int msg = 0; msg < Data.UIMessages[folder].Count; msg++)
                             {
                                 Data.msg curMsg = Data.UIMessages[folder][msg];
 
@@ -322,16 +336,16 @@ namespace Email_System
                         }
 
                         refreshCurrentFolder();
-                        server.removeFlagServer(m.folder, m.uid);                        
+                        server.removeFlagServer(m.folder, m.uid);
                     }
                 }
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
                 MessageBox.Show("No message selected!");
-            }           
+            }
         }
 
         private void markMessageBt_Click(object sender, EventArgs e)
@@ -346,11 +360,23 @@ namespace Email_System
                 // if message is unread
                 if (subject.Contains("(UNREAD)"))
                 {
-                    server.killListeners();
+                    //server.killListeners();
 
                     var folderIndex = Data.existingFolders.IndexOf(m.folder);
 
                     var index = Data.UIMessages[folderIndex].IndexOf(m);
+
+                    if (index == -1)
+                    {
+                        foreach (var message in Data.UIMessages[folderIndex])
+                        {
+                            if (message.date == m.date && message.sender == m.sender)
+                            {
+                                index = Data.UIMessages[folderIndex].IndexOf(message);
+                            }
+                        }
+                    }
+
                     m.flags = m.flags.Replace("(UNREAD)", "");
                     m.flags += ", Seen";
 
@@ -367,7 +393,7 @@ namespace Email_System
                 // if message is read
                 else if (!subject.Contains("(UNREAD)"))
                 {
-                    server.killListeners();
+                    //server.killListeners();
 
                     var folderIndex = Data.existingFolders.IndexOf(m.folder);
 
@@ -415,11 +441,11 @@ namespace Email_System
                 }
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Utility.logMessage("No message selected!", 3000);
                 Debug.WriteLine(ex.Message);
-            }         
+            }
 
         }
 
@@ -431,10 +457,29 @@ namespace Email_System
             {
                 int messageIndex = messagesDGV.CurrentCell.RowIndex;
                 Data.msg m = currentFolderMessages[messageIndex];
-                Utility.moveMsgTrash(m.uid, m.subject, m.folder);
+
+                if (m.folder != Data.trashFolderName && m.folder != Data.spamFolderName)
+                {
+                    Utility.moveMsgTrash(m.uid, m.subject, m.folder);
+                }
+
+                else
+                {
+                    DialogResult d = MessageBox.Show("Are you sure you want to delete all messages in this folder permanently?", "Warning", MessageBoxButtons.YesNo);
+
+                    if (d == DialogResult.Yes)
+                    {
+                        Utility.emptyFolder(m.folder);
+                        refreshCurrentFolder();
+                    }
+
+                    else
+                        return;
+                }
+
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Utility.logMessage("No message selected!", 3000);
                 Debug.WriteLine(ex.Message);
@@ -456,12 +501,12 @@ namespace Email_System
             Settings s = Settings.GetInstance;
 
             //if we are currently downloading user's messages
-            if(l.messagesBackgroundWorker.IsBusy && Properties.Settings.Default.downloadMessagesEnabled)
+            if (l.messagesBackgroundWorker.IsBusy && Properties.Settings.Default.downloadMessagesEnabled)
             {
                 DialogResult d = MessageBox.Show("We are currently fetching your messages. Do you wish to  continue in background (YES) or cancel (NO)?", "error", MessageBoxButtons.YesNo);
 
                 //if continue in background
-                if(d == DialogResult.Yes)
+                if (d == DialogResult.Yes)
                 {
                     instance.Dispose();
                     l.Hide();
@@ -478,7 +523,7 @@ namespace Email_System
             }
 
 
-            if(!s.IsDisposed)
+            if (!s.IsDisposed)
                 s.Dispose();
 
             if (!l.folderListenerBW.CancellationPending)
@@ -508,7 +553,7 @@ namespace Email_System
                 Environment.Exit(0);
             }
 
-            if(!Utility.connectedToInternet())
+            if (!Utility.connectedToInternet())
             {
                 Application.Exit();
             }
@@ -521,9 +566,9 @@ namespace Email_System
 
             List<Data.msg> searchResults = new List<Data.msg>();
 
-            foreach(var folder in Data.UIMessages)
+            foreach (var folder in Data.UIMessages)
             {
-                foreach(var msg in folder)
+                foreach (var msg in folder)
                 {
                     if (contentRBT.Checked)
                     {
@@ -537,8 +582,8 @@ namespace Email_System
                     else if (subjectRBT.Checked)
                     {
                         //if (msg.subject.Contains(searchQuery))
-                        
-                        if(msg.subject.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+
+                        if (msg.subject.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
                         {
                             searchResults.Add(msg);
                         }
@@ -610,7 +655,7 @@ namespace Email_System
         //event handler for pressing enter in the search field
         private void searchTb_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter)
             {
                 searchBt.PerformClick();
                 e.SuppressKeyPress = true;
@@ -631,7 +676,7 @@ namespace Email_System
 
             if (m.flags.Contains("Draft"))
             {
-                new newEmail(4, null!, m.body, m.subject, m.to, m.from, m.cc, m.attachments, m.folder, m.uid, m.flags, m.sender).Show();
+                new newEmail(4, m.body, m.subject, m.to, m.from, m.cc, m.attachments, m.folder, m.uid, m.flags, m.sender).Show();
             }
 
             else
@@ -642,7 +687,7 @@ namespace Email_System
 
                 if (subject.Contains("(UNREAD)"))
                 {
-                    server.killListeners();
+                    //server.killListeners();
 
                     var folderIndex = Data.existingFolders.IndexOf(m.folder);
 
@@ -652,7 +697,7 @@ namespace Email_System
                     Data.UIMessages[folderIndex][index] = m;
                     Data.pendingMessages[folderIndex][index] = m;
 
-                    if(Utility.connectedToInternet())
+                    if (Utility.connectedToInternet())
                         server.markMsgAsReadServer(m.folder, m.uid);
                 }
 
@@ -673,6 +718,9 @@ namespace Email_System
             //check for stages chnages in data?
             //Data.existingMessages != Data.staged
             //then existing should be overwritten with stages 
+            moveToTrashBt.Text = "Trash";
+            moveToTrashBt.Image = Properties.Resources.icons8_trash_32;
+            moveMessageBt.Enabled = true;
 
             if (Data.updatePending)
             {
@@ -687,12 +735,14 @@ namespace Email_System
             //int folder = folderDGV.CurrentCell.RowIndex;
             int folder = folderDGV.CurrentRow.Index;
 
-            //folderDGV.SelectedCells
-            string folderName = folderDGV.CurrentCell.Value.ToString();
-            folderName = folderName.Remove(folderName.LastIndexOf(' '));
-
             try
             {
+                string folderName = folderDGV.CurrentCell.Value.ToString();
+
+                if (!folderName.Contains(Data.draftFolderName))
+                    folderName = folderName.Remove(folderName.LastIndexOf(' '));
+
+
                 if (Data.UIMessages[folder].Count <= 0)
                 {
                     toggleButtons(false);
@@ -718,7 +768,20 @@ namespace Email_System
 
                         else
                             toggleButtons(true);
-                    }                     
+                    }
+
+                    if (folderName == Data.spamFolderName)
+                    {
+                        moveToTrashBt.Text = "Empty spam";
+                        moveToTrashBt.Image = Properties.Resources.icons8_empty_box_32;
+                        moveMessageBt.Enabled = false;
+                    }
+
+                    else if (folderName == Data.trashFolderName)
+                    {
+                        moveToTrashBt.Text = "Empty trash";
+                        moveToTrashBt.Image = Properties.Resources.icons8_empty_box_32;
+                    }
 
                     foreach (var item in Data.UIMessages[folder])
                     {
@@ -812,18 +875,18 @@ namespace Email_System
         {
             try
             {
-                if(string.IsNullOrEmpty(newFolderNameTB.Text))
+                if (string.IsNullOrEmpty(newFolderNameTB.Text))
                 {
                     MessageBox.Show("Please enter a foldername!");
                     return;
                 }
 
-                server.killListeners();
+                //server.killListeners();
                 string folderName = newFolderNameTB.Text;
                 createFolder(folderName);
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Please enter a foldername!");
             }
@@ -865,9 +928,9 @@ namespace Email_System
             {
                 Utility.logMessage("Deleting folder. This might take a while", 11000);
 
-                server.killListeners();
+                //server.killListeners();
 
-                var digitsToRemove = new[] { '0','1','2','3','4','5','6','7','8','9','(',')'}; //remove count digits from string
+                var digitsToRemove = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '(', ')' }; //remove count digits from string
 
                 string folderName = folderDGV.CurrentCell.Value.ToString(); //get foldername (i.e. selected folder in DGV)
 
@@ -881,7 +944,7 @@ namespace Email_System
                 {
                     DialogResult dr = MessageBox.Show("This folder contains messages, do you wish to continue?", "Warning", MessageBoxButtons.YesNo);
 
-                    if(dr == DialogResult.No)
+                    if (dr == DialogResult.No)
                     {
                         return;
                     }
@@ -897,7 +960,7 @@ namespace Email_System
 
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Unable to delete folder. You should only delete folders that you have created yourself.");
                 Debug.WriteLine(ex.Message);

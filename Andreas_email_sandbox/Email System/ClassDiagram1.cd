@@ -1,22 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
-  <Class Name="Email_System.Properties.Resources" Collapsed="true">
-    <Position X="4" Y="1.5" Width="1.5" />
+  <Class Name="Email_System.Properties.Resources">
+    <Position X="10" Y="1.5" Width="4.75" />
     <TypeIdentifier>
-      <HashCode>AAAKAEAGAABgAAEAICBBECAIAQAgAAABCAAAAAACAIA=</HashCode>
+      <HashCode>AAAKIEEGAABgIAsAICBBECAIAQAgEAABCAABAAAKAIg=</HashCode>
     </TypeIdentifier>
   </Class>
-  <Class Name="Email_System.Properties.Settings" Collapsed="true">
-    <Position X="0.5" Y="2.5" Width="1.75" />
+  <Class Name="Email_System.Properties.Settings">
+    <Position X="6.5" Y="2.5" Width="3.25" />
     <TypeIdentifier>
       <HashCode>AAQBAAAAAAAAAAAAAQAAIAAAAASBAAACAAAAAAAAACA=</HashCode>
     </TypeIdentifier>
   </Class>
+  <Class Name="Email_System.Blacklist">
+    <Position X="0.5" Y="0.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>ICEAAIAAACgIABAAAACAAAACAkAICAIAAHAMAAAEAAE=</HashCode>
+      <FileName>Blacklist.cs</FileName>
+    </TypeIdentifier>
+  </Class>
   <Class Name="Email_System.Data">
-    <Position X="0.75" Y="0.75" Width="6" />
-    <Compartments>
-      <Compartment Name="Nested Types" Collapsed="false" />
-    </Compartments>
+    <Position X="6.5" Y="0.5" Width="6" />
     <NestedTypes>
       <Struct Name="Email_System.Data.msg" Collapsed="true">
         <TypeIdentifier>
@@ -25,63 +29,77 @@
       </Struct>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAIIUgAAQhAIBAAAAgAABACAAAECkAYgAATCACQAAAw=</HashCode>
+      <HashCode>AAIJUgSAQxAIBAAUAgACBACAAAEGkAYoEBDCAKQAAAw=</HashCode>
       <FileName>Data.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Email_System.login" Collapsed="true">
-    <Position X="2.25" Y="0.5" Width="1.5" />
+  <Class Name="Email_System.login">
+    <Position X="9.25" Y="0.5" Width="6.75" />
     <TypeIdentifier>
       <HashCode>QBAAEAAAgCAAQJBAAEGCQAACHQBAAAQAQAYQAIAAAGA=</HashCode>
       <FileName>login.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Email_System.Mailbox" Collapsed="true">
-    <Position X="4" Y="0.5" Width="1.5" />
+  <Class Name="Email_System.Mailbox">
+    <Position X="17" Y="0.75" Width="5.75" />
     <TypeIdentifier>
-      <HashCode>kyAEkgi0ACCAAAgBAYGhBADCBABGQgIBCCAJBUIAhSg=</HashCode>
+      <HashCode>k6AE0gi0AKCAAAgDIYGhBADCBABOYgIBCGYJBWIAhSg=</HashCode>
       <FileName>Mailbox.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Email_System.newEmail" Collapsed="true">
-    <Position X="5.75" Y="0.5" Width="1.5" />
+  <Class Name="Email_System.newEmail">
+    <Position X="0.5" Y="0.5" Width="8.25" />
     <TypeIdentifier>
-      <HashCode>BIAkAEwABigSABgkAAWCEAFKSRDJUBIUEAQAhAAAACA=</HashCode>
+      <HashCode>BIQkAEwABygSABgkAAWCEAFKSRDJUBAUEAQAhAAAACA=</HashCode>
       <FileName>newEmail.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Email_System.Program" Collapsed="true">
+  <Class Name="Email_System.Program">
     <Position X="0.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
       <FileName>Program.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Email_System.readMessage" Collapsed="true">
-    <Position X="2.25" Y="1.5" Width="1.5" />
+  <Class Name="Email_System.readMessage">
+    <Position X="0.5" Y="1" Width="7.75" />
     <TypeIdentifier>
       <HashCode>AQAAAAgADCAoEBAggAGIAAg6CAAAIBAACEQQAQhABAA=</HashCode>
       <FileName>readMessage.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Email_System.server" Collapsed="true">
-    <Position X="5.75" Y="1.5" Width="1.5" />
+  <Class Name="Email_System.server">
+    <Position X="0.5" Y="1.5" Width="5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAQAAAAAAAAAAQAAAAAAgAQgACAAAAAAA=</HashCode>
+      <HashCode>AAACAAAAAAAAUAAAAAAAAAAQAAAAAAgAQhACAAAAgAA=</HashCode>
       <FileName>server.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Email_System.Settings" Collapsed="true">
-    <Position X="2.25" Y="2.5" Width="1.5" />
+  <Class Name="Email_System.Settings">
+    <Position X="0.5" Y="1.5" Width="4.5" />
     <TypeIdentifier>
-      <HashCode>IAAAAAAAACQEAAIAAICAAAACBABACAIAAAAQAAACAAg=</HashCode>
+      <HashCode>IAAAAAAAACQEAAIAAICAAAACBABICAAAAEAQAAACAAg=</HashCode>
       <FileName>Settings.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Email_System.Utility">
-    <Position X="8" Y="0.75" Width="3.75" />
+    <Position X="0.5" Y="1.5" Width="6.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAGIgAAAEAAAAAAKAQFQAAAAAAAAAAAAAiAAAIA=</HashCode>
+      <HashCode>AAAAIAGIgAAAEAAAAAIKAQFQAAAAAAAAAAAIAiAAAIA=</HashCode>
+      <FileName>Utility.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Email_System.waitForm">
+    <Position X="0.5" Y="1.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAACAAAAiAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>waitForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="StringExtensions">
+    <Position X="17.25" Y="0.75" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAA=</HashCode>
       <FileName>Utility.cs</FileName>
     </TypeIdentifier>
   </Class>

@@ -1,21 +1,13 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using MailKit;
+﻿using MailKit;
 using MailKit.Net.Imap;
 using MimeKit;
-using Org.BouncyCastle.Asn1.X509;
-using System.Net.NetworkInformation;
-using System.Xml.Serialization;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Text.Json;
 
 namespace Email_System
 {
-    internal class Data 
+    internal class Data
     {
         public struct msg
         {
@@ -136,7 +128,8 @@ namespace Email_System
             Queue<Tuple<string, uint>> q = new Queue<Tuple<string, uint>>();
             Tuple<string, uint> tp = new Tuple<string, uint>(message.folder, message.uid);
             q.Enqueue(tp);
-            server.moveMsgServer(q, spamFolderName);
+            var t = server.moveMsgServer(q, spamFolderName);
+            t.Wait();
         }
 
         // Listen All folders
@@ -153,16 +146,16 @@ namespace Email_System
 
             //while we haven't cancelled the BW
             while (!bw.CancellationPending)
-            {          
-                
-                if(changedUids.Count > 0)
+            {
+
+                if (changedUids.Count > 0)
                 {
                     Thread.Sleep(5000);
                 }
 
                 var folders = client.GetFolders(client.PersonalNamespaces[0]);
 
-                bool flag= false;
+                bool flag = false;
 
                 //loop through all folders
                 foreach (var folder in folders)
@@ -173,6 +166,11 @@ namespace Email_System
                     //IMailFolder f = client.GetFolder(folder);
                     try
                     {
+                        var p = folder.Attributes.ToString();
+
+                        if (p.Contains("NonExistent"))
+                            continue;
+
                         folder.Open(FolderAccess.ReadOnly);
 
                         //for adding new folders
@@ -248,7 +246,7 @@ namespace Email_System
                                 //if serverIds doesn't contain some uid we have locally, it must be the case that it was deleted
                                 if (!serverAllIds.Contains(u))
                                 {
-                                    if(!changedUids.Contains(u))
+                                    if (!changedUids.Contains(u))
                                         removed_uid.Add(u);
                                 }
                             }
@@ -285,6 +283,7 @@ namespace Email_System
                             flag = false;
                         }
                     }
+
 
                     catch (Exception ex)
                     {
@@ -348,7 +347,7 @@ namespace Email_System
 
             Debug.WriteLine("existing folders loaded");
 
-            existingFolders= data!;
+            existingFolders = data!;
         }
 
         public static async Task loadFolders(BackgroundWorker bw)
@@ -383,7 +382,7 @@ namespace Email_System
                 }
             }
 
-            
+
             //loadMessages(bw);
 
             loadExistingFolders();
@@ -440,13 +439,14 @@ namespace Email_System
 
                             messages.Add(message);
 
-                            if (messages.Count % 10 == 0 && messages.Count != 0)
+                            if (messages.Count % 20 == 0 && messages.Count != 0)
                             {
                                 msgs[i].AddRange(messages);
                                 saveMessages(msgs);
                                 Task t = loadExistingMessages();
                                 t.Wait();
                                 messages.Clear();
+                                Utility.refreshCurrentFolder();
                             }
                         }
 
@@ -454,16 +454,18 @@ namespace Email_System
                         saveMessages(msgs);
                         Task task = loadExistingMessages();
                         task.Wait();
+                        Utility.refreshCurrentFolder();
+
 
                         i++;
                     }
 
                     saveMessages(msgs);
-                        break;
+                    break;
 
                     if (exit)
                         break;
-                }                
+                }
             }
 
 
@@ -476,7 +478,7 @@ namespace Email_System
         private static msg buildMessage(msg message, IMessageSummary messageSummary, string folderName)
         {
 
-            if(messageSummary.GMailMessageId != null)
+            if (messageSummary.GMailMessageId != null)
             {
                 message.gmailMessageId = messageSummary.GMailMessageId;
             }
@@ -507,7 +509,7 @@ namespace Email_System
                 message.from = "";
             }
 
-            if(messageSummary.Envelope.Sender != null)
+            if (messageSummary.Envelope.Sender != null)
             {
                 message.sender = messageSummary.Envelope.Sender.ToString();
             }
@@ -568,19 +570,19 @@ namespace Email_System
             if (messageSummary.Flags != null)
             {
                 message.flags = messageSummary.Flags.ToString()!;
-            } 
+            }
             else
             {
                 message.flags = "";
             }
-            
+
 
             // Make blacklist check
-/*            bool black = containedInBlacklist(message.sender, message.subject, message.body);
-            if (black)
-            {
-                message.flags += ", BLACK";
-            }*/
+            /*            bool black = containedInBlacklist(message.sender, message.subject, message.body);
+                        if (black)
+                        {
+                            message.flags += ", BLACK";
+                        }*/
 
             return message;
         }
@@ -779,39 +781,15 @@ namespace Email_System
             return null!;
         }
 
-        public static async Task<IMailFolder> GetFolder(string folderName)
-        {
-            ImapClient client = await Utility.establishConnectionImap();
-
-            
-            switch(folderName)
-            {
-                case "LOL":
-                    return null;
-                    break;
-                default:
-                    break;
-
-            }
-
-
-            var spamFolder = client.GetFolder(SpecialFolder.Junk);
-            spamFolderName = spamFolder.FullName;
-            return spamFolder;
-
-        }
-
         public static void deleteFiles()
         {
             File.Delete(Utility.username + "messages.json");
             File.Delete(Utility.username + "folders.json");
         }
 
-
-
         // ---- BLACK LIST -----
         public static string BLACK_LIST_EMAILS_FILE_NAME = Utility.username + "BLACK_LIST_EMAILS.json";
-        public static string BLACK_LIST_WORDS_FILE_NAME =  Utility.username + "BLACK_LIST_WORDS.json";
+        public static string BLACK_LIST_WORDS_FILE_NAME = Utility.username + "BLACK_LIST_WORDS.json";
 
         // 2D blacklist
         // black_list[0] -> email black_list
@@ -874,13 +852,13 @@ namespace Email_System
             // Write to blacklist emails file
             var json_emails = JsonSerializer.Serialize(black_list_emails);
             File.WriteAllText(BLACK_LIST_EMAILS_FILE_NAME, json_emails);
-            
+
 
 
             // Write to blacklist words file    
             var json_words = JsonSerializer.Serialize(black_list_words);
             File.WriteAllText(BLACK_LIST_WORDS_FILE_NAME, json_words);
-            
+
 
         }
 
@@ -939,12 +917,12 @@ namespace Email_System
                 {
                     msg curMessage = pendingMessages[folderIndex][messageIndex];
                     string flags = curMessage.flags;
-                    
+
 
                     if (containedInBlacklist(curMessage.sender, curMessage.subject, curMessage.body))
                     {
                         // Move to different folder:)))
-                        Utility.moveMsgFolderToFolder(curMessage.uid, curMessage.folder, spamFolderName);
+                        //Utility.moveMsgFolderToFolder(curMessage.uid, curMessage.folder, spamFolderName);
                         Tuple<string, uint> tp = new Tuple<string, uint>(curMessage.folder, curMessage.uid);
                         q.Enqueue(tp);
                         messagesInFolder--;
@@ -952,11 +930,11 @@ namespace Email_System
                 }
             }
 
-           if (q.Count > 0)
-           {
+            if (q.Count > 0)
+            {
                 updatePending = true;
                 server.moveMsgServer(q, spamFolderName);
-           }
+            }
         }
     }
 }
