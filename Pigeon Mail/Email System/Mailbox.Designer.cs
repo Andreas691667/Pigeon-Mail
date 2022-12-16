@@ -56,11 +56,6 @@
             this.settingsBt = new System.Windows.Forms.Button();
             this.logLabel = new System.Windows.Forms.Label();
             this.messagesDGV = new System.Windows.Forms.DataGridView();
-            this.Folder = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.From = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Subject = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Body = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Date = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.folderDGV = new System.Windows.Forms.DataGridView();
             this.FolderView = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.addFolderBt = new System.Windows.Forms.Button();
@@ -68,6 +63,11 @@
             this.loadIconPB = new System.Windows.Forms.PictureBox();
             this.deleteFolderBt = new System.Windows.Forms.Button();
             this.newFolderNameTB = new System.Windows.Forms.TextBox();
+            this.Folder = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.From = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Subject = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Body = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Date = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.messagesDGV)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.folderDGV)).BeginInit();
@@ -391,65 +391,6 @@
             this.messagesDGV.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.messagesDGV_CellDoubleClick);
             this.messagesDGV.SelectionChanged += new System.EventHandler(this.messagesDGV_SelectionChanged);
             // 
-            // Folder
-            // 
-            this.Folder.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Folder.DefaultCellStyle = dataGridViewCellStyle2;
-            this.Folder.HeaderText = "Folder";
-            this.Folder.MinimumWidth = 130;
-            this.Folder.Name = "Folder";
-            this.Folder.ReadOnly = true;
-            this.Folder.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Folder.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Folder.Width = 130;
-            // 
-            // From
-            // 
-            this.From.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.From.HeaderText = "From";
-            this.From.MinimumWidth = 6;
-            this.From.Name = "From";
-            this.From.ReadOnly = true;
-            this.From.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.From.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.From.Width = 95;
-            // 
-            // Subject
-            // 
-            this.Subject.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Subject.HeaderText = "Subject";
-            this.Subject.MinimumWidth = 6;
-            this.Subject.Name = "Subject";
-            this.Subject.ReadOnly = true;
-            this.Subject.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Subject.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // Body
-            // 
-            this.Body.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Body.HeaderText = "Message";
-            this.Body.MinimumWidth = 6;
-            this.Body.Name = "Body";
-            this.Body.ReadOnly = true;
-            this.Body.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Body.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // Date
-            // 
-            this.Date.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            dataGridViewCellStyle3.Format = "F";
-            dataGridViewCellStyle3.NullValue = null;
-            this.Date.DefaultCellStyle = dataGridViewCellStyle3;
-            this.Date.HeaderText = "Date";
-            this.Date.MinimumWidth = 6;
-            this.Date.Name = "Date";
-            this.Date.ReadOnly = true;
-            this.Date.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Date.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Date.Width = 58;
-            // 
             // folderDGV
             // 
             this.folderDGV.AllowUserToAddRows = false;
@@ -542,6 +483,65 @@
             this.newFolderNameTB.Size = new System.Drawing.Size(176, 27);
             this.newFolderNameTB.TabIndex = 17;
             // 
+            // Folder
+            // 
+            this.Folder.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Folder.DefaultCellStyle = dataGridViewCellStyle2;
+            this.Folder.HeaderText = "Folder";
+            this.Folder.MinimumWidth = 130;
+            this.Folder.Name = "Folder";
+            this.Folder.ReadOnly = true;
+            this.Folder.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Folder.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Folder.Width = 130;
+            // 
+            // From
+            // 
+            this.From.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.From.HeaderText = "From";
+            this.From.MinimumWidth = 6;
+            this.From.Name = "From";
+            this.From.ReadOnly = true;
+            this.From.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.From.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.From.Width = 95;
+            // 
+            // Subject
+            // 
+            this.Subject.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Subject.HeaderText = "Subject";
+            this.Subject.MinimumWidth = 6;
+            this.Subject.Name = "Subject";
+            this.Subject.ReadOnly = true;
+            this.Subject.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Subject.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Body
+            // 
+            this.Body.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Body.HeaderText = "Message";
+            this.Body.MinimumWidth = 6;
+            this.Body.Name = "Body";
+            this.Body.ReadOnly = true;
+            this.Body.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Body.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Date
+            // 
+            this.Date.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            dataGridViewCellStyle3.Format = "F";
+            dataGridViewCellStyle3.NullValue = null;
+            this.Date.DefaultCellStyle = dataGridViewCellStyle3;
+            this.Date.HeaderText = "Date";
+            this.Date.MinimumWidth = 6;
+            this.Date.Name = "Date";
+            this.Date.ReadOnly = true;
+            this.Date.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Date.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Date.Width = 58;
+            // 
             // Mailbox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -603,12 +603,12 @@
         private Button deleteFolderBt;
         public ComboBox folderDropDown;
         public PictureBox loadIconPB;
+        private Button markMessageBt;
+        private TextBox newFolderNameTB;
         private DataGridViewTextBoxColumn Folder;
         private DataGridViewTextBoxColumn From;
         private DataGridViewTextBoxColumn Subject;
         private DataGridViewTextBoxColumn Body;
         private DataGridViewTextBoxColumn Date;
-        private Button markMessageBt;
-        private TextBox newFolderNameTB;
     }
 }

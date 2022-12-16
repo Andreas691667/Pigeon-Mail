@@ -116,7 +116,6 @@ namespace Email_System
                 messagesDGV.Rows.Insert(messagesDGV.Rows.Count, item.folder, item.sender, subject, item.body);
             }
 
-
             currentFolderMessages.Add(item);
         }
 
