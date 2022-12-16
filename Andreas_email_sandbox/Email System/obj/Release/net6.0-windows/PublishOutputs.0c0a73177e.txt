@@ -1,0 +1,10 @@
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Publish version\Email System.exe
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Publish version\Email System.dll
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Publish version\Email System.deps.json
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Publish version\Email System.runtimeconfig.json
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Publish version\Email System.dll.config
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Publish version\Email System.pdb
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Publish version\EmailValidation.dll
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Publish version\MailKit.dll
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Publish version\MimeKit.dll
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\Publish version\BouncyCastle.Crypto.dll
