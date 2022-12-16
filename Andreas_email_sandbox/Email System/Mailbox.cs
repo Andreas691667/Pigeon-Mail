@@ -720,6 +720,7 @@ namespace Email_System
             //then existing should be overwritten with stages 
             moveToTrashBt.Text = "Trash";
             moveToTrashBt.Image = Properties.Resources.icons8_trash_32;
+            moveMessageBt.Enabled = true;
 
             if (Data.updatePending)
             {
@@ -880,7 +881,7 @@ namespace Email_System
                     return;
                 }
 
-                server.killListeners();
+                //server.killListeners();
                 string folderName = newFolderNameTB.Text;
                 createFolder(folderName);
             }
@@ -927,7 +928,7 @@ namespace Email_System
             {
                 Utility.logMessage("Deleting folder. This might take a while", 11000);
 
-                server.killListeners();
+                //server.killListeners();
 
                 var digitsToRemove = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '(', ')' }; //remove count digits from string
 

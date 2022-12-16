@@ -307,24 +307,33 @@ namespace Email_System
 
         public static void logMessage(string message, int time)
         {
-            var m = Mailbox.GetInstance;
-
-            m.BeginInvoke(new Action(() => Mailbox.setText(message)));
-
-            m.loadIconPB.Visible = true;
-
-            var t = new System.Windows.Forms.Timer();
-
-            t.Interval = time; // it will Tick in 3 seconds
-
-            t.Tick += (s, e) =>
+            try
             {
-                m.BeginInvoke(new Action(() => Mailbox.setText("")));
-                m.loadIconPB.Visible = false;
-                t.Stop();
-            };
 
-            t.Start();
+                var m = Mailbox.GetInstance;
+
+                m.BeginInvoke(new Action(() => Mailbox.setText(message)));
+
+                m.loadIconPB.Visible = true;
+
+                var t = new System.Windows.Forms.Timer();
+
+                t.Interval = time; // it will Tick in 3 seconds
+
+                t.Tick += (s, e) =>
+                {
+                    m.BeginInvoke(new Action(() => Mailbox.setText("")));
+                    m.loadIconPB.Visible = false;
+                    t.Stop();
+                };
+
+                t.Start();
+            }
+
+            catch ( Exception ex)
+            {
+
+            }
         }
 
         public static void restartApplication()
