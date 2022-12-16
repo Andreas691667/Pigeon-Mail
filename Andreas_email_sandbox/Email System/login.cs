@@ -110,10 +110,6 @@ namespace Email_System
             Utility.setUsername(usernameTb.Text);
             Utility.setPassword(passwordTb.Text);
 
-
-            Data.loadOrCreateBlackListFile();
-
-
             // Get SMTP Client
             SmtpClient client = new SmtpClient();
 
@@ -289,6 +285,7 @@ namespace Email_System
             Data.GetFlaggedFolder();
             Data.GetDraftFolder();
             Data.GetAllFolder();
+            Data.loadOrCreateBlackListFile();
             Task getSpamFolderTask = Data.GetSpamFolder();
             getSpamFolderTask.Wait();
             Task task = Data.loadMessages(bw);
