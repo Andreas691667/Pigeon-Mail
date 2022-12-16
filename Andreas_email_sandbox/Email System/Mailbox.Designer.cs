@@ -139,7 +139,7 @@
             this.addFlagBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.addFlagBt.Image = global::Email_System.Properties.Resources.icons8_flag_32;
             this.addFlagBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.addFlagBt.Location = new System.Drawing.Point(1453, 0);
+            this.addFlagBt.Location = new System.Drawing.Point(1445, -1);
             this.addFlagBt.Name = "addFlagBt";
             this.addFlagBt.Size = new System.Drawing.Size(105, 64);
             this.addFlagBt.TabIndex = 4;
@@ -165,9 +165,9 @@
             this.moveToTrashBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.moveToTrashBt.Image = global::Email_System.Properties.Resources.icons8_trash_32;
             this.moveToTrashBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.moveToTrashBt.Location = new System.Drawing.Point(1647, 0);
+            this.moveToTrashBt.Location = new System.Drawing.Point(1625, 0);
             this.moveToTrashBt.Name = "moveToTrashBt";
-            this.moveToTrashBt.Size = new System.Drawing.Size(56, 64);
+            this.moveToTrashBt.Size = new System.Drawing.Size(99, 64);
             this.moveToTrashBt.TabIndex = 6;
             this.moveToTrashBt.Text = "Trash";
             this.moveToTrashBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -180,9 +180,9 @@
             this.deleteBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.deleteBt.Image = global::Email_System.Properties.Resources.icons8_remove_32;
             this.deleteBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.deleteBt.Location = new System.Drawing.Point(1564, 0);
+            this.deleteBt.Location = new System.Drawing.Point(1556, 0);
             this.deleteBt.Name = "deleteBt";
-            this.deleteBt.Size = new System.Drawing.Size(75, 64);
+            this.deleteBt.Size = new System.Drawing.Size(62, 64);
             this.deleteBt.TabIndex = 7;
             this.deleteBt.Text = "Delete";
             this.deleteBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -220,9 +220,9 @@
             this.markMessageBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.markMessageBt.Image = global::Email_System.Properties.Resources.icons8_secured_letter_321;
             this.markMessageBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.markMessageBt.Location = new System.Drawing.Point(1033, 3);
+            this.markMessageBt.Location = new System.Drawing.Point(1048, 3);
             this.markMessageBt.Name = "markMessageBt";
-            this.markMessageBt.Size = new System.Drawing.Size(109, 61);
+            this.markMessageBt.Size = new System.Drawing.Size(104, 61);
             this.markMessageBt.TabIndex = 17;
             this.markMessageBt.Text = "Read/unread";
             this.markMessageBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -233,7 +233,7 @@
             // 
             this.folderDropDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.folderDropDown.FormattingEnabled = true;
-            this.folderDropDown.Location = new System.Drawing.Point(1248, 35);
+            this.folderDropDown.Location = new System.Drawing.Point(1242, 34);
             this.folderDropDown.Name = "folderDropDown";
             this.folderDropDown.Size = new System.Drawing.Size(197, 28);
             this.folderDropDown.TabIndex = 16;
@@ -243,9 +243,9 @@
             this.moveMessageBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.moveMessageBt.Image = global::Email_System.Properties.Resources.icons8_live_folder_32;
             this.moveMessageBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.moveMessageBt.Location = new System.Drawing.Point(1149, 3);
+            this.moveMessageBt.Location = new System.Drawing.Point(1158, 4);
             this.moveMessageBt.Name = "moveMessageBt";
-            this.moveMessageBt.Size = new System.Drawing.Size(94, 61);
+            this.moveMessageBt.Size = new System.Drawing.Size(78, 61);
             this.moveMessageBt.TabIndex = 15;
             this.moveMessageBt.Text = "Move";
             this.moveMessageBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -325,9 +325,9 @@
             this.settingsBt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.settingsBt.Image = global::Email_System.Properties.Resources.icons8_settings_32;
             this.settingsBt.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.settingsBt.Location = new System.Drawing.Point(1708, 0);
+            this.settingsBt.Location = new System.Drawing.Point(1730, 0);
             this.settingsBt.Name = "settingsBt";
-            this.settingsBt.Size = new System.Drawing.Size(91, 64);
+            this.settingsBt.Size = new System.Drawing.Size(71, 64);
             this.settingsBt.TabIndex = 8;
             this.settingsBt.Text = "Settings";
             this.settingsBt.TextAlign = System.Drawing.ContentAlignment.BottomCenter;

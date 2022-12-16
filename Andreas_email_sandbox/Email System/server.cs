@@ -107,48 +107,6 @@ namespace Email_System
             }
         }
 
-        /*
-        public static async void moveMsgSpamServer(string msg_folder, uint msg_uid)
-        {
-            // Get IMap client
-            var client = await Utility.establishConnectionImap();
-          
-            try
-            {
-
-                // Creates new UniqueId with id of msg_uid      
-                var id = new UniqueId[] { new UniqueId (msg_uid) };
-
-                // Get spam folder of type IMailFolder
-                var spamFolder = await Data.GetSpamFolder(client);
-
-                // Get current folder of type IMailFolder
-                var folder = await client.GetFolderAsync(msg_folder);
-
-                // Open folder to allow access
-                await folder.OpenAsync(FolderAccess.ReadWrite);
-
-                // Move message to spam
-                var map = await folder.MoveToAsync(id, spamFolder);
-
-                Debug.WriteLine("Moved message to spam");
-                
-            }
-
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-
-            finally
-            {
-                client.Disconnect(true);
-                Thread.Sleep(5000);
-                Data.changedUids.Remove(msg_uid);
-            }
-        }
-        */
-
         public static async Task moveMsgServer(Queue<Tuple<string, uint>> q, string moveToFolder)
         {
             var client = await Utility.establishConnectionImap();
@@ -196,6 +154,32 @@ namespace Email_System
             {
                 client.Disconnect(true);
                 Data.changedUids.Remove(idToRemove);
+            }
+        }
+
+        public static async void emptyFolderServer(string folder)
+        {
+            var client = await Utility.establishConnectionImap();
+
+            List<uint> idsToRemove = new List<uint>();
+
+            var f = await client.GetFolderAsync(folder);
+            await f.OpenAsync(FolderAccess.ReadWrite);
+
+            var allMessages = f.Fetch(0,-1, MessageSummaryItems.UniqueId);
+
+            foreach(var msg in allMessages)
+            {
+                idsToRemove.Add(msg.UniqueId.Id);
+                await f.AddFlagsAsync(msg.UniqueId, MessageFlags.Deleted, true);
+            }
+
+            await f.ExpungeAsync();
+            await client.DisconnectAsync(true);     
+            
+            foreach(uint id in idsToRemove)
+            {
+                Data.changedUids.Remove(id);
             }
         }
 

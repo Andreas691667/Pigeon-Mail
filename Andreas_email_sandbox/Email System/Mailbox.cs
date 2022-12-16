@@ -372,6 +372,18 @@ namespace Email_System
                     var folderIndex = Data.existingFolders.IndexOf(m.folder);
 
                     var index = Data.UIMessages[folderIndex].IndexOf(m);
+
+                    if (index == -1)
+                    {
+                        foreach (var message in Data.UIMessages[folderIndex])
+                        {
+                            if (message.date == m.date && message.sender == m.sender)
+                            {
+                                index = Data.UIMessages[folderIndex].IndexOf(message);
+                            }
+                        }
+                    }
+
                     m.flags = m.flags.Replace("(UNREAD)", "");
                     m.flags += ", Seen";
 
@@ -452,7 +464,26 @@ namespace Email_System
             {
                 int messageIndex = messagesDGV.CurrentCell.RowIndex;
                 Data.msg m = currentFolderMessages[messageIndex];
-                Utility.moveMsgTrash(m.uid, m.subject, m.folder);
+
+                if(m.folder != Data.trashFolderName && m.folder != Data.spamFolderName)
+                {
+                    Utility.moveMsgTrash(m.uid, m.subject, m.folder);
+                }
+
+                else
+                {
+                    DialogResult d = MessageBox.Show("Are you sure you want to delete all messages in this folder permanently?", "Warning", MessageBoxButtons.YesNo);
+
+                    if (d == DialogResult.Yes)
+                    {
+                        Utility.emptyFolder(m.folder);
+                        refreshCurrentFolder();
+                    }
+
+                    else
+                        return;
+                }
+                
             }
 
             catch(Exception ex)
@@ -694,6 +725,8 @@ namespace Email_System
             //check for stages chnages in data?
             //Data.existingMessages != Data.staged
             //then existing should be overwritten with stages 
+            moveToTrashBt.Text = "Trash";
+            moveToTrashBt.Image = Properties.Resources.icons8_trash_32;
 
             if (Data.updatePending)
             {
@@ -741,7 +774,20 @@ namespace Email_System
 
                         else
                             toggleButtons(true);
-                    }                     
+                    }
+                    
+                    if(folderName == Data.spamFolderName)
+                    {
+                        moveToTrashBt.Text = "Empty spam";
+                        moveToTrashBt.Image = Properties.Resources.icons8_empty_box_32;
+                        moveMessageBt.Enabled = false;
+                    }
+
+                    else if (folderName == Data.trashFolderName)
+                    {
+                        moveToTrashBt.Text = "Empty trash";
+                        moveToTrashBt.Image = Properties.Resources.icons8_empty_box_32;
+                    }
 
                     foreach (var item in Data.UIMessages[folder])
                     {

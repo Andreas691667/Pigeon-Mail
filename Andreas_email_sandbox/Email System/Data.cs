@@ -789,35 +789,11 @@ namespace Email_System
             return null!;
         }
 
-        public static async Task<IMailFolder> GetFolder(string folderName)
-        {
-            ImapClient client = await Utility.establishConnectionImap();
-
-            
-            switch(folderName)
-            {
-                case "LOL":
-                    return null;
-                    break;
-                default:
-                    break;
-
-            }
-
-
-            var spamFolder = client.GetFolder(SpecialFolder.Junk);
-            spamFolderName = spamFolder.FullName;
-            return spamFolder;
-
-        }
-
         public static void deleteFiles()
         {
             File.Delete(Utility.username + "messages.json");
             File.Delete(Utility.username + "folders.json");
         }
-
-
 
         // ---- BLACK LIST -----
         public static string BLACK_LIST_EMAILS_FILE_NAME = Utility.username + "BLACK_LIST_EMAILS.json";

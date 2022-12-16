@@ -163,6 +163,16 @@ namespace Email_System.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icons8_empty_box_32 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-empty-box-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icons8_file_delete_32 {
             get {
                 object obj = ResourceManager.GetObject("icons8-file-delete-32", resourceCulture);
