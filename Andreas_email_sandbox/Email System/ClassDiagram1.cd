@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
   <Class Name="Email_System.Properties.Resources">
-    <Position X="10" Y="1.5" Width="4.75" />
+    <Position X="0.5" Y="0.5" Width="4.75" />
     <TypeIdentifier>
       <HashCode>AAAKIEEGAABgIAsAICBBECAIAQAgEAABCAABAAAKAIg=</HashCode>
     </TypeIdentifier>
   </Class>
   <Class Name="Email_System.Properties.Settings">
-    <Position X="6.5" Y="2.5" Width="3.25" />
+    <Position X="9.5" Y="0.5" Width="3.25" />
     <TypeIdentifier>
       <HashCode>AAQBAAAAAAAAAAAAAQAAIAAAAASBAAACAAAAAAAAACA=</HashCode>
     </TypeIdentifier>
@@ -20,7 +20,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Email_System.Data">
-    <Position X="6.5" Y="0.5" Width="6" />
+    <Position X="0.5" Y="0.5" Width="6" />
     <NestedTypes>
       <Struct Name="Email_System.Data.msg" Collapsed="true">
         <TypeIdentifier>
@@ -34,7 +34,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Email_System.login">
-    <Position X="9.25" Y="0.5" Width="6.75" />
+    <Position X="0.5" Y="0.5" Width="6.75" />
     <TypeIdentifier>
       <HashCode>QBAAEAAAgCAAQJBAAEGCQAACHQBAAAQAQAYQAIAAAGA=</HashCode>
       <FileName>login.cs</FileName>
