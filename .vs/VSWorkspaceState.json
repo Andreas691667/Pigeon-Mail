@@ -1,10 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Andreas_email_sandbox",
-    "\\Andreas_email_sandbox\\Email System",
-    "\\Andreas_email_sandbox\\Email System\\Properties"
+    "\\Pigeon Mail",
+    "\\Pigeon Mail\\Email System"
   ],
-  "SelectedNode": "\\Andreas_email_sandbox\\Email System\\Mailbox.cs",
+  "SelectedNode": "\\Pigeon Mail\\Email System\\Mailbox.cs",
   "PreviewInSolutionExplorer": false
 }
