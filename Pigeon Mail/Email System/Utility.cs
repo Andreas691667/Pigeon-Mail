@@ -257,8 +257,6 @@ namespace Email_System
         //stops listening on folders and deletes message locally
         public static void deleteMsg(uint uid, string folder)
         {
-            server.killListeners();
-
             var folderIndex = Data.existingFolders.IndexOf(folder);
 
             Queue<Tuple<string, uint>> deleteQueue = new Queue<Tuple<string, uint>>();

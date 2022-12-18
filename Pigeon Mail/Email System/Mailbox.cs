@@ -880,7 +880,6 @@ namespace Email_System
                     return;
                 }
 
-                //server.killListeners();
                 string folderName = newFolderNameTB.Text;
                 createFolder(folderName);
             }
@@ -893,7 +892,6 @@ namespace Email_System
             finally
             {
                 newFolderNameTB.Clear();
-                server.startListeners();
                 Utility.logMessage("Creating folder. This might take a while", 10000);
             }
         }
@@ -926,8 +924,6 @@ namespace Email_System
             try
             {
                 Utility.logMessage("Deleting folder. This might take a while", 11000);
-
-                //server.killListeners();
 
                 var digitsToRemove = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '(', ')' }; //remove count digits from string
 
@@ -968,7 +964,6 @@ namespace Email_System
             finally
             {
                 RetrieveFolders();
-                server.startListeners();
             }
         }
 

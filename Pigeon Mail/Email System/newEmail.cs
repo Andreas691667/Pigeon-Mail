@@ -447,8 +447,6 @@ namespace Email_System
 
                 var client = Utility.establishConnectionSmtp();
 
-                server.killListeners();
-
                 messageSent = true;
                 this.Close();
 
@@ -477,9 +475,6 @@ namespace Email_System
 
                     client.Disconnect(true);
                     client.Dispose();
-
-                    if (!isDraft)
-                        server.startListeners();
 
                     Utility.logMessage("Message sent successfully!", 3000);
                 }

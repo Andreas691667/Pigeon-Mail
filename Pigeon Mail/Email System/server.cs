@@ -23,7 +23,7 @@ namespace Email_System
             var l = login.GetInstance;
 
             if (!l.folderListenerBW.IsBusy) { }
-            //l.folderListenerBW.RunWorkerAsync();
+                l.folderListenerBW.RunWorkerAsync();
 
         }
 
@@ -48,8 +48,6 @@ namespace Email_System
                     Utility.logMessage("Message deleted", 3000);
                     Debug.WriteLine("msg deleted from server from folder: " + folder.FullName);
                 }
-
-                startListeners();
             }
 
             catch (Exception ex)

@@ -1,0 +1,10 @@
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\PigeonPost\Email System.exe
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\PigeonPost\Email System.dll
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\PigeonPost\Email System.deps.json
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\PigeonPost\Email System.runtimeconfig.json
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\PigeonPost\Email System.dll.config
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\PigeonPost\Email System.pdb
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\PigeonPost\EmailValidation.dll
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\PigeonPost\MailKit.dll
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\PigeonPost\MimeKit.dll
+C:\Users\Andreas\Documents\GitHub\Software_engineering_project\PigeonPost\BouncyCastle.Crypto.dll
