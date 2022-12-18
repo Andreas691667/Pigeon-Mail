@@ -31,6 +31,7 @@ namespace Email_System
         public static string flaggedFolderName = "";
         public static string allFolderName = "";
         public static string spamFolderName = "";
+        public static string sentFolderName = "";
 
         //list to load folders on login
         private static List<string> folderList = new List<string>();
@@ -772,6 +773,43 @@ namespace Email_System
                         if (folder.Name == name)
                         {
                             spamFolderName = folder.FullName;
+                            return folder;
+                        }
+                    }
+                }
+            }
+
+            return null!;
+        }
+
+        static string[] SentFolderNames = { "Sent", "Sendte Mails", "Sent mail" };
+
+        //get the trashFolder and return the Imailfolder
+        public static async Task<IMailFolder> GetSentFolder(ImapClient client = null!)
+        {
+            if (client == null)
+            {
+                client = await Utility.establishConnectionImap();
+            }
+
+            if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0)
+            {
+                var sentFolder = client.GetFolder(SpecialFolder.Sent);
+                sentFolderName = sentFolder.FullName;
+                return sentFolder;
+            }
+
+            else
+            {
+                var personal = client.GetFolder(client.PersonalNamespaces[0]);
+
+                foreach (var folder in personal.GetSubfolders(false, CancellationToken.None))
+                {
+                    foreach (var name in SentFolderNames)
+                    {
+                        if (folder.Name == name)
+                        {
+                            sentFolderName = folder.FullName;
                             return folder;
                         }
                     }

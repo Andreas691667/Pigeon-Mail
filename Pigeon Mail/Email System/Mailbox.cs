@@ -195,7 +195,7 @@ namespace Email_System
                     // only add to dropdown if not already added and not one of these special folders:
                     if (!folderDropDown.Items.Contains(dropDownString) && dropDownString != Data.trashFolderName
                         && dropDownString != Data.draftFolderName && dropDownString != Data.flaggedFolderName
-                        && dropDownString != Data.allFolderName)
+                        && dropDownString != Data.allFolderName && dropDownString != Data.sentFolderName)
                     {
                         folderDropDown.Items.Add(dropDownString);
                     }

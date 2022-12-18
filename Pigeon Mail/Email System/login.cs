@@ -281,6 +281,7 @@ namespace Email_System
 
             BackgroundWorker bw = sender as BackgroundWorker;
 
+            Data.GetSentFolder();
             Data.GetTrashFolder();
             Data.GetFlaggedFolder();
             Data.GetDraftFolder();
