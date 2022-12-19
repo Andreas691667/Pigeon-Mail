@@ -12,9 +12,7 @@ namespace Email_System
         public struct msg
         {
             public uint uid { get; set; }
-            public ulong? gmailMessageId { get; set; }
             public string body { get; set; }
-            public string htmlBody { get; set; }
             public string from { get; set; }
             public string sender { get; set; }
             public string to { get; set; }
@@ -478,16 +476,6 @@ namespace Email_System
 
         private static msg buildMessage(msg message, IMessageSummary messageSummary, string folderName)
         {
-
-            if (messageSummary.GMailMessageId != null)
-            {
-                message.gmailMessageId = messageSummary.GMailMessageId;
-            }
-            else
-            {
-                message.gmailMessageId = 0;
-            }
-
 
             message.folder = folderName;
 
